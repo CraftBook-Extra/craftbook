@@ -332,6 +332,8 @@ public class MechanismListener extends CraftBookDelegateListener {
             			|| line2.equalsIgnoreCase("[GlassDGate]")
             			|| line2.equalsIgnoreCase("[IronGate]")
             			|| line2.equalsIgnoreCase("[IronDGate]")
+            			|| line2.equalsIgnoreCase("[NetherGate]")
+            			|| line2.equalsIgnoreCase("[NetherDGate]")
             			)
             		)
             {
@@ -346,6 +348,8 @@ public class MechanismListener extends CraftBookDelegateListener {
             			blockType = BlockType.GLASS_PANE;
             		else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
             			blockType = BlockType.IRON_BARS;
+            		else if(line2.equalsIgnoreCase("[NetherGate") || line2.equalsIgnoreCase("[NetherDGate"))
+            			blockType = BlockType.NETHER_BRICK_FENCE;
             		else
             			blockType = BlockType.FENCE;
             		
@@ -524,6 +528,8 @@ public class MechanismListener extends CraftBookDelegateListener {
         	|| line2.equalsIgnoreCase("[GlassDGate]")
         	|| line2.equalsIgnoreCase("[IronGate]")
         	|| line2.equalsIgnoreCase("[IronDGate]")
+        	|| line2.equalsIgnoreCase("[NetherGate]")
+        	|| line2.equalsIgnoreCase("[NetherDGate]")
         	) {
             if (checkCreatePermissions && !player.canUseCommand("/makegate")) {
                 player.sendMessage(Colors.Rose
@@ -537,6 +543,8 @@ public class MechanismListener extends CraftBookDelegateListener {
             	setLine = line2.equalsIgnoreCase("[GlassGate]") ? "[GlassGate]" : "[GlassDGate]";
             else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
             	setLine = line2.equalsIgnoreCase("[IronGate]") ? "[IronGate]" : "[IronDGate]";
+            else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("[NetherDGate]"))
+            	setLine = line2.equalsIgnoreCase("[NetherGate]") ? "[NetherGate]" : "NetherDGate]";
             else
             	setLine = line2.equalsIgnoreCase("[Gate]") ? "[Gate]" : "[DGate]";
             
@@ -1165,6 +1173,8 @@ public class MechanismListener extends CraftBookDelegateListener {
                             || line2.equalsIgnoreCase("[GlassDGate]")
                             || line2.equalsIgnoreCase("[IronGate]")
                             || line2.equalsIgnoreCase("[IronDGate]")
+                            || line2.equalsIgnoreCase("[NetherGate]")
+                            || line2.equalsIgnoreCase("[NetherDGate]")
                             )
                         && checkPermission(player, "/gate")) {
                 	
@@ -1180,11 +1190,14 @@ public class MechanismListener extends CraftBookDelegateListener {
             			gateType = BlockType.GLASS_PANE;
             		else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
             			gateType = BlockType.IRON_BARS;
+            		else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("NetherDGate]"))
+            			gateType = BlockType.NETHER_BRICK_FENCE;
             		else
             			gateType = BlockType.FENCE;
             		
             		boolean dgate = line2.equalsIgnoreCase("[GlassDGate]")
             						|| line2.equalsIgnoreCase("[IronDGate]")
+            						|| line2.equalsIgnoreCase("[NetherDGate]")
             						|| line2.equalsIgnoreCase("[DGate]");
                     
                     // A gate may toggle or not
