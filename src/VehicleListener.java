@@ -742,9 +742,13 @@ public class VehicleListener extends CraftBookDelegateListener {
 
                     if (test == null || test) {
                         Player player = minecart.getPassenger();
+                    	float facing = 0;
+
                         if (player != null) {
-                            // Let's find a place to put the player
-                            Location loc = new Location(blockX, blockY, blockZ);
+                        	// Let's find a place to put the player
+                        	facing = player.getRotation();
+                        	
+                        	Location loc = new Location(blockX, blockY, blockZ);
                             Vector signPos = new Vector(blockX, blockY - 2, blockZ);
 
                             if (CraftBook.getBlockID(world, signPos) == BlockType.SIGN_POST
@@ -773,6 +777,25 @@ public class VehicleListener extends CraftBookDelegateListener {
                                                 player.sendMessage(Colors.Gold + "You've arrived at: "
                                                         + text);
                                             }
+                                            if (((Sign) cBlock).getText(2) != null) {
+                                            	if (((Sign) cBlock).getText(2).equalsIgnoreCase("S")) {
+                                            		facing = 0;
+                                            	} else if (((Sign) cBlock).getText(2).equalsIgnoreCase("SW")) {
+                                            		facing = 45;
+                                            	} else if (((Sign) cBlock).getText(2).equalsIgnoreCase("W")) {
+                                            		facing = 90;
+                                            	} else if (((Sign) cBlock).getText(2).equalsIgnoreCase("NW")) {
+                                            		facing = 135;
+                                            	} else if (((Sign) cBlock).getText(2).equalsIgnoreCase("N")) {
+                                            		facing = 180;
+                                            	} else if (((Sign) cBlock).getText(2).equalsIgnoreCase("NE")) {
+                                            		facing = 225;
+                                            	} else if (((Sign) cBlock).getText(2).equalsIgnoreCase("E")) {
+                                                	facing = 270;
+                                                } else if (((Sign) cBlock).getText(2).equalsIgnoreCase("SE")) {
+                                                	facing = 315;
+                                            	}
+                                            }
                                         }
                                     }
                                 }
@@ -785,6 +808,7 @@ public class VehicleListener extends CraftBookDelegateListener {
 
                             UtilEntity.mountEntity(player.getEntity(), (OEntity)null); //to eject
                             player.teleportTo(loc);
+                        	player.setRotation(facing);
                         }
                     }
 
@@ -2585,9 +2609,10 @@ public class VehicleListener extends CraftBookDelegateListener {
      * @return
      */
     public boolean satisfiesCartSort(String line, Minecart minecart, Vector trackPos) {
+    	
     	if(line.length() == 0)
     		return false;
-    	
+
         Player player = minecart.getPassenger();
         
         if (line.equalsIgnoreCase("All")) {
@@ -2648,35 +2673,55 @@ public class VehicleListener extends CraftBookDelegateListener {
         String[] parts = line.split(":");
         
         if (parts.length >= 2) {
+        	boolean invert = false;
+
+        	parts[1] = parts[1].trim();
+        	if (parts[1].length() > 0 && parts[1].startsWith("!")) {
+        		invert = true;
+        		parts[1] = parts[1].substring(1);
+        	}
+ 
             if (player != null && parts[0].equalsIgnoreCase("Held")) {
+            	if (parts[1].equalsIgnoreCase("NONE")) {
+            		if (player.getItemInHand() == -1) {
+            			return true;
+            		} else {
+            			return false;
+            		}
+            	}
+
             	int[] info = getItemInfoFromParts(parts);
             	if(info == null)
             		return false;
             	
             	OItemStack iStack = player.getEntity().k.d();
-            	if(iStack != null && player.getItemInHand() >= 0
-            	   && contentEqualsItem(player.getItemInHand(), iStack.h(), iStack.a, info))
-            	{
-            		return true;
+            	if(iStack != null && player.getItemInHand() >= 0) {
+            		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.h(), iStack.a, info)) || 
+            			( invert && !contentEqualsItem(player.getItemInHand(), iStack.h(), iStack.a, info))) {
+            			return true;
+            		}
             	}
             } else if (player != null && parts[0].equalsIgnoreCase("Group")) {
-                if (player.isInGroup(parts[1])) {
+                if ((!invert && player.isInGroup(parts[1])) || (invert && !player.isInGroup(parts[1]) )) {
                     return true;
                 }
             } else if (player != null && parts[0].equalsIgnoreCase("Ply")) {
-                if (parts[1].equalsIgnoreCase(player.getName())) {
+                if ((!invert && parts[1].equalsIgnoreCase(player.getName())) || (invert && !parts[1].equalsIgnoreCase(player.getName() ))) {
                     return true;
                 }
             } else if (player != null && parts[0].equalsIgnoreCase("INV")) {
             	Inventory inv = player.getInventory();
-            	if(inv == null)
+            	if(!invert && inv == null)
             		return false;
+            	
+            	if (invert && inv == null)
+            		return true;
             	
             	int[] info = getItemInfoFromParts(parts);
             	if(info == null)
             		return false;
             	
-            	if(contentsHasItems(inv.getContents(), info))
+            	if ((!invert && contentsHasItems(inv.getContents(), info)) || (invert && !contentsHasItems(inv.getContents(), info)))
         			return true;
             	
             } else if (minecart.getType() == Minecart.Type.StorageCart
@@ -2718,7 +2763,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                         return true;
                     }
                 }
-            }
+            }            
         }
         
         return false;
