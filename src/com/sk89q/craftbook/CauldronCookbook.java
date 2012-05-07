@@ -20,10 +20,9 @@
 package com.sk89q.craftbook;
 
 //import java.util.logging.Logger;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
-//import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Store of recipes.
@@ -58,7 +57,7 @@ public class CauldronCookbook {
      * @param ingredients
      */
     public CauldronRecipe find(Map<CraftBookItem,Integer> ingredients) {
-        for (CauldronRecipe recipe : recipes) {
+    	for (CauldronRecipe recipe : recipes) {
             if (recipe.hasAllIngredients(ingredients)) {
                 return recipe;
             }
@@ -66,6 +65,21 @@ public class CauldronCookbook {
         return null;
     }
 
+    /**
+     * Gets a recipe by its ingredients. The list will be sorted.
+     *
+     * @param ingredients
+     */
+    public CauldronRecipe find(Map<CraftBookItem,Integer> ingredients, String recipename) {
+        for (CauldronRecipe recipe : recipes) {
+            if (recipe.getName().equalsIgnoreCase(recipename) && recipe.hasAllIngredients(ingredients)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+    
+    
     /**
      * Get the number of recipes.
      * 

@@ -888,6 +888,8 @@ public class VehicleListener extends CraftBookDelegateListener {
                     Boolean test = Redstone.testAnyInput(world, underPt);
 
                     if (test == null || test) {
+                    	Sign sign = getControllerSign(world, blockX, blockY - 1, blockZ, "[Craft]");
+                    	
                         if (minecart.getType() == Minecart.Type.StorageCart && minecart.getStorage() != null) {
                         	
                         	ItemArray<?> cartStorage = minecart.getStorage();
@@ -918,11 +920,17 @@ public class VehicleListener extends CraftBookDelegateListener {
                         		}
                         	}
                         	
-                        	CauldronRecipe recipe = craftBlockRecipes.find(contents);
+                        	CauldronRecipe recipe = null;
 
-                            if(recipe != null)
+                        	if (sign == null || sign.getText(2).length() < 1) {
+                        		recipe = craftBlockRecipes.find(contents);
+                        	} else {
+                        		recipe = craftBlockRecipes.find(contents, sign.getText(2));
+                        	}
+
+                        	if(recipe != null)
                             {
-                            	List<CraftBookItem> ingredients = new ArrayList<CraftBookItem>(recipe.getIngredients());
+                        		List<CraftBookItem> ingredients = new ArrayList<CraftBookItem>(recipe.getIngredients());
                             	
                             	boolean itemsFound = true;
                             	ingredientLoop:
