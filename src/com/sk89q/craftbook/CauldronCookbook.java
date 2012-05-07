@@ -66,13 +66,14 @@ public class CauldronCookbook {
     }
 
     /**
-     * Gets a recipe by its ingredients. The list will be sorted.
+     * Gets a recipe by its ingredients and name.
      *
      * @param ingredients
+     * @param recipeName
      */
-    public CauldronRecipe find(Map<CraftBookItem,Integer> ingredients, String recipename) {
+    public CauldronRecipe find(Map<CraftBookItem,Integer> ingredients, String recipeName) {
         for (CauldronRecipe recipe : recipes) {
-            if (recipe.getName().equalsIgnoreCase(recipename) && recipe.hasAllIngredients(ingredients)) {
+            if (recipe.getName().equalsIgnoreCase(recipeName) && recipe.hasAllIngredients(ingredients)) {
                 return recipe;
             }
         }
