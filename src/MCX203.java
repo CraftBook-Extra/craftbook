@@ -175,7 +175,8 @@ public class MCX203 extends BaseIC {
         double z = chip.getPosition().getZ();
         
         World world = CraftBook.getWorld(chip.getCBWorld());
-    	ItemChestCollector chestCollector = new ItemChestCollector(world, source, dist, item, color, x, y, z);
+        Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
+    	ItemChestCollector chestCollector = new ItemChestCollector(world, source, dist, item, color, x, y, z, lever);
     	etc.getServer().addToServerQueue(chestCollector);
     }
     
@@ -189,8 +190,9 @@ public class MCX203 extends BaseIC {
     	private final double x;
     	private final double y;
     	private final double z;
+    	private final Vector lever;
     	
-    	public ItemChestCollector(World world, NearbyChestBlockBag source, double distance, int item, int color, double x, double y, double z)
+    	public ItemChestCollector(World world, NearbyChestBlockBag source, double distance, int item, int color, double x, double y, double z, Vector lever)
     	{
     		this.world = world;
     		this.source = source;
@@ -200,6 +202,7 @@ public class MCX203 extends BaseIC {
     		this.x = x;
     		this.y = y;
     		this.z = z;
+    		this.lever = lever;
     	}
     	
 		@Override
@@ -227,6 +230,8 @@ public class MCX203 extends BaseIC {
 							&& source.hasAvailableSlotSpace(eitem.a.c, (byte)eitem.a.h(), eitem.a.a))
 						{
 							//found = true;
+
+							Redstone.setOutput(CraftBook.getCBWorld(world), lever, true);
 							
 							Enchantment[] enchants = itemEnt.getItem().getEnchantments();
 							
@@ -247,6 +252,9 @@ public class MCX203 extends BaseIC {
 			{
 				e.printStackTrace();
 			}
+			
+			// Toggle output off
+			Redstone.setOutput(CraftBook.getCBWorld(world), lever, false);
 		}
     }
 }

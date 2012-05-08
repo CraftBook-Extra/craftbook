@@ -242,12 +242,15 @@ public class GateSwitch {
     		blockType = BlockType.GLASS_PANE;
     	else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
     		blockType = BlockType.IRON_BARS;
+    	else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("[NetherDGate]"))
+    		blockType = BlockType.NETHER_BRICK_FENCE;
     	else
     		blockType = BlockType.FENCE;
     	
     	boolean smallSearchSize = line2.equalsIgnoreCase("[GlassDGate]")
     							  || line2.equalsIgnoreCase("[IronDGate]")
-    							  || line2.equalsIgnoreCase("[DGate]");
+    							  || line2.equalsIgnoreCase("[DGate]")
+    							  || line2.equalsIgnoreCase("[NetherDGate]");
     	
         int x = sign.getX();
         int y = sign.getY();

@@ -544,7 +544,7 @@ public class MechanismListener extends CraftBookDelegateListener {
             else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
             	setLine = line2.equalsIgnoreCase("[IronGate]") ? "[IronGate]" : "[IronDGate]";
             else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("[NetherDGate]"))
-            	setLine = line2.equalsIgnoreCase("[NetherGate]") ? "[NetherGate]" : "NetherDGate]";
+            	setLine = line2.equalsIgnoreCase("[NetherGate]") ? "[NetherGate]" : "[NetherDGate]";
             else
             	setLine = line2.equalsIgnoreCase("[Gate]") ? "[Gate]" : "[DGate]";
             
@@ -1190,7 +1190,7 @@ public class MechanismListener extends CraftBookDelegateListener {
             			gateType = BlockType.GLASS_PANE;
             		else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
             			gateType = BlockType.IRON_BARS;
-            		else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("NetherDGate]"))
+            		else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("[NetherDGate]"))
             			gateType = BlockType.NETHER_BRICK_FENCE;
             		else
             			gateType = BlockType.FENCE;
