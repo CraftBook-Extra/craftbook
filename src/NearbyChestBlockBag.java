@@ -17,10 +17,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
-import com.sk89q.craftbook.*;
+
+import com.sk89q.craftbook.BlockSourceException;
+import com.sk89q.craftbook.BlockType;
+import com.sk89q.craftbook.CraftBookWorld;
+import com.sk89q.craftbook.OutOfBlocksException;
+import com.sk89q.craftbook.OutOfSpaceException;
+import com.sk89q.craftbook.Vector;
 
 /**
  *
@@ -43,6 +50,11 @@ public class NearbyChestBlockBag extends BlockBag {
         chests = new TreeSet<ComparableInventory>(comparator);
     }
 
+    /**
+     * List of vector for found Chests
+     */
+    private ArrayList<Vector> foundList = new ArrayList<Vector>();
+    
     /**
      * Gets a block.
      *
@@ -314,11 +326,15 @@ public class NearbyChestBlockBag extends BlockBag {
 
             if (complexBlock instanceof Chest) {
                 Chest chest = (Chest)complexBlock;
+                
                 chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), chest));
             } else if (complexBlock instanceof DoubleChest) {
                 DoubleChest chest = (DoubleChest)complexBlock;
-                chests.add(new ComparableInventory(cbworld, 
-                        new Vector(chest.getX(), chest.getY(), chest.getZ()), chest));
+                chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), chest));
+
+            	//DoubleChest chest = (DoubleChest)complexBlock;
+                //chests.add(new ComparableInventory(cbworld, 
+                //        new Vector(chest.getX(), chest.getY(), chest.getZ()), chest));
                 // Double chests have two chest blocks, so creating a new Vector
                 // should theoretically prevent duplication (but it doesn't
                 // (yet...)
@@ -326,39 +342,78 @@ public class NearbyChestBlockBag extends BlockBag {
         }
     }
     
-    public void addSingleSourcePositionExtra(CraftBookWorld cbworld, Vector pos) {
-        int x = pos.getBlockX();
-        int y = pos.getBlockY();
-        int z = pos.getBlockZ();
-        World world = CraftBook.getWorld(cbworld);
-        
-        if (CraftBook.getBlockID(world, pos) == BlockType.CHEST) {
-            ComplexBlock complexBlock =
-                    world.getComplexBlock(x, y, z);
+    /*
+     * Check if two vectors point to the same location...
+     * I'm sure there's an easier way of doing this, but I wanted to keep to integer comparisons
+     * and Vector.distance() gets into floating point.
+     */
+    private boolean vectorInList(Vector target, ArrayList<Vector> list) {
+    	boolean inList = false;
 
-            if (complexBlock instanceof Chest) {
-                Chest chest = (Chest)complexBlock;
-                chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), chest));
-            } else if (complexBlock instanceof DoubleChest) {
-                DoubleChest chest = (DoubleChest)complexBlock;
-                chests.add(new ComparableInventory(cbworld, 
-                        new Vector(chest.getX(), chest.getY(), chest.getZ()), chest));
-                // Double chests have two chest blocks, so creating a new Vector
-                // should theoretically prevent duplication (but it doesn't
-                // (yet...)
-            }
-        }
-        else if(CraftBook.getBlockID(world, pos) == BlockType.DISPENSER)
-        {
-        	ComplexBlock complexBlock = world.getComplexBlock(x, y, z);
-        	
-        	if(complexBlock instanceof Dispenser)
-        	{
-        		Dispenser dispenser = (Dispenser) complexBlock;
-        		chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), dispenser));
-        	}
-        }
+    	for (Vector pos : list) {
+    		if (target.getBlockX() == pos.getBlockX() && target.getBlockY() == pos.getBlockY() && target.getBlockZ() == pos.getBlockZ()) {
+    			inList = true;
+    			break;
+    		}
+    	}
+    	
+    	return inList;
     }
+
+    /*
+     * Add a source position
+     * 
+     * This uses the ArrayList foundList to track Vectors that have been
+     * added, and for double chests adds vectors for both blocks when only
+     * adding one ComparableInventory to the chests Set.
+     * 
+     * This fixes [Collect] setups only using a double chest on one side
+     * of the block.
+     */
+	public void addSingleSourcePositionExtra(CraftBookWorld cbworld, Vector pos) {
+		int x = pos.getBlockX();
+		int y = pos.getBlockY();
+		int z = pos.getBlockZ();
+		World world = CraftBook.getWorld(cbworld);
+
+		if (CraftBook.getBlockID(world, pos) == BlockType.CHEST) {
+			ComplexBlock complexBlock = world.getComplexBlock(x, y, z);
+
+			if (complexBlock instanceof Chest || complexBlock instanceof DoubleChest) {
+				
+				if (!vectorInList(pos, foundList)) {
+					foundList.add(pos);
+					if (complexBlock instanceof Chest) {
+						chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), (Chest)complexBlock));
+					} else if (complexBlock instanceof DoubleChest) {
+						chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), (DoubleChest)complexBlock));
+						findChest:
+						for (int xM = -1; xM <= 1; xM++) {
+							for (int zM = -1; zM <= 1; zM++) {
+								if (xM == 0 && zM ==0) {
+									continue;
+								}
+								Vector aPos = pos.add(xM, 0, zM);
+								if (CraftBook.getBlockID(world, aPos) == BlockType.CHEST) {
+									if (!vectorInList(aPos, foundList)) {
+										foundList.add(aPos);										
+									}
+									break findChest;
+								}
+							}
+						}						
+					}
+				}
+			}
+		} else if (CraftBook.getBlockID(world, pos) == BlockType.DISPENSER) {
+			ComplexBlock complexBlock = world.getComplexBlock(x, y, z);
+
+			if (complexBlock instanceof Dispenser) {
+				Dispenser dispenser = (Dispenser) complexBlock;
+				chests.add(new ComparableInventory(cbworld, pos.toBlockVector(), dispenser));
+			}
+		}
+	}
     
     /**
      * Get the number of chest blocks. A double-width chest will count has

@@ -22,7 +22,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sk89q.craftbook.*;
+import com.sk89q.craftbook.BlockSourceException;
+import com.sk89q.craftbook.BlockType;
+import com.sk89q.craftbook.CauldronCookbook;
+import com.sk89q.craftbook.CauldronRecipe;
+import com.sk89q.craftbook.CraftBookEnchantment;
+import com.sk89q.craftbook.CraftBookItem;
+import com.sk89q.craftbook.CraftBookWorld;
+import com.sk89q.craftbook.ItemType;
+import com.sk89q.craftbook.StringUtil;
+import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.WorldLocation;
 
 /**
  * Delegate listener for vehicle-related hooks and features.
@@ -575,168 +585,135 @@ public class VehicleListener extends CraftBookDelegateListener {
                     	stopStation.remove(minecart.getPassenger().getName());
                         //return;
                     }
-                } else if (under == minecartDepositBlock[0] && underColor == minecartDepositBlock[1]) {
-                    Boolean test = Redstone.testAnyInput(world, underPt);
+				} else if (under == minecartDepositBlock[0] && underColor == minecartDepositBlock[1]) {
+					Boolean test = Redstone.testAnyInput(world, underPt);
 
-                    if (test == null || test) {
-                        if (minecart.getType() == Minecart.Type.StorageCart) {
-                            Vector pt = new Vector(blockX, blockY, blockZ);
-                            CraftBookWorld cbworld = CraftBook.getCBWorld(world);
-                            NearbyChestBlockBag bag = new NearbyChestBlockBag(cbworld, pt);
+					if (test == null || test) {
+						if (minecart.getType() == Minecart.Type.StorageCart) {
+							Vector pt = new Vector(blockX, blockY, blockZ);
+							CraftBookWorld cbworld = CraftBook.getCBWorld(world);
+							NearbyChestBlockBag bag = new NearbyChestBlockBag(cbworld, pt);
 
-                            for (int y = -1; y <= 0; y++) {
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(1, y, 0));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(2, y, 0));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(-1, y, 0));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(-2, y, 0));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(0, y, 1));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(0, y, 2));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(0, y, -1));
-                                bag.addSingleSourcePositionExtra(cbworld, pt.add(0, y, -2));
-                            }
-                            
-                            if (bag.getChestBlockCount() > 0) {
-                            	Sign sign = getControllerSign(world, pt.add(0, -1, 0), "[Deposit]");
-                                if (sign != null){
-                                	
-                                	//repeat call protection
-                                	long curtime = (long)Math.floor(System.currentTimeMillis() / 1000);
-                            		if(sign.getText(0).length() > 0)
-                            		{
-                            			try
-                            			{
-                            				int hashid = Integer.parseInt(sign.getText(0));
-                            				if(hashid == minecart.getEntity().hashCode())
-                            				{
-                            					if(sign.getText(3).length() > 0)
-                            					{
-                            						long lastTime = Long.parseLong(sign.getText(3));
-                            						if(curtime - lastTime < 2)
-                            							return;
-                            					}
-                            				}
-                            				else
-                            				{
-                            					sign.setText(0, ""+minecart.getEntity().hashCode());
-                            				}
-                            				sign.setText(3, ""+curtime);
-                            			}
-                            			catch(NumberFormatException e)
-                            			{
-                            				
-                            			}
-                            		}
-                            		else
-                            		{
-                            			sign.setText(0, ""+minecart.getEntity().hashCode());
-                            			sign.setText(3, ""+curtime);
-                            		}
-                                	
-                            		//the actual moving
-                                	if(sign.getText(2).length() > 0)
-                                	{
-                                		String[] args = sign.getText(2).split(":", 2);
-                                		int type = 0;
-                                		int color = -1;
-                                		int amount = 0;
-                                		
-                                		try
-                                		{
-                                			String[] args2 = args[0].split("@", 2);
-                                			type = Integer.parseInt(args2[0]);
-                                			if(args2.length > 1)
-                                				color = Integer.parseInt(args2[1]);
-                                			if(args.length > 1)
-                                				amount = Integer.parseInt(args[1]);
-                                		}
-                                		catch(NumberFormatException e)
-                                		{
-                                			return;
-                                		}
-                                		
-                                		ItemArrayUtil.moveChestBagToItemArray(
-                                				minecart.getStorage(), bag, type, color, amount);
-                                	}
-                                	else
-                                	{
-                                		ItemArrayUtil.moveChestBagToItemArray(
-                                				minecart.getStorage(), bag);
-                                	}
-                                } else {
-                                	sign = getControllerSign(world, pt.add(0, -1, 0), "[Collect]");
-                                	
-                                	if(sign != null)
-                                	{
-                                		//repeat call protection
-                                		long curtime = (long)Math.floor(System.currentTimeMillis() / 1000);
-                                		if(sign.getText(0).length() > 0)
-                                		{
-                                			try
-                                			{
-                                				int hashid = Integer.parseInt(sign.getText(0));
-                                				if(hashid == minecart.getEntity().hashCode())
-                                				{
-                                					if(sign.getText(3).length() > 0)
-                                					{
-                                						long lastTime = Long.parseLong(sign.getText(3));
-                                						if(curtime - lastTime < 2)
-                                							return;
-                                					}
-                                				}
-                                				else
-                                				{
-                                					sign.setText(0, ""+minecart.getEntity().hashCode());
-                                				}
-                                				sign.setText(3, ""+curtime);
-                                			}
-                                			catch(NumberFormatException e)
-                                			{
-                                				
-                                			}
-                                		}
-                                		else
-                                		{
-                                			sign.setText(0, ""+minecart.getEntity().hashCode());
-                                			sign.setText(3, ""+curtime);
-                                		}
-                                	}
-                                	
-                                	//the actual moving
-                                	if(sign != null && sign.getText(2).length() > 0)
-                                	{
-                                		String[] args = sign.getText(2).split(":", 2);
-                                		int type = 0;
-                                		int color = -1;
-                                		int amount = 0;
-                                		
-                                		try
-                                		{
-                                			String[] args2 = args[0].split("@", 2);
-                                			type = Integer.parseInt(args2[0]);
-                                			if(args2.length > 1)
-                                				color = Integer.parseInt(args2[1]);
-                                			if(args.length > 1)
-                                				amount = Integer.parseInt(args[1]);
-                                		}
-                                		catch(NumberFormatException e)
-                                		{
-                                			return;
-                                		}
-                                		
-                                		ItemArrayUtil.moveItemArrayToChestBag(
-                                				minecart.getStorage(), bag, type, color, amount);
-                                	}
-                                	else
-                                	{
-                                		ItemArrayUtil.moveItemArrayToChestBag(
-                                				minecart.getStorage(), bag);
-                                	}
-                                }
-                            }
-                        }
-                    }
+							// Add Chests around the block
+							for (int x = -2; x <= 2; x++) {
+								for (int z = -2; z <= 2; z++) {
+									for (int y = -1; y <= 0; y++) {
+										bag.addSingleSourcePositionExtra(cbworld, pt.add(x, y, z));
+									}
+								}
+							}
+							// Also allow the rail system to be under the floor stocking chests directly above.
+							// Not in the loop so that the chest cannot be offset on X or Z, only Y.
+							bag.addSingleSourcePosition(cbworld, pt.add(0,2,0));
+							bag.addSingleSourcePosition(cbworld, pt.add(0,3,0));
 
-                    return;
+							if (bag.getChestBlockCount() > 0) {
+								Sign sign = getControllerSign(world, pt.add(0, -1, 0), "[Deposit]");
+								if (sign != null) {
+
+									// repeat call protection
+									long curtime = (long) Math.floor(System.currentTimeMillis() / 1000);
+									if (sign.getText(0).length() > 0) {
+										try {
+											int hashid = Integer.parseInt(sign.getText(0));
+											if (hashid == minecart.getEntity().hashCode()) {
+												if (sign.getText(3).length() > 0) {
+													long lastTime = Long.parseLong(sign.getText(3));
+													if (curtime - lastTime < 2)
+														return;
+												}
+											} else {
+												sign.setText(0, "" + minecart.getEntity().hashCode());
+											}
+											sign.setText(3, "" + curtime);
+										} catch (NumberFormatException e) {
+
+										}
+									} else {
+										sign.setText(0, "" + minecart.getEntity().hashCode());
+										sign.setText(3, "" + curtime);
+									}
+
+									// the actual moving
+									if (sign.getText(2).length() > 0) {
+										String[] args = sign.getText(2).split(":", 2);
+										int type = 0;
+										int color = -1;
+										int amount = 0;
+
+										try {
+											String[] args2 = args[0].split("@", 2);
+											type = Integer.parseInt(args2[0]);
+											if (args2.length > 1)
+												color = Integer.parseInt(args2[1]);
+											if (args.length > 1)
+												amount = Integer.parseInt(args[1]);
+										} catch (NumberFormatException e) {
+											return;
+										}
+
+										ItemArrayUtil.moveChestBagToItemArray(minecart.getStorage(), bag, type, color, amount);
+									} else {
+										ItemArrayUtil.moveChestBagToItemArray(minecart.getStorage(), bag);
+									}
+								} else {
+									sign = getControllerSign(world, pt.add(0, -1, 0), "[Collect]");
+
+									if (sign != null) {
+										// repeat call protection
+										long curtime = (long) Math.floor(System.currentTimeMillis() / 1000);
+										if (sign.getText(0).length() > 0) {
+											try {
+												int hashid = Integer.parseInt(sign.getText(0));
+												if (hashid == minecart.getEntity().hashCode()) {
+													if (sign.getText(3).length() > 0) {
+														long lastTime = Long.parseLong(sign.getText(3));
+														if (curtime - lastTime < 2)
+															return;
+													}
+												} else {
+													sign.setText(0, "" + minecart.getEntity().hashCode());
+												}
+												sign.setText(3, "" + curtime);
+											} catch (NumberFormatException e) {
+
+											}
+										} else {
+											sign.setText(0, "" + minecart.getEntity().hashCode());
+											sign.setText(3, "" + curtime);
+										}
+									}
+
+									// the actual moving
+									if (sign != null && sign.getText(2).length() > 0) {
+										String[] args = sign.getText(2).split(":", 2);
+										int type = 0;
+										int color = -1;
+										int amount = 0;
+
+										try {
+											String[] args2 = args[0].split("@", 2);
+											type = Integer.parseInt(args2[0]);
+											if (args2.length > 1)
+												color = Integer.parseInt(args2[1]);
+											if (args.length > 1)
+												amount = Integer.parseInt(args[1]);
+										} catch (NumberFormatException e) {
+											return;
+										}
+
+										ItemArrayUtil.moveItemArrayToChestBag(minecart.getStorage(), bag, type, color, amount);
+									} else {
+										ItemArrayUtil.moveItemArrayToChestBag(minecart.getStorage(), bag);
+									}
+								}
+							} else {
+								logger.info("No chest");
+							}
+						}
+					}
+
+					return;
                 } else if (under == minecartEjectBlock[0] && underColor == minecartEjectBlock[1]) {
                     Boolean test = Redstone.testAnyInput(world, underPt);
 
