@@ -260,7 +260,7 @@ public class ToggleArea extends SignOrientedMechanism {
                     return;
                 }
             	
-            	copy = copyManager.load(cbworld, namespace, inactiveID);
+            	copy.clear(bag);
                 copy.paste(bag);
             }
         } catch (BlockSourceException e) {
