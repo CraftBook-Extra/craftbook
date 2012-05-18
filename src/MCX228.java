@@ -154,7 +154,7 @@ public class MCX228 extends BaseIC {
 	    	
 	    	World world = CraftBook.getWorld(chip.getCBWorld());
 	        int data = CraftBook.getBlockData(world, chip.getPosition());
-	        BlockArea area = MCX220.getBlockArea(chip, data, width, height, length, offx, offy, offz);
+	        BlockArea area = UtilIC.getBlockArea(chip, data, width, height, length, offx, offy, offz);
 	        RedstoneListener redListener = (RedstoneListener) chip.getExtra();
 	        boolean foundone = false;
 	        for(int y = area.getY(); y < area.getY2(); y++)

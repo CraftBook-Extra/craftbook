@@ -58,15 +58,17 @@ public class MCX116 extends BaseIC {
      */
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
-        String id = sign.getLine3().toLowerCase();
-
-        if (id.length() != 0)
-        {
-            if(id.length() < 3 || id.charAt(1) != ':' || (id.charAt(0) != 'g' && id.charAt(0) != 'p') )
-            {
-            	return "Invalid player or group name on Third line.";
-            }
-        }
+		
+		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
+		
+		if(!sign.getLine3().isEmpty())
+		{
+			String[] values = sign.getLine3().split(":", 2);
+			if(!UtilEntity.isValidPlayerTypeID(values[0]))
+			{
+				return "Invalid player or group name on Third line.";
+			}
+		}
         
         if (sign.getLine4().length() != 0) {
             return "Fourth line must be blank.";
@@ -92,7 +94,8 @@ public class MCX116 extends BaseIC {
     protected void findPlayerAbove(ChipState chip, boolean tnt)
     {
     	World world = CraftBook.getWorld(chip.getCBWorld());
-		String id = chip.getText().getLine3().toLowerCase();
+    	SignText text = UtilIC.getSignTextWithExtension(chip);
+		String id = text.getLine3().toLowerCase();
     	
     	int x = chip.getBlockPosition().getBlockX();
         int z = chip.getBlockPosition().getBlockZ();
@@ -162,8 +165,7 @@ public class MCX116 extends BaseIC {
 	        	{
 	        		if(!ID.isEmpty())
 	        		{
-	        			if( (ID.charAt(0) == 'g' && player.isInGroup(ID.substring(2))) ||
-	        					(ID.charAt(0) == 'p' && player.getName().equalsIgnoreCase(ID.substring(2))) )
+	        			if(UtilEntity.isValidPlayerEntity(player, ID))
 	        			{
 	        				abovePlayer = player;
 	        				break;

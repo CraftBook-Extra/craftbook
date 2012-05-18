@@ -63,6 +63,8 @@ public class MCX146 extends BaseIC {
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
     	
+		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
+		
     	if(PotionType.getEffect(sign.getLine3()) == null)
     	{
     		return "3rd line must contain a valid Potion name or id #";
@@ -70,7 +72,7 @@ public class MCX146 extends BaseIC {
     	
     	if(!sign.getLine4().isEmpty())
     	{
-    		String out = MCX140.isValidDimensions(sign.getLine4());
+    		String out = UtilIC.isValidDimensions(sign.getLine4(), "4th", 1,16, 1,16, 1,16,   -10,10, -10,10, -10,10);
     		if(out != null)
     			return out;
     	}
@@ -161,7 +163,7 @@ public class MCX146 extends BaseIC {
 	    	World world = CraftBook.getWorld(chip.getCBWorld());
 	    	Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
 	        int data = CraftBook.getBlockData(world, chip.getPosition());
-	        BlockArea area = MCX220.getBlockArea(chip, data, width, height, length, offx, offy, offz);
+	        BlockArea area = UtilIC.getBlockArea(chip, data, width, height, length, offx, offy, offz);
 	        
 	        detectPlayers(world, lever, area, chip);
     	}
@@ -185,11 +187,12 @@ public class MCX146 extends BaseIC {
     
     protected void detectPlayers(World world, Vector lever, BlockArea area, ChipState chip)
     {
-    	PotionType type = PotionType.getEffect(chip.getText().getLine3());
+    	SignText text = UtilIC.getSignTextWithExtension(chip);
+    	PotionType type = PotionType.getEffect(text.getLine3());
     	if(!type.allowed)
     		return;
     	
-    	String[] args = chip.getText().getLine1().split("\\+", 2);
+    	String[] args = text.getLine1().split("\\+", 2);
     	int amplifier = 0;
     	int duration = 180 * 20;
     	if(args.length > 1)

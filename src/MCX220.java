@@ -63,40 +63,9 @@ public class MCX220 extends BaseIC {
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
     	if(!sign.getLine3().isEmpty())
     	{
-    		String[] args = sign.getLine3().split("/", 2);
-    		String[] dim = args[0].split(":", 3);
-    		if(dim.length != 3)
-    			return "3rd line format: width:height:length/x-offset:y-offset:z-offset";
-    		try
-    		{
-    			int width = Integer.parseInt(dim[0]);
-    			int height = Integer.parseInt(dim[1]);
-    			int length = Integer.parseInt(dim[2]);
-    			if(width < 1 || width > 41 || height < 1 || height > 41 || length < 1 || length > 41)
-    				return "width, height, and length must be a number from 1 to 41";
-    			
-    			if(args.length > 1)
-    			{
-    				String[] offsets = args[1].split(":", 3);
-    				if(offsets.length != 3)
-    					return "3rd line format: width:height:length/x-offset:y-offset:z-offset";
-    				
-    				int offx = Integer.parseInt(offsets[0]);
-    				int offy = Integer.parseInt(offsets[1]);
-    				int offz = Integer.parseInt(offsets[2]);
-    				
-    				if(offx < -10 || offx > 10
-    					|| offy < -10 || offy > 10
-    					|| offz < -10 || offz > 10)
-    				{
-    					return "offset values must be a number from -10 to 10";
-    				}
-    			}
-    		}
-    		catch(NumberFormatException e)
-    		{
-    			return "3rd line format: width:height:length/x-offset:y-offset:z-offset";
-    		}
+    		String out = UtilIC.isValidDimensions(sign.getLine4(), "3rd", 1,41, 1,41, 1,41,   -10,10, -10,10, -10,10);
+    		if(out != null)
+    			return out;
     	}
     	
     	if(!sign.getLine4().isEmpty())
@@ -164,7 +133,7 @@ public class MCX220 extends BaseIC {
 	    	
 	    	World world = CraftBook.getWorld(chip.getCBWorld());
 	        int data = CraftBook.getBlockData(world, chip.getPosition());
-	        BlockArea area = getBlockArea(chip, data, width, height, length, offx, offy, offz);
+	        BlockArea area = UtilIC.getBlockArea(chip, data, width, height, length, offx, offy, offz);
 	        addArea(wblockVec, area);
     	}
     	else if(chip.getIn(1).isTriggered())
@@ -200,56 +169,5 @@ public class MCX220 extends BaseIC {
     protected void removeArea(WorldBlockVector key)
     {
     	MCX220.icAreas.remove(key);
-    }
-    
-    protected static BlockArea getBlockArea(ChipState chip, int data, int width, int height, int length, int offx, int offy, int offz)
-    {
-    	width--;
-    	height--;
-    	length--;
-    	
-    	int wStart = width / 2;
-        
-        int startX = 0;
-        int endX = 0;
-        int startZ = 0;
-        int endZ = 0;
-        
-        if (data == 0x2) //east
-        {
-        	startX = (int)chip.getPosition().getX() - wStart;
-        	endX = startX + width;
-        	
-        	startZ = (int)chip.getBlockPosition().getZ();
-        	endZ = startZ + length;
-        }
-        else if (data == 0x3) //west
-        {
-        	startX = (int)chip.getPosition().getX() - wStart;
-        	endX = startX + width;
-        	
-        	endZ = (int)chip.getBlockPosition().getZ();
-        	startZ = endZ - length;
-        }
-        else if (data == 0x4) //north
-        {
-        	startZ = (int)chip.getPosition().getZ() - wStart;
-        	endZ = startZ + width;
-        	
-        	startX = (int)chip.getBlockPosition().getX();
-        	endX = startX + length;
-        }
-        else if (data == 0x5) //south
-        {
-        	startZ = (int)chip.getPosition().getZ() - wStart;
-        	endZ = startZ + width;
-        	
-        	endX = (int)chip.getBlockPosition().getX();
-        	startX = endX - length;
-        }
-        
-        int y = (int)chip.getPosition().getY() + offy;
-        
-        return new BlockArea(chip.getCBWorld(), startX + offx, y, startZ + offz, endX + offx, y + height, endZ + offz);
     }
 }

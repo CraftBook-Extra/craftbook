@@ -56,6 +56,8 @@ public class MCX142 extends MCX140 {
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
     	
+		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
+		
     	if(!sign.getLine1().isEmpty())
     	{
     		if(sign.getLine1().charAt(0) != '@' || sign.getLine1().length() < 2)
@@ -64,12 +66,12 @@ public class MCX142 extends MCX140 {
     		}
     		
     		String[] args = sign.getLine1().substring(1).split("\\+", 2);
-    		if(!MCX140.isValidEntityName(args[0]))
+    		if(!UtilEntity.isValidEntityTypeID(args[0]))
     		{
     			return "Invalid name on Line 1";
     		}
     		
-    		if(args.length > 1 && !MCX140.isValidEntityName(args[1]))
+    		if(args.length > 1 && !UtilEntity.isValidEntityTypeID(args[1]))
     		{
     			return "Invalid rider name on Line 1";
     		}
@@ -88,7 +90,7 @@ public class MCX142 extends MCX140 {
     	
     	if(!sign.getLine4().isEmpty())
     	{
-    		String out = MCX140.isValidDimensions(sign.getLine4());
+    		String out = UtilIC.isValidDimensions(sign.getLine4(), "4th", 1,16, 1,16, 1,16,   -10,10, -10,10, -10,10);
     		if(out != null)
     			return out;
     	}
@@ -104,6 +106,9 @@ public class MCX142 extends MCX140 {
     	if(id.isEmpty())
     		return;
     	
+    	SignText text = UtilIC.getSignTextWithExtension(chip);
+    	id = text.getLine3();
+    	
     	WorldLocation dest = MCX113.airwaves.get(id);
     	if(dest == null)
     	{
@@ -114,7 +119,7 @@ public class MCX142 extends MCX140 {
     	dest = dest.add(0.5D, 0.0D, 0.5D);
     	dest = dest.setY(MCX112.getSafeY(CraftBook.getWorld(dest.getCBWorld()), dest.getCoordinate()) + 1.0D);
     	
-    	String[] args = chip.getText().getLine1().substring(1).split("\\+", 2);
+    	String[] args = text.getLine1().substring(1).split("\\+", 2);
         
         DetectEntityInArea detectEntity = new DetectEntityInArea(area, lever, args[0], args.length > 1 ? args[1] : null, dest, null);
         etc.getServer().addToServerQueue(detectEntity);

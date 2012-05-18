@@ -189,6 +189,7 @@ public class Cauldron {
                 }
 
                 // Give results
+                resultItemLoop:
                 for (CraftBookItem cbitem : recipe.getResults()) {
                 	Item item = new Item(cbitem.id(), 1, -1, cbitem.color());
                 	if(cbitem.hasEnchantments())
@@ -208,9 +209,33 @@ public class Cauldron {
 	        				
 	        				item.addEnchantment(enchant);
 	        			}
+	                	
+	                	player.giveItem(item);
                 	}
-                    player.giveItem(item);
+                	else
+                	{
+                		Inventory inv = player.getInventory();
+                		int size = inv.getContentsSize();
+                		size -= 4; //armor slots
+                		for(int i = 0; i < size; i++)
+                		{
+                			Item invitem = inv.getItemFromSlot(i);
+                			if(invitem != null
+                				&& invitem.getItemId() == cbitem.id()
+                				&& (cbitem.color() == -1 || invitem.getDamage() == cbitem.color())
+                				&& invitem.getAmount() < ItemArrayUtil.getStackMax(invitem)
+                				)
+                			{
+                				invitem.setAmount(invitem.getAmount() + 1);
+                				continue resultItemLoop;
+                			}
+                		}
+                		
+                		//matching item not found, so give item as usual.
+                		player.giveItem(item);
+                	}
                 }
+                player.getInventory().update();
             // Didn't find a recipe
             } else {
                 player.sendMessage(Colors.Red + "Hmm, this doesn't make anything...");

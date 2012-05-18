@@ -518,7 +518,9 @@ public class RedstoneListener extends CraftBookDelegateListener
             		switch(options.length())
             		{
             			case 1:
+            			case 2:
             				break;
+            			case 3:
             			case 4:
             			case 7:
             				options = options.substring(1);
@@ -527,14 +529,27 @@ public class RedstoneListener extends CraftBookDelegateListener
             		
                 	if(len > 9)
                 	{
-                		int[][] orders = getIOOrder(options);
-                		if(orders[0] == null && orders[1] == null)
+                		byte direction = 0;
+                		if(options.length() == 2 || options.length() == 3)
                 		{
-                			options = "";
-                			//player.sendMessage(Colors.Rose + "Unrecognized options: " + line2.substring(8));
+                			direction = UtilIC.getExtendDirection(line2);
+                		}
+                		
+                		if(direction == 0)
+                		{
+	                		int[][] orders = getIOOrder(options);
+	                		if(orders[0] == null && orders[1] == null)
+	                		{
+	                			options = "";
+	                			//player.sendMessage(Colors.Rose + "Unrecognized options: " + line2.substring(8));
+	                		}
+	                		else
+	                			options = line2.substring(8);
                 		}
                 		else
+                		{
                 			options = line2.substring(8);
+                		}
                 	}
                 	
                     // To check the environment
