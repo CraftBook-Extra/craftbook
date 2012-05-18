@@ -707,8 +707,6 @@ public class VehicleListener extends CraftBookDelegateListener {
 										ItemArrayUtil.moveItemArrayToChestBag(minecart.getStorage(), bag);
 									}
 								}
-							} else {
-								logger.info("No chest");
 							}
 						}
 					}
