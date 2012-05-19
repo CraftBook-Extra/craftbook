@@ -1,3 +1,68 @@
+2.0extra17.1:
+- added [MC3456] MARQUEETRANSMIT
+    - cycles through numbered wireless IC band names. [MC1111] [MC0111]
+    - band name and name range are placed on the 3rd line
+    - EX:
+        line1:
+        line2: [MC3456]
+        line3: MyBand:0:3
+        line4:
+        This will cycle through MyBand0, MyBand1, MyBand2, MyBand3 
+    - To cycle in reverse, place a ! in front of the band name on the 3rd line
+        - EX: !MyBand:0:3 
+- added [Craft] sign for Minecart Craft
+    - allows ability to specify recipe to craft
+        - place recipe name on the 3rd line of the sign 
+- added [NetherGate] and [NetherDGate]
+- added ability to extend specific IC signs
+    - allows an additional sign to be used to continue line input
+        - EX: players with long names 
+    - Currently only applies to [MCX116] [MCZ116] [MCX117] [MCZ117] [MCX140]
+        [MCU140] [MCX142] [MCU142] [MCX144] [MCU144] [MCX146] [MCU146]
+        - More supported ICs will likely be added 
+    - The additional sign's location is specified on the 2nd line of the sign,
+        at the end of the [MCxxxx]
+    - The directions are:
+        >> for right
+        << for left
+        ^^ for up
+        !^ for down 
+    - EX:
+        line1:
+        line2: [MCU140]>>
+        line3: P:alongnamedplayer
+        line4:
+        This will look for another sign on the right of the IC sign for the
+            continuation of the player with the long name 
+    - Continuations must be placed on the same line number. 
+- added ability to detect players with names that contain a match to the
+    specified word
+    - applies to all ICs mentioned above in the sign extension
+    - Works just like specifying a player's name, except M: is used instead of
+        P:
+    - It will detect if the word placed after M: is part of the player's name.
+    - EX:
+        line1:
+        line2: [MCU140]
+        line3: M:ongnam
+        line4:
+        This will match players that contain ongnam in their name. 
+- updated Minecart Eject to now eject players facing the direction set on the
+    3rd line of the [Eject] sign.
+    - Directions are: S, SW, W, NW, N, NE, E, SE 
+- updated Minecart Sort Settings
+    - added Held:None for empty hands
+    - added ability to sort based on "everything except ___"
+        - works as a NOT
+        - applies to Held, Group, Inv
+        - place a ! infront of the specified name
+            - Ex: Held:!339, Group:!Admins, etc 
+- updated Minecart Collect and Minecart Deposit to recognize a few more chest
+    placements
+- updated Cauldrons to stack items instead of placing in inventory
+    individually
+- fixed issue with Toggle Areas toggling of dual areas.
+
 2.0extra17.0:
 - updated to minecraft 1.2.5
 - added multi-world support
