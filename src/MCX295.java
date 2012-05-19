@@ -22,6 +22,9 @@ public class MCX295 extends BaseIC {
 	
     public String validateEnvironment(int worldType, Vector pos, SignText sign) {
     	String[] targetRelative = sign.getLine3().split(":");
+    	int x;
+    	int y;
+    	int z;
     	
     	if (targetRelative.length != 3) {
     		return "Invalid relative location, use XX:YY:ZZ";
@@ -29,10 +32,15 @@ public class MCX295 extends BaseIC {
     		if (targetRelative[0].startsWith("!")) {
     			targetRelative[0] = targetRelative[0].substring(1);
     		}
-    		int x = Integer.parseInt(targetRelative[0]);
-    		int y = Integer.parseInt(targetRelative[1]);
-    		int z = Integer.parseInt(targetRelative[2]);
     		
+    		try {
+	    		x = Integer.parseInt(targetRelative[0]);
+	    		y = Integer.parseInt(targetRelative[1]);
+	    		z = Integer.parseInt(targetRelative[2]);
+    		} catch (NumberFormatException e) {
+    			return "Invalid value found for X:Y:Z offset";
+    		}
+	    		
     		if (x < -32 || x > 32) {
     			return "X range must be +/- 32";
     		}
@@ -49,6 +57,10 @@ public class MCX295 extends BaseIC {
     
 	@Override
 	public void think(ChipState chip) {
+		int x;
+		int y;
+		int z;
+		
 		if(chip.inputAmount() != 0 && !chip.getIn(1).is()) {
     		return;
     	}
@@ -59,10 +71,15 @@ public class MCX295 extends BaseIC {
 			invert = true;
 			targetRelative[0] = targetRelative[0].substring(1);
 		}
-		int x = Integer.parseInt(targetRelative[0]);
-		int y = Integer.parseInt(targetRelative[1]);
-		int z = Integer.parseInt(targetRelative[2]);
-			
+		
+		try {
+			x = Integer.parseInt(targetRelative[0]);
+			y = Integer.parseInt(targetRelative[1]);
+			z = Integer.parseInt(targetRelative[2]);
+		} catch (NumberFormatException e) {
+			return;
+		}
+		
 		if (x < -32 || x > 32 || z < -32 || z > 32 || y < -255 || y > 255) {
 			return;
 		}
