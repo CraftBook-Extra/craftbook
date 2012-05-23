@@ -48,9 +48,9 @@ public class CompoundBlockBag extends BlockBag {
      * @param id
      */
     public void storeBlock(int id) throws BlockSourceException {
-    	storeBlock(id, (byte)-1);
+    	storeBlock(id, -1);
     }
-    public void storeBlock(int id, byte data) throws BlockSourceException {
+    public void storeBlock(int id, int data) throws BlockSourceException {
         for (BlockBag b : sources)
             try {
                 b.storeBlock(id, data);
@@ -66,9 +66,9 @@ public class CompoundBlockBag extends BlockBag {
      * @param id
      */
     public void fetchBlock(int id) throws BlockSourceException {
-    	fetchBlock(id, (byte)-1);
+    	fetchBlock(id, -1);
     }
-    public void fetchBlock(int id, byte data) throws BlockSourceException {
+    public void fetchBlock(int id, int data) throws BlockSourceException {
         for (BlockBag b : sources)
             try {
                 b.fetchBlock(id, data);

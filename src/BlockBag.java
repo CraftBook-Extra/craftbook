@@ -212,7 +212,7 @@ public abstract class BlockBag {
      * @param id
      */
     public abstract void fetchBlock(int id) throws BlockSourceException;
-    public abstract void fetchBlock(int id, byte data) throws BlockSourceException;
+    public abstract void fetchBlock(int id, int data) throws BlockSourceException;
     
     /**
      * Store a block.
@@ -220,7 +220,7 @@ public abstract class BlockBag {
      * @param id
      */
     public abstract void storeBlock(int id) throws BlockSourceException;
-    public abstract void storeBlock(int id, byte data) throws BlockSourceException;
+    public abstract void storeBlock(int id, int data) throws BlockSourceException;
     
     /**
      * Checks to see if a block exists without removing it.

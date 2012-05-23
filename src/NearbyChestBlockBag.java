@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.BlockType;
@@ -66,7 +67,7 @@ public class NearbyChestBlockBag extends BlockBag {
     public void fetchBlock(int id) throws BlockSourceException {
     	fetchBlock(id, (byte)-1);
     }
-    public void fetchBlock(int id, byte data) throws BlockSourceException {
+    public void fetchBlock(int id, int data) throws BlockSourceException {
         try {
             for (ComparableInventory c : chests) {
                 Inventory chest = c.getInventory();
@@ -110,16 +111,16 @@ public class NearbyChestBlockBag extends BlockBag {
      * @throws OutOfSpaceException
      */
     public void storeBlock(int id) throws BlockSourceException {
-    	storeBlock(id, (byte)-1, 1);
+    	storeBlock(id, -1, 1);
     }
-    public void storeBlock(int id, byte data) throws BlockSourceException {
+    public void storeBlock(int id, int data) throws BlockSourceException {
     	storeBlock(id, data, 1);
     }
-    public void storeBlock(int id, byte data, int amount) throws BlockSourceException {
+    public void storeBlock(int id, int data, int amount) throws BlockSourceException {
     	storeBlock(id, data, amount, null);
     }
-    public void storeBlock(int id, byte data, int amount, Enchantment[] enchants) throws BlockSourceException {
-        try {
+    public void storeBlock(int id, int data, int amount, Enchantment[] enchants) throws BlockSourceException {
+    	try {
             for (ComparableInventory c : chests) {
                 Inventory chest = c.getInventory();
                 Item[] itemArray = chest.getContents();
@@ -273,18 +274,6 @@ public class NearbyChestBlockBag extends BlockBag {
             }
         }
         return false;
-    }
-
-    /**
-     * Stores a block.
-     *
-     * @param pos
-     * @param id
-     * @return
-     * @throws OutOfSpaceException
-     */
-    public void storeBlock(int id, int amount) throws BlockSourceException {
-        
     }
 
     /**

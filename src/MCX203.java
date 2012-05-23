@@ -19,8 +19,12 @@
 
 import java.util.List;
 
-import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.ic.*;
+import com.sk89q.craftbook.BlockSourceException;
+import com.sk89q.craftbook.CraftBookWorld;
+import com.sk89q.craftbook.SignText;
+import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.ic.BaseIC;
+import com.sk89q.craftbook.ic.ChipState;
 
 /**
  * Dispenser.
@@ -240,7 +244,7 @@ public class MCX203 extends BaseIC {
 							
 							//store
 							try {
-		                        source.storeBlock(eitem.a.c, (byte)eitem.a.h(), eitem.a.a, enchants);
+		                        source.storeBlock(eitem.a.c, eitem.a.h(), eitem.a.a, enchants);
 		                    } catch (BlockSourceException e) {
 		                        break;
 		                    }
