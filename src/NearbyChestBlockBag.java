@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.BlockType;

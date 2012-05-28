@@ -19,13 +19,9 @@
 
 package com.sk89q.craftbook.ic;
 
-import java.util.logging.Logger;
-
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
-import com.sk89q.craftbook.ic.ChipState;
 
 /**
  * Clock IC
