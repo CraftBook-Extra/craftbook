@@ -19,6 +19,8 @@
 
 package com.sk89q.craftbook.ic;
 
+import java.util.logging.Logger;
+
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
@@ -62,11 +64,11 @@ public class MC1420 extends BaseIC {
             return "Clock rate is not a number.";
         }
         
-        if (clockTime < 5){
-            return "Clock rate must be a minimum of 5.";
+        if (clockTime < 3){
+            return "Clock rate must be a minimum of 3.";
         }
-        if (clockTime > 15){
-            return "Clock rate may not be greater than 15.";
+        if (clockTime > 999){
+            return "Clock rate may not be greater than 999.";
         }
 
         if (sign.getLine4().length() != 0) {
@@ -84,11 +86,24 @@ public class MC1420 extends BaseIC {
 	@Override
     public void think(ChipState chip) {
         int clockTime = Integer.parseInt(chip.getText().getLine3());
-        int count = chip.getText().getLine4().length();
+        int count = 0;
+        
+        // Get the current number in the sequence if there is one
+        if (chip.getText().getLine4().length() > 0) {
+        	try {
+        		count = Integer.parseInt(chip.getText().getLine4());
+        	} catch (NumberFormatException e) {
+        		count = 0;
+        	}
+        }
+
         if(count % clockTime == clockTime-1){
             chip.getOut(1).set(!chip.getLast(1));
-            chip.getText().setLine4("");
-        } else chip.getText().setLine4(chip.getText().getLine4()+" ");
+            chip.getText().setLine4("0");
+        } else {
+        	count++;
+        	chip.getText().setLine4(Integer.toString(count));
+        }
         
         chip.getText().supressUpdate();
     }
