@@ -196,4 +196,65 @@ public class UtilItem
 		
 		return true;
 	}
+	
+	/*
+	 * Retooled slightly, allows the same:
+	 * <id>:<qty>@<damage>
+	 * 
+	 * As well as now allowing:
+	 * <id>@<damage>
+	 * 
+	 * Defaulting the <qty> to 1 in the latter case
+	 */
+	public static int[] getItemInfoFromParts(String[] parts) {
+		if (parts == null) return null;
+		
+		if (parts.length > 1) {
+			return oldGetItemInfoFromParts(parts);
+		}
+		String[] parts2 = parts[0].split("@", 2);
+		if (parts2 == null) return null;
+		int[] item = new int[3];
+		
+		try {
+			item[0] = Integer.parseInt(parts2[0]);
+			if (parts2.length > 1)
+				item[1] = Integer.parseInt(parts2[1]);
+			else
+				item[1] = -1;
+			item[2] = 1;
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		
+		return item;
+	}
+	
+	public static int[] oldGetItemInfoFromParts(String[] parts) {
+		if (parts == null || parts.length < 2)
+			return null;
+
+		String[] parts2 = parts[1].split("@", 2);
+		int[] item = new int[3];
+
+		try {
+			item[0] = Integer.parseInt(parts2[0]);
+			item[1] = -1;
+			if (parts2.length > 1) {
+				item[1] = Integer.parseInt(parts2[1]);
+				if (item[1] > 15 || item[1] < 0)
+					return null;
+			}
+
+			item[2] = 1;
+			if (parts.length > 2) {
+				item[2] = Integer.parseInt(parts[2]);
+			}
+		} catch (NumberFormatException e) {
+			return null;
+		}
+
+		return item;
+	}
+
 }

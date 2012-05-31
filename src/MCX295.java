@@ -67,6 +67,9 @@ public class MCX295 extends BaseIC {
 
 		String[] targetRelative = chip.getText().getLine3().split(":");
 		boolean invert = false;
+		
+		if (targetRelative.length < 3) return;
+		
 		if (targetRelative[0].startsWith("!")) {
 			invert = true;
 			targetRelative[0] = targetRelative[0].substring(1);
