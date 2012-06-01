@@ -155,7 +155,7 @@ public class MCX216 extends BaseIC {
 							itemEnt.destroy();
 
 							world.setBlockAt(getBlockByItem(this.itemId), target.getBlockX(), target.getBlockY(), target.getBlockZ());
-							world.setBlockData(target.getBlockX(), target.getBlockY(), target.getBlockZ(), (this.damVal == -1 ? 0 : this.damVal));
+							world.setBlockData(target.getBlockX(), target.getBlockY(), target.getBlockZ(), eitem.a.h());
 
 							break;
 						}
