@@ -34,7 +34,6 @@ public class TickPatch extends OEntityTracker {
      */
     @Deprecated
     public static final CopyOnWriteArrayList<Runnable> TASK_LIST = new CopyOnWriteArrayList<Runnable>();
-    //public static final CopyOnWriteArrayList<Runnable> TASK_LIST_NETH = new CopyOnWriteArrayList<Runnable>();
     
     private static Class<OEntityTracker> CLASS = OEntityTracker.class;
     private static Field[] FIELDS = CLASS.getDeclaredFields();
@@ -42,8 +41,8 @@ public class TickPatch extends OEntityTracker {
     private final int WORLD_INDEX;
     private static Runnable tickRunnable;
     
-    private TickPatch(OMinecraftServer arg0, OEntityTracker g, int index) {
-        super(arg0, index);
+    private TickPatch(OMinecraftServer arg0, OEntityTracker g, int index, String worldName) {
+        super(arg0, index, worldName);
         WORLD_INDEX = index;
         if(g.getClass()!=CLASS) throw new RuntimeException("unexpected type for im instance");
         for(Field f:FIELDS) try {
@@ -85,13 +84,18 @@ public class TickPatch extends OEntityTracker {
         	tickRunnable.run();
     }
     
-    protected static void setTickRunnable(Runnable runnable, int index)
+    protected static void setTickRunnable(Runnable runnable, World world)
     {
-    	OMinecraftServer s = etc.getServer().getMCServer();
+    	EntityTracker entityTracker = world.getEntityTracker();
+    	if(entityTracker == null)
+    	{
+    		throw new RuntimeException("unexpected error: EntityTracker is null");
+    	}
+    	
         try {
-        	Field field = s.m[index].getClass().getDeclaredField("tickRunnable");
+        	Field field = entityTracker.getTracker().getClass().getDeclaredField("tickRunnable");
         	field.setAccessible(true);
-        	field.set(s.m[index], runnable);
+        	field.set(entityTracker.getTracker(), runnable);
         } catch (SecurityException e) {
             throw new RuntimeException("unexpected error: cannot use reflection");
         } catch (NoSuchFieldException e) {
@@ -107,43 +111,67 @@ public class TickPatch extends OEntityTracker {
      * Applies the patch, if not already applied.
      * Call before using addTask or getTaskList().
      */
-    public static void applyPatch() {
-        OMinecraftServer s = etc.getServer().getMCServer();
-        //for(int i = 0; i < s.k.length; i++)
-        int i = 0;
-        {
-	        try {
-	            s.m[i].getClass().getDeclaredField("HP_PATCH_APPLIED");
-	        } catch (SecurityException e) {
-	            throw new RuntimeException("unexpected error: cannot use reflection");
-	        } catch (NoSuchFieldException e) {
-	            s.m[i] = new TickPatch(s,s.m[i],i);
-	        }
+    public static void applyPatch(World world) {
+    	EntityTracker entityTracker = world.getEntityTracker();
+    	if(entityTracker == null)
+    	{
+    		throw new RuntimeException("unexpected error: EntityTracker is null");
+    	}
+    	
+    	int i = 0;
+    	
+    	try {
+    		entityTracker.getTracker().getClass().getDeclaredField("HP_PATCH_APPLIED");
+        } catch (SecurityException e) {
+            throw new RuntimeException("unexpected error: cannot use reflection");
+        } catch (NoSuchFieldException e) {
+        	OWorld oworld = world.getWorld();
+        	
+        	try {
+        		TickPatch patch = new TickPatch(etc.getServer().getMCServer(),entityTracker.getTracker(),i,world.getName());
+            	EntityTracker tickTrack = new EntityTracker(patch);
+        		
+        		Field field = patch.getClass().getSuperclass().getDeclaredField("canaryEntityTracker");
+            	field.setAccessible(true);
+            	field.set(patch, tickTrack);
+            	
+            	field = oworld.getClass().getSuperclass().getDeclaredField("entityTracker");
+            	field.setAccessible(true);
+            	field.set(oworld, patch );
+            } catch (SecurityException e2) {
+            	throw new RuntimeException("error: EntityTracker reflection failed.");
+            } catch (NoSuchFieldException e2) {
+            	throw new RuntimeException("error: entityTracker field missing. Outdated?");
+            } catch (IllegalArgumentException e2) {
+            	e2.printStackTrace();
+            } catch (IllegalAccessException e2) {
+            	throw new RuntimeException("error: EntityTracker access failed.");
+    		}
         }
     }
     /**
      * Adds a new task.
      */
-    public static void addTask(Runnable r, int worldIndex) {
-    	OMinecraftServer s = etc.getServer().getMCServer();
-    	
-    	if(worldIndex < 0 || worldIndex >= s.m.length)
+    public static void addTask(Runnable r, World world) {
+    	if(r == null || world == null)
     		return;
     	
-    	getTaskList(worldIndex).add(r);
+    	getTaskList(world).add(r);
     }
     /**
      * Retrieves the task list.
      */
     @SuppressWarnings("unchecked")
-    public static CopyOnWriteArrayList<Runnable> getTaskList(int index) {
+    public static CopyOnWriteArrayList<Runnable> getTaskList(World world) {
     	
-    	//[TODO]: add multi-world tasks? Might use more resources than needed, so for now keep to one.
-    	index = 0;
+    	EntityTracker entityTracker = world.getEntityTracker();
+    	if(entityTracker == null)
+    	{
+    		throw new RuntimeException("unexpected error: EntityTracker is null");
+    	}
     	
-        OMinecraftServer s = etc.getServer().getMCServer();
         try {
-            return (CopyOnWriteArrayList<Runnable>) s.m[index].getClass().getField("TASK_LIST").get(null);
+            return (CopyOnWriteArrayList<Runnable>) entityTracker.getTracker().getClass().getField("TASK_LIST").get(null);
         } catch (SecurityException e) {
             throw new RuntimeException("unexpected error: cannot use reflection");
         } catch (NoSuchFieldException e) {
@@ -158,16 +186,16 @@ public class TickPatch extends OEntityTracker {
     /**
      * Wraps a runnable to allow easier use by plugins.
      */
-    public static Runnable wrapRunnable(final Plugin p, final Runnable r, final int worldIndex) {
+    public static Runnable wrapRunnable(final Plugin p, final Runnable r, final World world) {
         return new Runnable() {
             private PluginLoader l = etc.getLoader();
-            //private MinecraftServer s = etc.getMCServer();
+            
             public void run() {
             	
-                CopyOnWriteArrayList<Runnable> taskList = getTaskList(worldIndex);
+                CopyOnWriteArrayList<Runnable> taskList = getTaskList(world);
                 if(l.getPlugin(p.getName())!=p)
                 	while(taskList.contains(this))
-                		getTaskList(worldIndex).remove(this);
+                		getTaskList(world).remove(this);
                 if(p.isEnabled()) r.run();
             }
         };

@@ -123,7 +123,8 @@ public class CraftBook extends Plugin {
      */
     @Override
     public void initialize() {
-        TickPatch.applyPatch();
+    	World defaultWorld = etc.getServer().getDefaultWorld();
+        TickPatch.applyPatch(defaultWorld);
 
         registerHook(listener, "COMMAND", PluginListener.Priority.MEDIUM);
         registerHook(listener, "DISCONNECT", PluginListener.Priority.MEDIUM);
@@ -168,11 +169,9 @@ public class CraftBook extends Plugin {
         loader.addCustomListener(cbRequest);
         
         Redstone.outputLever = new OutputLever();
-        TickPatch.setTickRunnable(Redstone.outputLever, 0);
+        TickPatch.setTickRunnable(Redstone.outputLever, defaultWorld);
         
-        //for(int i = 0; i < delays.length; i++)
-        	//TickPatch.addTask(TickPatch.wrapRunnable(this, delays[i], i), i);
-        TickPatch.addTask(TickPatch.wrapRunnable(this, delays[0], 0), 0);
+        TickPatch.addTask(TickPatch.wrapRunnable(this, delays[0], defaultWorld), defaultWorld);
         
         pathToState.mkdirs();
         stateManager.load(pathToState);
@@ -444,14 +443,6 @@ public class CraftBook extends Plugin {
     
     protected static OWorldServer getMainOWorldServer(int dimension) {
     	return etc.getMCServer().a(dimension);
-    }
-    
-    protected static World getMainWorld(CraftBookWorld cbworld) {
-        return etc.getServer().getWorld(cbworld.dimension());
-    }
-    
-    protected static World getMainWorld(int dimension) {
-        return etc.getServer().getWorld(dimension);
     }
     
     protected static CraftBookWorld getCBWorld(World world)
