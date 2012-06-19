@@ -156,6 +156,7 @@ public class UtilEntity
     		return false;
     	
 		Player player = new Player((OEntityPlayerMP)entity.getEntity());
+		player = etc.getServer().getPlayer(player.getName()); // This is such a kludge, but we need the player's groups.
 		
 		//player
     	if(entityName.equalsIgnoreCase("P") || entityName.equalsIgnoreCase("PLAYER") || entityName.equalsIgnoreCase("PLY"))
@@ -172,7 +173,7 @@ public class UtilEntity
     	{
     		if(value != null)
     		{
-    			player.isInGroup(value);
+    			return player.isInGroup(value);
     		}
     		
     		return false;
