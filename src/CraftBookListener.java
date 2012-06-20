@@ -207,8 +207,9 @@ public class CraftBookListener extends PluginListener {
                                    (SignPatch.ExtensionListener)listener));
         }
         if(listener instanceof TickExtensionListener) {
+        	World defaultWorld = etc.getServer().getDefaultWorld();
             TickPatch.addTask(TickPatch.wrapRunnable(craftBook, 
-                              (TickExtensionListener)listener, 0), 0);
+                              (TickExtensionListener)listener, defaultWorld), defaultWorld);
         }
         listener.loadConfiguration();
     }
