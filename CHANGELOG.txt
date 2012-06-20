@@ -1,3 +1,21 @@
+2.0extra17.2:
+- added [MCX010] PULSE
+    - When toggled on, the output will turn on then turn off a moment after.
+    - The duration between the output's on/off pulse can be set on the 3rd
+        line. 
+- added [MCX216] & [MCZ216] PLANTER
+    - "Plants" seeds or saplings found within range of the IC.
+    - Seeds or saplings are planted above the IC at a specified distance.
+    - Specify the type of plant to grow on the 3rd line.
+    - Optional y-offset on the 4th line. 
+- added support for Canary's new multi-world feature. 
+- updated [MC1420] [MC0420] to use numbers instead of spaces.
+    - Range can now be 3 to 999
+    - Specify the range on the 4th line. 
+- fixed blockbags and items with high damage values.
+- fixed validation checks for [MCX295] & [MCZ295]
+- fixed player group detection 
+
 2.0extra17.1:
 - added [MC3456] MARQUEETRANSMIT
     - cycles through numbered wireless IC band names. [MC1111] [MC0111]
