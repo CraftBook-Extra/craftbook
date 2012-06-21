@@ -40,7 +40,7 @@ public class Sitting
 			return;
 		
 		UtilEntity.mountEntity(eplayer, (OEntity)null);
-		eplayer.a.a(player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch());
+		eplayer.a.a(player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch(), player.getWorld().getType().getId(), player.getWorld().getName());
 	}
 	
 	/*

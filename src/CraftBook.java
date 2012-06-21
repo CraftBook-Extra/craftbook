@@ -423,6 +423,19 @@ public class CraftBook extends Plugin {
     	return etc.getMCServer().getWorld(name, dimension);
     }
     
+    protected static OWorldServer getOWorldServer(String name, int dimension, boolean autoLoad)
+    {
+    	if(!etc.getServer().isWorldLoaded(name))
+    	{
+    		if(!autoLoad)
+    		{
+    			return null;
+    		}
+    		etc.getServer().loadWorld(name);
+    	}
+    	return etc.getMCServer().getWorld(name, dimension);
+    }
+    
     protected static World getWorld(CraftBookWorld cbworld)
     {
     	return getWorld(cbworld.name(), cbworld.dimension());
@@ -431,6 +444,20 @@ public class CraftBook extends Plugin {
     protected static World getWorld(String name, int dimension)
     {
     	OWorldServer oworld = getOWorldServer(name, dimension);
+    	if(oworld == null)
+    		return null;
+    	return oworld.world;
+    }
+    
+    protected static World getWorld(CraftBookWorld cbworld, boolean autoLoad)
+    {
+    	return getWorld(cbworld.name(), cbworld.dimension(), autoLoad);
+    }
+    
+    protected static World getWorld(String name, int dimension, boolean autoLoad)
+    {
+    	//keeping as a copy because of loaded check
+    	OWorldServer oworld = getOWorldServer(name, dimension, autoLoad);
     	if(oworld == null)
     		return null;
     	return oworld.world;
@@ -520,20 +547,21 @@ public class CraftBook extends Plugin {
     //[NOTE]: temporary fix for warping out of The End. Remove if Canary adds a work around to Minecraft's "feature"
     public static void teleportPlayer(Player player, WorldLocation wLocation)
     {
-    	if(!player.getWorld().getName().equals(wLocation.getCBWorld().name()))
+    	CraftBookWorld cbworld = wLocation.getCBWorld();
+    	
+    	if(!player.getWorld().getName().equals(cbworld.name()))
     	{
-    		//[TODO]: change when Canary adds support for players to teleport to different worlds, instead of
-        	//	 just dimensions
-    		player.sendMessage("Can not teleport to different worlds currently.");
-    		return;
+    		World world = CraftBook.getWorld(cbworld, true);
+    		if(world == null)
+    		{
+    			player.sendMessage(Colors.Rose+"Failed to find destination world.");
+    			return;
+    		}
     	}
     	
     	boolean isEnd = player.getWorld().getType() == World.Dimension.END;
 		
-    	//[TODO]: change when Canary adds support for players to teleport to different worlds
 		player.teleportTo(Util.worldLocationToLocation(wLocation));
-		
-		CraftBookWorld cbworld = wLocation.getCBWorld();
 		
 		if(isEnd && cbworld.dimension() != World.Dimension.END.getId())
 		{
@@ -576,18 +604,21 @@ public class CraftBook extends Plugin {
     	if(entity == null || UtilEntity.isDead(entity.getEntity()))
     		return;
     	
-    	if(!entity.getWorld().getName().equals(wLocation.getCBWorld().name()))
+    	CraftBookWorld cbworld = wLocation.getCBWorld();
+    	
+    	if(!entity.getWorld().getName().equals(cbworld.name()))
     	{
-    		//[TODO]: change when Canary adds support for players to teleport to different worlds, instead of
-        	//	 just dimensions
-    		return;
+    		World world = CraftBook.getWorld(cbworld, true);
+    		if(world == null)
+    		{
+    			return;
+    		}
     	}
     	
     	World oldWorld = entity.getWorld();
     	World.Dimension worldType = oldWorld.getType();
-    	CraftBookWorld cbworld = wLocation.getCBWorld();
     	
-    	if(worldType.getId() != cbworld.dimension())
+    	if(worldType.getId() != cbworld.dimension() || !entity.getWorld().getName().equals(cbworld.name()))
     	{
     		World newWorld = CraftBook.getWorld(cbworld);
     		OEntity rider = UtilEntity.riddenByEntity(entity.getEntity());
@@ -612,7 +643,6 @@ public class CraftBook extends Plugin {
     		
     		oldWorld.getWorld().a(entity.getEntity(), false);
     		
-    		//[TODO]: change when Canary adds support for players to teleport to different worlds
     		entity.teleportTo(Util.worldLocationToLocation(wLocation));
     		
     		UtilEntity.spawnEntityInWorld(newWorld.getWorld(), entity.getEntity());
@@ -626,7 +656,6 @@ public class CraftBook extends Plugin {
     		}
     	}
     	
-    	//[TODO]: change when Canary adds support for players to teleport to different worlds
     	entity.teleportTo(Util.worldLocationToLocation(wLocation));
     }
 }
