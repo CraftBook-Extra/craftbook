@@ -2650,9 +2650,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             String stop = stopStation.get(player.getName());
             // Allow a stop to use * for wildcard matching.
             if (stop != null && line.contains("*")) {
-            	String partial = line.substring(0, line.indexOf("*")).toLowerCase();
-            	String pStop = stop.toLowerCase();
-            	if (pStop.startsWith(partial)) {
+            	if (matchesWildCard(stop, line)) {
             		return true;
             	}
             } else if (stop != null && stop.equalsIgnoreCase(line)) {
@@ -2799,6 +2797,20 @@ public class VehicleListener extends CraftBookDelegateListener {
     	return new Minecart(oentity);
     }
 
+    private boolean matchesWildCard(String search, String match) {
+    	search = search.toLowerCase();
+    	match = match.toLowerCase();
+    	String[] parts = match.split("\\*");
+    	
+    	for (String ent : parts) {
+    		int loc = search.indexOf(ent);
+    		if (loc == -1) return false;
+    		search = search.substring(ent.length() + loc);
+    	}
+    	
+    	return true;
+    }
+    
     /**
      *
      * @param player
