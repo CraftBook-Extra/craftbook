@@ -2656,7 +2656,6 @@ public class VehicleListener extends CraftBookDelegateListener {
             		return true;
             	}
             } else if (stop != null && stop.equalsIgnoreCase(line)) {
-                logger.info("Non-wildcard found and matched");
             	return true;
             }
         }
