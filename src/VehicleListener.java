@@ -2645,11 +2645,19 @@ public class VehicleListener extends CraftBookDelegateListener {
                 && minecart.getPassenger() != null) {
             return true;
         }
-        
+
         if (player != null) {
             String stop = stopStation.get(player.getName());
-            if (stop != null && stop.equalsIgnoreCase(line)) {
-                return true;
+            // Allow a stop to use * for wildcard matching.
+            if (stop != null && line.contains("*")) {
+            	String partial = line.substring(0, line.indexOf("*")).toLowerCase();
+            	String pStop = stop.toLowerCase();
+            	if (pStop.startsWith(partial)) {
+            		return true;
+            	}
+            } else if (stop != null && stop.equalsIgnoreCase(line)) {
+                logger.info("Non-wildcard found and matched");
+            	return true;
             }
         }
         
