@@ -494,6 +494,7 @@ public class Util {
 											wLocation.pitch()
 											);
 		
+		location.world = wLocation.getCBWorld().name();
 		location.dimension = wLocation.getCBWorld().dimension();
 		
 		return location;
