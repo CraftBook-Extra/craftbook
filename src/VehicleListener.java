@@ -2646,6 +2646,10 @@ public class VehicleListener extends CraftBookDelegateListener {
             return true;
         }
 
+        if (player != null && line.equalsIgnoreCase("NoStop") && (stopStation.get(player.getName()) == null || stopStation.get(player.getName()).length() == 0)) {
+        	return true;
+        }
+        
         if (player != null) {
             String stop = stopStation.get(player.getName());
             // Allow a stop to use * for wildcard matching.
