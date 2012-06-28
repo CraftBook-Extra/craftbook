@@ -105,7 +105,8 @@ public class MC3456 extends BaseIC {
 	    	}
 	    	chip.getText().setLine4(Integer.toString(current));
 	    	
-	        MC1110.airwaves.put(parts[0] + current, !invert);
+	    	toggleBand tb = new toggleBand(parts[0] + current, !invert);
+	    	etc.getServer().addToServerQueue(tb, 150);
 		} else if (chip.getIn(2).is() == true) {
 
 	        resetAll(parts[0], lowVal, highVal, invert);
@@ -120,5 +121,22 @@ public class MC3456 extends BaseIC {
 		for (int n=lowVal; n <= highVal; n++) {
 			MC1110.airwaves.put(band + n, invert);
 		}
+	}
+	
+	private class toggleBand implements Runnable {
+		private final String bandName;
+		private final boolean state;
+		
+		public toggleBand(String bandName, boolean state) {
+			
+			this.bandName = bandName;
+			this.state = state;
+		}
+		
+		@Override
+		public void run() {
+		
+			MC1110.airwaves.put(bandName, state);
+		}		
 	}
 }
