@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.BlockType;
+import com.sk89q.craftbook.CraftBookItem;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.OutOfBlocksException;
 import com.sk89q.craftbook.OutOfSpaceException;
@@ -99,6 +100,75 @@ public class NearbyChestBlockBag extends BlockBag {
         } finally {
             flushChanges();
         }
+    }
+    
+    /**
+     * Checks if the chest contains the specified item.
+     * Added cuz peekBlock method is made in a strange way
+     * 
+     * @param cbitem
+     */
+    public boolean hasItem(CraftBookItem cbitem)
+    {
+    	return hasItems(cbitem, 1);
+    }
+    
+    public boolean hasItems(CraftBookItem cbitem, int amount)
+    {
+    	int count = 0;
+    	
+    	for (ComparableInventory c : chests)
+    	{
+    		Inventory chest = c.getInventory();
+            Item[] itemArray = chest.getContents();
+    		
+    		// Find the item
+            for (int i = 0; itemArray.length > i; i++)
+            {
+                if (itemArray[i] != null)
+                {
+                    // Found an item
+                    if (itemArray[i].getItemId() == cbitem.id()
+                    	&& (cbitem.color() == -1 || itemArray[i].getDamage() == cbitem.color())
+                        && itemArray[i].getAmount() >= 1
+                        && (!cbitem.hasEnchantments() || UtilItem.enchantsAreEqual(itemArray[i].getEnchantments(), cbitem.enchantments()))
+                        )
+                    {
+                    	count += itemArray[i].getAmount();
+                    	
+                    	if(count >= amount)
+                    	{
+                    		return true;
+                    	}
+                    }
+                }
+            }
+    	}
+    	
+    	return false;
+    }
+    
+    public boolean hasItemAtSlot(CraftBookItem cbitem, int amount, int slot)
+    {
+    	for (ComparableInventory c : chests)
+    	{
+    		Inventory chest = c.getInventory();
+    		Item item = chest.getItemFromSlot(slot);
+            if (item != null)
+            {
+                // Found an item
+                if (item.getItemId() == cbitem.id()
+                	&& (cbitem.color() == -1 || item.getDamage() == cbitem.color())
+                    && (amount == -1 || item.getAmount() >= amount)
+                    && (!cbitem.hasEnchantments() || UtilItem.enchantsAreEqual(item.getEnchantments(), cbitem.enchantments()))
+                    )
+                {
+                	return true;
+                }
+            }
+    	}
+    	
+    	return false;
     }
 
     /**
