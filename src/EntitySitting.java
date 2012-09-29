@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class EntitySitting extends OEntityFishHook
+public class EntitySitting extends OEntityFallingSand
 {
 	private final BaseEntity BASE_ENTITY;
 	
@@ -34,7 +34,8 @@ public class EntitySitting extends OEntityFishHook
 	public EntitySitting(SitType[] types, OWorldServer oworld, double x, double y, double z, double offsety)
 	{
 		super(oworld);
-		c(x, y, z);
+		b(x, y, z);
+		this.a = 132; //tripwire
 		
 		BASE_ENTITY = new BaseEntity(this);
 		
@@ -64,9 +65,9 @@ public class EntitySitting extends OEntityFishHook
 		
 		OFFSET_Y = offsety;
 		
-		int blockX = OMathHelper.b(BASE_ENTITY.getX());
-		int blockY = OMathHelper.b(BASE_ENTITY.getY());
-		int blockZ = OMathHelper.b(BASE_ENTITY.getZ());
+		int blockX = OMathHelper.c(BASE_ENTITY.getX());
+		int blockY = OMathHelper.c(BASE_ENTITY.getY());
+		int blockZ = OMathHelper.c(BASE_ENTITY.getZ());
 		
 		World world = new World(oworld);
 		
@@ -85,6 +86,10 @@ public class EntitySitting extends OEntityFishHook
 			case 108:
 			case 109:
 			case 114:
+			case 128:
+			case 134:
+			case 135:
+			case 136:
 				return true;
 		}
 		return false;
@@ -110,6 +115,7 @@ public class EntitySitting extends OEntityFishHook
 			|| id == 102 //glass pane
 			|| id == 107 //fence gate
 			|| id == 113 //nether brick fence
+			|| id == 139 //cobblestone wall
 			|| OBlock.m[id].e(world.getWorld(), x, y, z) == null)
 			return false;
 		return true;
@@ -117,25 +123,25 @@ public class EntitySitting extends OEntityFishHook
 	
 	@Override
 	//onUpdate
-	public void F_()
+	public void h_()
 	{
-		if(this.bg != null && this.bg.bE)
+		if(this.n != null && this.n.L)
 		{
 			//sitting player is dead
-			if(this.bg.bh == this)
+			if(this.n.o == this)
 			{
-				this.bg.bh = null;
+				this.n.o = null;
 			}
-			this.bg = null;
+			this.n = null;
 		}
 		
-		int x = OMathHelper.b(BASE_ENTITY.getX());
-		int y = OMathHelper.b(BASE_ENTITY.getY());
-		int z = OMathHelper.b(BASE_ENTITY.getZ());
+		int x = OMathHelper.c(BASE_ENTITY.getX());
+		int y = OMathHelper.c(BASE_ENTITY.getY());
+		int z = OMathHelper.c(BASE_ENTITY.getZ());
 		
 		World world = BASE_ENTITY.getWorld();
 		
-		if(this.bg == null || world.getBlockIdAt(x, y, z) != BLOCK_ID || !canSitOnBlock(world, x, y, z))
+		if(this.n == null || world.getBlockIdAt(x, y, z) != BLOCK_ID || !canSitOnBlock(world, x, y, z))
 		{
 			//dismounted
 			BASE_ENTITY.destroy();
@@ -143,20 +149,21 @@ public class EntitySitting extends OEntityFishHook
 		}
 		
 		ticks++;
-		if(ticks >= 1200)
+		if(ticks >= 50)
 		{
-			EntitySitting esitting = new EntitySitting(this.TYPES, world.getWorld(), BASE_ENTITY.getX(), BASE_ENTITY.getY(), BASE_ENTITY.getZ(), this.OFFSET_Y);
+			int etx = this.am.a(BASE_ENTITY.getX());
+			int ety = OMathHelper.c((BASE_ENTITY.getY()-2) * 32.0D);
+			int etz = this.am.a(BASE_ENTITY.getZ());
 			
-			UtilEntity.spawnEntityInWorld(world.getWorld(), esitting);
-			UtilEntity.mountEntity(this.bg, esitting);
+			etc.getMCServer().ab().a(x, y, z, 64.0D, world.getType().getId(),
+									new OPacket34EntityTeleport(BASE_ENTITY.getId(), etx, ety, etz, (byte)0, (byte)0), world.getName() );
 			
-			BASE_ENTITY.destroy();
-			return;
+			ticks = 0;
 		}
 		
-		if(this.bg instanceof OEntityPlayerMP)
+		if(this.n instanceof OEntityPlayerMP)
 		{
-			OEntityPlayerMP eplayer = (OEntityPlayerMP)this.bg;
+			OEntityPlayerMP eplayer = (OEntityPlayerMP)this.n;
 			for(SitType type : TYPES)
 			{
 				type.update(world.getWorld(), this, eplayer);
@@ -164,18 +171,26 @@ public class EntitySitting extends OEntityFishHook
 		}
 		
 		BASE_ENTITY.setMotion(0.0D, 0.0D, 0.0D);
-		a(0.0D, 0.0D, 0.0D);
+		d(0.0D, 0.0D, 0.0D);
 	}
 	
 	@Override
 	//getMountedYOffset
-	public double x_()
+	public double X()
 	{
 		return OFFSET_Y;
 	}
 	
 	@Override
-	protected boolean g_()
+	//canTriggerWalking
+	protected boolean e_()
+	{
+		return false;
+	}
+	
+	@Override
+	//canBeCollidedWith
+	public boolean L()
 	{
 		return false;
 	}

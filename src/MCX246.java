@@ -173,6 +173,6 @@ public class MCX246 extends BaseIC {
     	
         OWorldServer oworld = CraftBook.getOWorldServer(chip.getCBWorld());
         OEntityFireball fireball = new CBFireball(oworld, x, y, z, rotation, pitch, power, speed);
-		oworld.b(fireball);
+		oworld.d(fireball);
     }
 }

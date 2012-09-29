@@ -127,13 +127,13 @@ public class MCX131 extends BaseIC {
         			if( (id.charAt(0) == 'g' && player.isInGroup(id.substring(2))) ||
         					(id.charAt(0) == 'p' && player.getName().equalsIgnoreCase(id.substring(2))) )
         			{
-        				player.getEntity().a((OEntity)null, damage);
+        				player.getEntity().a(ODamageSource.j, damage);
         				damaged = true;
         			}
         		}
         		else
         		{
-        			player.getEntity().a((OEntity)null, damage);
+        			player.getEntity().a(ODamageSource.j, damage);
         			damaged = true;
         		}
         	}
@@ -170,13 +170,13 @@ public class MCX131 extends BaseIC {
 	        			Mob mob = (Mob)entity;
 	        			if(mob.getName().equalsIgnoreCase(id))
 	        			{
-	        				mob.getEntity().a(ODamageSource.k, damage);
+	        				mob.getEntity().a(ODamageSource.j, damage);
 	        				damaged = true;
 	        			}
 	        		}
 	        		else
 	        		{
-	        			entity.getEntity().a(ODamageSource.k, damage);
+	        			entity.getEntity().a(ODamageSource.j, damage);
 	        			damaged = true;
 	        		}
 	        	}

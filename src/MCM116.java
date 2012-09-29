@@ -176,7 +176,7 @@ public class MCM116 extends BaseIC {
 					match = true;
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("cow")) && (oent instanceof OEntityCow)) {
 					match = true;
-				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("mooshroom")) && (oent instanceof OEntityMushroomCow)) {
+				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("mooshroom")) && (oent instanceof OEntityMooshroom)) {
 					match = true;
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("ocelot")) && (oent instanceof OEntityOcelot)) {
 					match = true;
@@ -189,12 +189,12 @@ public class MCM116 extends BaseIC {
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("riddenpig")) && (oent instanceof OEntityPig)) {
 					OEntityPig op = (OEntityPig) oent;
 					// Check for saddle
-					if (op.A() == true && oent.bg != null) {
+					if (op.n() == true && oent.n != null) {
 						match = true;
 					}
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("saddledpig")) && (oent instanceof OEntityPig)) {
 					OEntityPig op = (OEntityPig) oent;
-					if (op.A() == true) {
+					if (op.n() == true) {
 						match = true;
 					}
 				} else if ((line.equalsIgnoreCase("mob") || line.equalsIgnoreCase("blaze")) && (oent instanceof OEntityBlaze)) {
@@ -211,9 +211,9 @@ public class MCM116 extends BaseIC {
 					match = true;
 				} else if ((line.equalsIgnoreCase("golem") || line.equalsIgnoreCase("irongolem")) && (oent instanceof OEntityIronGolem)) {
 					match = true;
-				} else if ((line.equalsIgnoreCase("golem") || line.equalsIgnoreCase("snowgolem")) && (oent instanceof OEntitySnowMan)) {
+				} else if ((line.equalsIgnoreCase("golem") || line.equalsIgnoreCase("snowgolem")) && (oent instanceof OEntitySnowman)) {
 					match = true;
-				} else if ((line.equalsIgnoreCase("mob") || line.equalsIgnoreCase("magmacube")) && (oent instanceof OEntityLavaSlime)) {
+				} else if ((line.equalsIgnoreCase("mob") || line.equalsIgnoreCase("magmacube")) && (oent instanceof OEntityMagmaCube)) {
 					match = true;
 				} else if ((line.equalsIgnoreCase("mob") || line.equalsIgnoreCase("pigzombie")) && (oent instanceof OEntityPigZombie)) {
 					match = true;

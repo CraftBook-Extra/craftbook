@@ -213,10 +213,10 @@ public class CBEnchantRecipe extends OShapedRecipes
 		OItemStack oenchantItem = enchantItem();
 		Item enchantItem = new Item(oenchantItem);
 		BaseItemType baseType = BaseItemType.fromId(enchantItem.getItemId());
-		int size = oinventory.c();
+		int size = oinventory.i_();
 		for(int i = 0; i < size; i++)
 		{
-			OItemStack oitemstack = oinventory.g_(i);
+			OItemStack oitemstack = oinventory.a(i);
 			
 			if(oitemstack != null)
 			{
@@ -291,7 +291,7 @@ public class CBEnchantRecipe extends OShapedRecipes
 				//[TODO]: change if ever figure out a way to quickly get inventoryWidth private value
 				// currently hardcoded on the assumption that the value will either be 2 or 3
 				// which is BAD!
-				int invSize = inventory.c();
+				int invSize = inventory.i_();
 				int invWidth;
 				if(invSize == 4)
 					invWidth = 2;
@@ -312,7 +312,7 @@ public class CBEnchantRecipe extends OShapedRecipes
 				
 				int slot = i + j * invWidth;
 				
-				OItemStack invItemStack = inventory.g_(slot);
+				OItemStack invItemStack = inventory.a(slot);
 				if (invItemStack == null && recipeItemStack == null)
 				{
 					continue;
@@ -324,8 +324,8 @@ public class CBEnchantRecipe extends OShapedRecipes
 				
 				if(recipeItem.getAmount() > 1)
 				{
-					invItemStack = inventory.g_(slot);
-					eplayer.a.b(new OPacket103SetSlot(eplayer.m.f, slot + 1, invItemStack));
+					invItemStack = inventory.a(slot);
+					eplayer.a.b(new OPacket103SetSlot(eplayer.bA.c, slot + 1, invItemStack));
 				}
 			}
 		}

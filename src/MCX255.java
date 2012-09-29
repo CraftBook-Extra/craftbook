@@ -104,7 +104,7 @@ public class MCX255 extends BaseIC {
         }
         
         OWorldServer world = CraftBook.getOWorldServer(chip.getCBWorld());
-        world.a(new OEntityLightningBolt(world, pos.getX(), y, pos.getZ()));
+        world.c(new OEntityLightningBolt(world, pos.getX(), y, pos.getZ()));
 
         chip.getOut(1).set(true);
     }

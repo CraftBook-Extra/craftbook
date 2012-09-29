@@ -248,14 +248,14 @@ public class MusicPlayer implements IMusicPlayer
 	{
 		for(MusicNote note : notes)
 		{
-			etc.getMCServer().h.a(x, y, z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(x, y, z, note.type, note.pitch));
+			etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket62LevelSound("note."+note.type, x+0.5D, y+0.5D, z+0.5D, note.volume, note.pitch), cbworld.name());
 			
 			if(radios != null)
 			{
 				for(RadioObject radio : radios.values())
 				{
-					etc.getMCServer().h.a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(),
-							new OPacket54PlayNoteBlock(radio.X, radio.Y, radio.Z, note.type, note.pitch));
+					etc.getMCServer().ab().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(),
+							new OPacket62LevelSound("note."+note.type, radio.X+0.5D, radio.Y+0.5D, radio.Z+0.5D, note.volume, note.pitch), cbworld.name());
 				}
 			}
 		}

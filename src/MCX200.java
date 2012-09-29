@@ -254,15 +254,15 @@ public class MCX200 extends BaseIC {
     	OWorldServer oworld = CraftBook.getOWorldServer(cbworld);
     	OEntity oentity = entity.getEntity();
     	
-    	oentity.c(entity.getX() + 0.5D, entity.getY(), entity.getZ() + 0.5D, entity.getRotation(), 0.0F);
-    	oworld.b(oentity);
+    	oentity.b(entity.getX() + 0.5D, entity.getY(), entity.getZ() + 0.5D, entity.getRotation(), 0.0F);
+    	oworld.d(oentity);
     	
     	if (rider != null)
     	{
     		OEntity orider = rider.getEntity();
-    		orider.c(entity.getX(), entity.getY(), entity.getZ(), entity.getRotation(), 0.0F);
-    		oworld.b(orider);
-    		orider.b(oentity);
+    		orider.b(entity.getX(), entity.getY(), entity.getZ(), entity.getRotation(), 0.0F);
+    		oworld.d(orider);
+    		orider.a(oentity);
     	}
     }
     
@@ -293,7 +293,7 @@ public class MCX200 extends BaseIC {
     	if(entity instanceof OEntitySheep)
     	{
     		OEntitySheep sheep = (OEntitySheep)entity;
-    		sheep.d_(color);
+    		sheep.b(color);
     	}
     	else if(entity instanceof OEntityCreeper)
     	{
@@ -304,7 +304,7 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityCreeper creeper = (OEntityCreeper)entity;
-    		creeper.aP().b(17, (byte)1);
+    		creeper.w().b(17, (byte)1);
     	}
     	else if(entity instanceof OEntityWolf)
     	{
@@ -315,7 +315,7 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityWolf wolf = (OEntityWolf)entity;
-    		wolf.aP().b(16, (byte)color);
+    		wolf.w().b(16, (byte)color);
     	}
     	else if(entity instanceof OEntityOcelot)
     	{
@@ -324,7 +324,7 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityOcelot ocelot = (OEntityOcelot)entity;
-    		ocelot.aP().b(16, (byte)color);
+    		ocelot.w().b(16, (byte)color);
     	}
     	else if(entity instanceof OEntityPig)
     	{
@@ -332,7 +332,7 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityPig pig = (OEntityPig)entity;
-    		pig.a(true);
+    		pig.e(true);
     	}
 	}
     

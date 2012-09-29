@@ -1,3 +1,20 @@
+2.0extra18.0:
+- updated to minecraft 1.3.2
+- added [MCX292] & [MCU292] CHEST HAS ITEM
+    - checks for specific items in a chest (or multiple chests)
+- added [MCX293] & [MCU293] CHEST FULL?
+    - checks if the chest is FULL, EMPTY, or if specific slots have any kind
+        of item in it.
+    - thanks healthyuncle for the suggestion!
+- updated Sitting
+    - Due to changes to Minecraft, the sitting feature needed to be adjusted.
+        Currently the sitting feature is not as good as it previously was.
+        I hope to figure out a better solution.
+- updated Music Player ICs
+    - Due to changes to Minecraft, the Music Player ICs no longer display
+        the note icons while playing music.
+        If highly requested, I can change it to display the note icons again
+
 2.0extra17.2:
 - added [MCX010] PULSE
     - When toggled on, the output will turn on then turn off a moment after.

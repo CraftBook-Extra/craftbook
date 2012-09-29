@@ -11,6 +11,8 @@ import javax.sound.midi.Track;
 
 public class MusicMidiTrack
 {
+	public final float VOLUME = 3.0F;
+	
 	public final Track TRACK;
 	
 	public static boolean enableChannel10 = false; //percussion channel
@@ -148,7 +150,7 @@ public class MusicMidiTrack
 			if(instrum < 0)
 				continue;
 			
-			notes.add(new MusicNote(instrum, (byte)note));
+			notes.add(new MusicNote(instrum, (byte)note, VOLUME));
 		}
 		
 		return notes;

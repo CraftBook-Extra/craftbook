@@ -1369,7 +1369,7 @@ public class MechanismListener extends CraftBookDelegateListener {
                 	if(!CBHooked.getBoolean(CBHook.SIGN_MECH, new Object[] {CBPluginInterface.CBSignMech.CONVERT_EXP, sign, player}))
                 		return true;
                 	
-                	player.getEntity().e_(levels); //remove levels
+                	player.getEntity().a(levels); //remove levels
                 	
                 	while(bottles > 64)
                 	{

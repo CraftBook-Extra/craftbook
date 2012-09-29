@@ -857,8 +857,8 @@ public class VehicleListener extends CraftBookDelegateListener {
 
                     return;
                 } else if (craftBlockRecipes != null && under == minecartCraftBlock[0] && underColor == minecartCraftBlock[1]
-                		&& (OMathHelper.b(minecart.getEntity().bj) != OMathHelper.b(minecart.getX())
-                    			|| OMathHelper.b(minecart.getEntity().bl) != OMathHelper.b(minecart.getZ()))
+                		&& (OMathHelper.c(minecart.getEntity().q) != OMathHelper.c(minecart.getX())
+                    			|| OMathHelper.c(minecart.getEntity().s) != OMathHelper.c(minecart.getZ()))
                 		) {
                     Boolean test = Redstone.testAnyInput(world, underPt);
 
@@ -1035,9 +1035,9 @@ public class VehicleListener extends CraftBookDelegateListener {
                         	
                         	double closeDist = -1.0D;
                         	
-                        	for(int i = 0; i < oworld.d.size(); i++)
+                        	for(int i = 0; i < oworld.i.size(); i++)
                         	{
-                        		OEntityPlayer tmpplayer = (OEntityPlayer) oworld.d.get(i);
+                        		OEntityPlayer tmpplayer = (OEntityPlayer) oworld.i.get(i);
                         		double d2 = tmpplayer.e(minecart.getX(), minecart.getY(), minecart.getZ());
                         		
                         		BaseEntity basePlayer = new BaseEntity(tmpplayer);
@@ -1286,9 +1286,9 @@ public class VehicleListener extends CraftBookDelegateListener {
                 	if (test == null || test)
                 	{
                 		OEntityMinecart eminecart = minecart.getEntity();
-                		if(OMathHelper.b(eminecart.bj) == OMathHelper.b(minecart.getX())
-                		   && OMathHelper.b(eminecart.bk) == OMathHelper.b(minecart.getY())
-                		   && OMathHelper.b(eminecart.bl) == OMathHelper.b(minecart.getZ()))
+                		if(OMathHelper.c(eminecart.q) == OMathHelper.c(minecart.getX())
+                		   && OMathHelper.c(eminecart.r) == OMathHelper.c(minecart.getY())
+                		   && OMathHelper.c(eminecart.s) == OMathHelper.c(minecart.getZ()))
                 			return;
                 		
                 		Vector signPos = new Vector(blockX, blockY - 2, blockZ);
@@ -2303,13 +2303,13 @@ public class VehicleListener extends CraftBookDelegateListener {
             	OEntityMinecart ecart = (OEntityMinecart)vehicle.getEntity();
             	if(vehicle.getPassenger() != null)
                 {
-            		ecart.bG = 0.98F;
-            		ecart.bH = 0.7F;
+            		ecart.N = 0.98F;
+            		ecart.O = 0.7F;
                 }
             	else
             	{
-            		ecart.bG = 0.001F;
-            		ecart.bH = 0.001F;
+            		ecart.N = 0.001F;
+            		ecart.O = 0.001F;
             	}
     		}
             
@@ -2380,7 +2380,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                 	{
                 		if(minecartCollisionType == MinecartCollisionType.GHOST)
                 		{
-                			OAxisAlignedBB bb = emptyCart.getEntity().bw.b(0.2000000029802322D, 0.0D, 0.2000000029802322D);
+                			OAxisAlignedBB bb = emptyCart.getEntity().D.b(0.2000000029802322D, 0.0D, 0.2000000029802322D);
                     		
                     		if(playerCart.getMotionX() != 0)
                     		{
@@ -2415,7 +2415,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                 				vehicle.getPassenger().giveItem(new Item(item, 1));
                 			}
                 			
-                			emptyCart.getEntity().bw.c(0, 0, 0, 0, 0, 0);
+                			emptyCart.getEntity().D.b(0, 0, 0, 0, 0, 0);
                 		}
                 	}
                 	
@@ -2686,10 +2686,10 @@ public class VehicleListener extends CraftBookDelegateListener {
             	if(info == null)
             		return false;
             	
-            	OItemStack iStack = player.getEntity().k.d();
+            	OItemStack iStack = player.getEntity().by.g();
             	if(iStack != null && player.getItemInHand() >= 0) {
-            		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.h(), iStack.a, info)) || 
-            			( invert && !contentEqualsItem(player.getItemInHand(), iStack.h(), iStack.a, info))) {
+            		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info)) || 
+            			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info))) {
             			return true;
             		}
             	}

@@ -194,7 +194,7 @@ public class MCX140 extends BaseIC {
 			
 			OWorldServer oworld = CraftBook.getOWorldServer(AREA.getCBWorld());
 			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.b.iterator(); it.hasNext();)
+    		Iterator it = oworld.f.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
     			
@@ -207,9 +207,9 @@ public class MCX140 extends BaseIC {
     			BaseEntity entity = new BaseEntity((OEntity)obj);
     			
     			if(AREA.containsPoint(AREA.getCBWorld(),
-										OMathHelper.b(entity.getX()),
-										OMathHelper.b(entity.getY()),
-										OMathHelper.b(entity.getZ()) )
+										OMathHelper.c(entity.getX()),
+										OMathHelper.c(entity.getY()),
+										OMathHelper.c(entity.getZ()) )
     				&& UtilEntity.isValidEntity(entity, ENTITY_NAME)
     				&& (RIDER_NAME == null || RIDER_NAME.isEmpty()
     					|| (UtilEntity.riddenByEntity(entity.getEntity()) != null && UtilEntity.isValidEntity(new BaseEntity(UtilEntity.riddenByEntity(entity.getEntity())), RIDER_NAME)) )

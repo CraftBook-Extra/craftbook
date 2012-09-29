@@ -155,6 +155,6 @@ public class MCX250 extends BaseIC {
         	data = 3; //dirt
         }
         
-        etc.getMCServer().h.a(x, y, z, 64.0D, chip.getCBWorld().dimension(), new OPacket61DoorChange(particleType.getId(), x, y, z, data));
+        etc.getMCServer().ab().a(x, y, z, 64.0D, chip.getCBWorld().dimension(), new OPacket61DoorChange(particleType.getId(), x, y, z, data), chip.getCBWorld().name());
     }
 }

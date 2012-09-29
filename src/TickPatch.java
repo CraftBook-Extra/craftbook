@@ -41,8 +41,8 @@ public class TickPatch extends OEntityTracker {
     private final int WORLD_INDEX;
     private static Runnable tickRunnable;
     
-    private TickPatch(OMinecraftServer arg0, OEntityTracker g, int index, String worldName) {
-        super(arg0, index, worldName);
+    private TickPatch(OWorldServer oworld, OEntityTracker g, int index) {
+        super(oworld);
         WORLD_INDEX = index;
         if(g.getClass()!=CLASS) throw new RuntimeException("unexpected type for im instance");
         for(Field f:FIELDS) try {
@@ -128,14 +128,14 @@ public class TickPatch extends OEntityTracker {
         	OWorld oworld = world.getWorld();
         	
         	try {
-        		TickPatch patch = new TickPatch(etc.getServer().getMCServer(),entityTracker.getTracker(),i,world.getName());
+        		TickPatch patch = new TickPatch(world.getWorld(),entityTracker.getTracker(),i);
             	EntityTracker tickTrack = new EntityTracker(patch);
         		
-        		Field field = patch.getClass().getSuperclass().getDeclaredField("canaryEntityTracker");
+        		Field field = patch.getClass().getSuperclass().getDeclaredField("entityTracker");
             	field.setAccessible(true);
             	field.set(patch, tickTrack);
             	
-            	field = oworld.getClass().getSuperclass().getDeclaredField("entityTracker");
+            	field = oworld.getClass().getDeclaredField("L");
             	field.setAccessible(true);
             	field.set(oworld, patch );
             } catch (SecurityException e2) {

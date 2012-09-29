@@ -51,10 +51,10 @@ public class MCX245 extends MC1241 {
             Vector firePos = chip.getBlockPosition().add(backDir);
             OWorldServer oworld = CraftBook.getOWorldServer(chip.getCBWorld());
             OEntityEgg arrow = new OEntityEgg(oworld);
-            arrow.c(firePos.getBlockX() + 0.5, firePos.getBlockY() + 0.5,
+            arrow.b(firePos.getBlockX() + 0.5, firePos.getBlockY() + 0.5,
                     firePos.getBlockZ() + 0.5, 0, 0);
-            oworld.b(arrow);
-            arrow.a(backDir.getBlockX(), vertVel, backDir.getBlockZ(),
+            oworld.d(arrow);
+            arrow.c(backDir.getBlockX(), vertVel, backDir.getBlockZ(),
                     speed, spread);
         }
     }

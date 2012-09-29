@@ -141,6 +141,10 @@ public abstract class BlockBag {
                                 || id == BlockType.MELON_STEM
                                 || id == BlockType.END_PORTAL
                                 || id == BlockType.END_PORTAL_FRAME
+                                || id == BlockType.COCOA_POD
+                                || id == BlockType.EMERALD_ORE
+                                || id == BlockType.CARROT
+                                || id == BlockType.POTATOES
                                 ) {
                             return false;
                         }
@@ -169,6 +173,9 @@ public abstract class BlockBag {
                     // Look for redstone dust
                     } else if (id == BlockType.REDSTONE_WIRE) {
                         fetchBlock(331);
+                     // Look for tripwire
+                    } else if (id == BlockType.TRIPWIRE) {
+                        fetchBlock(287);
                     // Look for furnace
                     } else if (id == BlockType.BURNING_FURNACE) {
                         fetchBlock(BlockType.FURNACE);

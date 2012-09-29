@@ -28,9 +28,9 @@ public class Bounce
 		if(from.y <= to.y)
 			return false;
 		
-		int x = OMathHelper.b(entity.getX());
-		int y = OMathHelper.b(entity.getY()) - 1;
-		int z = OMathHelper.b(entity.getZ());
+		int x = OMathHelper.c(entity.getX());
+		int y = OMathHelper.c(entity.getY()) - 1;
+		int z = OMathHelper.c(entity.getZ());
 		
 		World world = entity.getWorld();
 		CraftBookWorld cbworld = CraftBook.getCBWorld(world);
@@ -93,8 +93,8 @@ public class Bounce
 		if(applyForce != 0)
 		{
 			OEntity oentity = entity.getEntity();
-			oentity.bq = applyForce;
-			etc.getMCServer().h.a(new OPacket28EntityVelocity(oentity), cbworld.dimension());
+			oentity.x = applyForce;
+			etc.getMCServer().ab().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
 			return true;
 		}
 		return false;
@@ -104,9 +104,9 @@ public class Bounce
 	{
 		if(icRepelAreas != null && icRepelAreas.size() > 0)
 		{
-			int x = OMathHelper.b(entity.getX());
-			int y = OMathHelper.b(entity.getY());
-			int z = OMathHelper.b(entity.getZ());
+			int x = OMathHelper.c(entity.getX());
+			int y = OMathHelper.c(entity.getY());
+			int z = OMathHelper.c(entity.getZ());
 			
 			World world = entity.getWorld();
 			CraftBookWorld cbworld = CraftBook.getCBWorld(world);
@@ -167,19 +167,19 @@ public class Bounce
 			if(applyForce != null)
 			{
 				OEntity oentity = entity.getEntity();
-				oentity.bp = applyForce[0];
-				oentity.bq = applyForce[1];
-				oentity.br = applyForce[2];
-				etc.getMCServer().h.a(new OPacket28EntityVelocity(oentity), cbworld.dimension());
+				oentity.w = applyForce[0];
+				oentity.x = applyForce[1];
+				oentity.y = applyForce[2];
+				etc.getMCServer().ab().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
 			}
 		}
 	}
 	
 	protected static boolean fallProtected(BaseEntity entity, int amount)
 	{
-		int x = OMathHelper.b(entity.getX());
-		int y = OMathHelper.b(entity.getY()) - 1;
-		int z = OMathHelper.b(entity.getZ());
+		int x = OMathHelper.c(entity.getX());
+		int y = OMathHelper.c(entity.getY()) - 1;
+		int z = OMathHelper.c(entity.getZ());
 		
 		Block block = entity.getWorld().getBlockAt(x, y, z);
 		
@@ -233,7 +233,7 @@ public class Bounce
 		
 		if(icRepelAreas != null && icRepelAreas.size() > 0)
 		{
-			y = OMathHelper.b(entity.getY());
+			y = OMathHelper.c(entity.getY());
 			
 			block = entity.getWorld().getBlockAt(x, y, z);
 			

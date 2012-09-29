@@ -90,19 +90,19 @@ public class MCX237 extends BaseIC {
     		}
     	}
     	
-    	OPacket70Bed packet;
+    	OPacket70GameEvent packet;
     	if(chip.getIn(1).is())
-    		packet = new OPacket70Bed(2, 0);
+    		packet = new OPacket70GameEvent(2, 0);
     	else if(!CraftBook.getWorld(chip.getCBWorld()).isRaining())
     		return;
     	else
-    		packet = new OPacket70Bed(1, 0);
+    		packet = new OPacket70GameEvent(1, 0);
     	
     	boolean out = chip.getIn(1).is();
     	switch(type)
     	{
     		case 0:
-    			etc.getMCServer().h.a(packet);
+    			etc.getMCServer().ab().a(packet);
     			break;
     		case 1:
     			Player player = etc.getServer().matchPlayer(id);

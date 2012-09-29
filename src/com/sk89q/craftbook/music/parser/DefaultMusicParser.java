@@ -8,6 +8,8 @@ import com.sk89q.craftbook.music.MusicNoteKey;
 
 public class DefaultMusicParser
 {
+	public static final float VOLUME = 3.0F;
+	
 	public static ArrayList<MusicNoteKey> parse(BufferedReader br, int maxDuration, int maxLines) throws IOException
 	{
 		MusicNoteKey[] keys = new MusicNoteKey[maxDuration];
@@ -95,7 +97,7 @@ public class DefaultMusicParser
 					keys[curKey] = new MusicNoteKey(curKey);
 				}
 				
-				keys[curKey].addNote(type, (byte) (basePitch + (pitch - 3) * 12) );
+				keys[curKey].addNote(type, (byte) (basePitch + (pitch - 3) * 12), VOLUME );
 				
 				if(curKey > maxKey)
 					maxKey = curKey;
@@ -233,7 +235,7 @@ public class DefaultMusicParser
 					pitch = 24;
 				}
 				
-				keys[curKey].addNote(type, (byte) pitch );
+				keys[curKey].addNote(type, (byte) pitch, VOLUME );
 				
 				if(curKey > maxKey)
 					maxKey = curKey;
@@ -326,7 +328,7 @@ public class DefaultMusicParser
 					else if(pitch > 24)
 						pitch = 24;
 					
-					key.addNote(instrument, (byte)pitch);
+					key.addNote(instrument, (byte)pitch, VOLUME);
 					musicKeys.add(key);
 				}
 				

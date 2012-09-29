@@ -21,17 +21,17 @@ public class UtilEntity
 {
 	protected static OEntity riddenByEntity(OEntity oentity)
 	{
-		return oentity.bg;
+		return oentity.n;
 	}
 	
 	protected static OEntity ridingEntity(OEntity oentity)
 	{
-		return oentity.bh;
+		return oentity.o;
 	}
 	
 	protected static double getMountedYOffset(OEntity oentity)
 	{
-		return oentity.x_();
+		return oentity.X();
 	}
 	
 	/*
@@ -39,17 +39,17 @@ public class UtilEntity
 	 */
 	protected static void mountEntity(OEntity oentity, OEntity mountEntity)
 	{
-		oentity.b(mountEntity);
+		oentity.a(mountEntity);
 	}
 	
 	protected static boolean spawnEntityInWorld(OWorld oworld, OEntity oentity)
 	{
-		return oworld.b(oentity);
+		return oworld.d(oentity);
 	}
 	
 	protected static boolean isDead(OEntity oentity)
 	{
-		return oentity.bE;
+		return oentity.L;
 	}
 	
 	protected static boolean isValidEntityTypeID(String args)
@@ -245,7 +245,7 @@ public class UtilEntity
 					if(entityName.equals("Sheep") && (entity.getEntity() instanceof OEntitySheep))
 			    	{
 			    		OEntitySheep sheep = (OEntitySheep)entity.getEntity();
-			    		return color == sheep.x();
+			    		return color == sheep.n();
 			    	}
 			    	else if(entityName.equals("Creeper") && (entity.getEntity() instanceof OEntityCreeper))
 			    	{
@@ -253,7 +253,7 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityCreeper creeper = (OEntityCreeper)entity.getEntity();
-			    		return (color == 0) ^ creeper.x();
+			    		return (color == 0) ^ creeper.n();
 			    	}
 			    	else if(entityName.equals("Wolf") && (entity.getEntity() instanceof OEntityWolf))
 			    	{
@@ -261,9 +261,9 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityWolf wolf = (OEntityWolf)entity.getEntity();
-			    		return (color == 2 && wolf.E())
-			    				|| (color == 1 && wolf.v_())
-			    				|| (color == 0 && !wolf.E() && !wolf.v_() && !wolf.u_());
+			    		return (color == 2 && wolf.bu())
+			    				|| (color == 1 && wolf.o())
+			    				|| (color == 0 && !wolf.bu() && !wolf.o() && !wolf.n());
 			    	}
 			    	else if(entityName.equals("Ozelot") && (entity.getEntity() instanceof OEntityOcelot))
 			    	{
@@ -271,8 +271,8 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityOcelot ocelot = (OEntityOcelot)entity.getEntity();
-			    		return (color == 1 && ocelot.v_())
-			    				|| (color == 0 && !ocelot.v_() && !ocelot.u_());
+			    		return (color == 1 && ocelot.o())
+			    				|| (color == 0 && !ocelot.o() && !ocelot.n());
 			    	}
 			    	else if(entityName.equals("Pig") && (entity.getEntity() instanceof OEntityPig))
 			    	{
@@ -280,7 +280,7 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityPig pig = (OEntityPig)entity.getEntity();
-			    		return (color == 0) ^ pig.A();
+			    		return (color == 0) ^ pig.n();
 			    	}
 				}
 				

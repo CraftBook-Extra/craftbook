@@ -13,17 +13,17 @@ public class CBWorkbench extends OBlockWorkbench
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean a(OWorld oworld, int x, int y, int z, OEntityPlayer eplayer)
+	public boolean a(OWorld oworld, int x, int y, int z, OEntityPlayer eplayer, int direction, float offsetx, float offsety, float offsetz)
 	{
-		boolean output = super.a(oworld, x, y, z, eplayer);
+		boolean output = super.a(oworld, x, y, z, eplayer, direction, offsetx, offsety, offsetz);
 		
-		if(!(eplayer.m instanceof OContainerWorkbench))
+		if(!(eplayer.bA instanceof OContainerWorkbench))
 			return output;
 		
-		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.m;
+		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bA;
 		
 		@SuppressWarnings("rawtypes")
-		List inventorySlots = ocontainerwb.e;
+		List inventorySlots = ocontainerwb.b;
 		
 		if(inventorySlots != null)
 		{
@@ -31,7 +31,7 @@ public class CBWorkbench extends OBlockWorkbench
 			{
 				if(inventorySlots.get(i) instanceof OSlotCrafting)
 				{
-					CBSlotCrafting cbslot = new CBSlotCrafting(eplayer, ocontainerwb.a, ocontainerwb.b, 0, 124, 35);
+					CBSlotCrafting cbslot = new CBSlotCrafting(eplayer, ocontainerwb.e, ocontainerwb.f, 0, 124, 35);
 					inventorySlots.set(i, cbslot);
 					
 					return output;

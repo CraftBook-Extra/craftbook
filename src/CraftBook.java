@@ -254,12 +254,12 @@ public class CraftBook extends Plugin {
         	for(int i = 0; i < oworlds.length; i++)
         	{
 	    		for(@SuppressWarnings("rawtypes")
-	    		Iterator it = oworlds[i].b.iterator(); it.hasNext();)
+	    		Iterator it = oworlds[i].f.iterator(); it.hasNext();)
 	    		{
 	    			Object obj = it.next();
 	    			if(obj instanceof EntitySitting)
 	    			{
-	    				((EntitySitting)obj).X();
+	    				((EntitySitting)obj).y();
 	    			}
 	    		}
         	}
@@ -465,7 +465,7 @@ public class CraftBook extends Plugin {
     
     protected static String getMainWorldName()
     {
-    	return etc.getMCServer().m();
+    	return etc.getServer().getMCServer().a("level-name", "world");
     }
     
     protected static OWorldServer getMainOWorldServer(int dimension) {
@@ -568,7 +568,7 @@ public class CraftBook extends Plugin {
 			World world = CraftBook.getWorld(cbworld);
 			boolean found = false;
 			for(@SuppressWarnings("rawtypes")
-    		Iterator it = world.getWorld().b.iterator(); it.hasNext();)
+    		Iterator it = world.getWorld().f.iterator(); it.hasNext();)
     		{
 				Object obj = it.next();
     			
@@ -587,7 +587,7 @@ public class CraftBook extends Plugin {
 			if(!found)
 			{
 				UtilEntity.spawnEntityInWorld(world.getWorld(), player.getEntity());
-				player.getEntity().c(wLocation.getX(), player.getY(), wLocation.getZ(), player.getRotation(), player.getPitch());
+				player.getEntity().b(wLocation.getX(), player.getY(), wLocation.getZ(), player.getRotation(), player.getPitch());
 				world.getWorld().a(player.getEntity(), false);
 			}
 		}
@@ -637,7 +637,7 @@ public class CraftBook extends Plugin {
     		}
     		
     		oldWorld.getWorld().f(entity.getEntity());
-    		entity.getEntity().bE = false;
+    		entity.getEntity().L = false;
     		
     		wLocation = wLocation.add(0.0D, 0.6200000047683716D, 0.0D);
     		

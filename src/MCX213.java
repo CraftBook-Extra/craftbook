@@ -586,12 +586,12 @@ public class MCX213 extends BaseIC {
 	        			packet.e = data;
 	        		}
 	        		
-	        		etc.getMCServer().h.a(x, y, z, 64.0D, cbworld.dimension(), packet);
+	        		etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), packet, cbworld.name());
 	        		
 	        		if(!clear)
 	        		{
-	        			etc.getMCServer().h.a(x, y, z, 64.0D, cbworld.dimension(),
-	        					new OPacket54PlayNoteBlock(x, y, z, 0, data));
+	        			etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(),
+	        					new OPacket54PlayNoteBlock(x, y, z, BlockType.STICKY_PISTON, 0, data), cbworld.name());
 	        		}
 	        	}
     		}

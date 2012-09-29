@@ -167,7 +167,7 @@ public class MCX112 extends BaseIC {
             			oworld.c(bx, by, bz, 0);
             			oworld.h(bx, by, bz, bdata);
             			oworld.h(bx, by - 1, bz, bdata);
-            			oworld.b(bx, by, bz, bx, by, bz);
+            			oworld.d(bx, by, bz, bx, by, bz);
             		}
         		}
         		

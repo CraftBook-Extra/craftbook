@@ -152,6 +152,26 @@ public final class BlockType {
     public static final int DRAGON_EGG = 122;
     public static final int REDSTONE_LAMP_OFF = 123;
     public static final int REDSTONE_LAMP_ON = 124;
+    public static final int WOODEN_DOUBLE_SLAB = 125;
+    public static final int WOODEN_SLAB = 126;
+    public static final int COCOA_POD = 127;
+    public static final int SANDSTONE_STAIRS = 128;
+    public static final int EMERALD_ORE = 129;
+    public static final int ENDER_CHEST = 130;
+    public static final int TRIPWIRE_HOOK = 131;
+    public static final int TRIPWIRE = 132;
+    public static final int BLOCK_OF_EMERALD = 133;
+    public static final int SPRUCE_WOOD_STAIRS = 134;
+    public static final int BIRCH_WOOD_STAIRS = 135;
+    public static final int JUNGLE_WOOD_STAIRS = 136;
+    public static final int COMMAND_BLOCK = 137;
+    public static final int BEACON = 138;
+    public static final int COBBLESTONE_WALL = 139;
+    public static final int FLOWER_POT = 140;
+    public static final int CARROT = 141;
+    public static final int POTATOES = 142;
+    public static final int WOODEN_BUTTON = 143;
+    public static final int MOB_HEAD = 144;
 
     /**
      * Stores a list of dropped blocks for blocks.
@@ -275,6 +295,26 @@ public final class BlockType {
         blockDrops.put(122, 122);
         blockDrops.put(123, 123);
         blockDrops.put(124, 123);
+        blockDrops.put(125, 125);
+        blockDrops.put(126, 126);
+        blockDrops.put(127, 127);
+        blockDrops.put(128, 128);
+        blockDrops.put(129, 388);
+        blockDrops.put(130, 130);
+        blockDrops.put(131, 131);
+        blockDrops.put(132, 287);
+        blockDrops.put(133, 133);
+        blockDrops.put(134, 134);
+        blockDrops.put(135, 135);
+        blockDrops.put(136, 136);
+        blockDrops.put(137, 137);
+        blockDrops.put(138, 138);
+        blockDrops.put(139, 139);
+        blockDrops.put(140, 140);
+        blockDrops.put(141, 391);
+        blockDrops.put(142, 392);
+        blockDrops.put(143, 143);
+        blockDrops.put(144, 144);
     }
 
     /**
@@ -296,6 +336,8 @@ public final class BlockType {
                 || id == TORCH
                 || id == REDSTONE_WIRE
                 || id == CROPS
+                || id == CARROT
+                || id == POTATOES
                 || id == SIGN_POST
                 || id == WALL_SIGN
                 || id == MINECART_TRACKS
@@ -331,6 +373,9 @@ public final class BlockType {
                 || id == FIRE
                 || id == REDSTONE_WIRE
                 || id == CROPS
+        		|| id == CARROT
+                || id == POTATOES
+                || id == COCOA_POD
                 || id == SIGN_POST
                 || id == WOODEN_DOOR
                 || id == TRAPDOOR
@@ -349,6 +394,8 @@ public final class BlockType {
                 || id == REDSTONE_REPEATER_ON
                 || id == BED
                 || id == STONE_BUTTON
+                || id == WOODEN_BUTTON
+                || id == TRIPWIRE_HOOK
                 || id == SNOW
                 || id == CACTUS
                 || id == REED
@@ -376,6 +423,8 @@ public final class BlockType {
                 || id == FIRE
                 || id == REDSTONE_WIRE
                 || id == CROPS
+        		|| id == CARROT
+                || id == POTATOES
                 || id == SIGN_POST
                 || id == LADDER
                 || id == MINECART_TRACKS
@@ -390,6 +439,9 @@ public final class BlockType {
                 || id == REDSTONE_REPEATER_OFF
                 || id == REDSTONE_REPEATER_ON
                 || id == STONE_BUTTON
+                || id == WOODEN_BUTTON
+                || id == TRIPWIRE_HOOK
+                || id == TRIPWIRE
                 || id == SNOW
                 || id == REED
                 || id == WEB
@@ -412,10 +464,15 @@ public final class BlockType {
                 || id == STATIONARY_WATER
                 || id == LAVA
                 || id == STATIONARY_LAVA
+                || id == CHEST
+                || id == ENDER_CHEST
                 || id == TORCH
                 || id == WOODEN_STAIRS
                 || id == REDSTONE_WIRE
                 || id == CROPS
+        		|| id == CARROT
+                || id == POTATOES
+                || id == COCOA_POD
                 || id == SOIL
                 || id == TALL_GRASS
                 || id == SIGN_POST
@@ -428,6 +485,10 @@ public final class BlockType {
                 || id == BRICK_STAIRS
                 || id == STONE_BRICK_STAIRS
                 || id == NETHER_BRICK_STAIRS
+                || id == SANDSTONE_STAIRS
+                || id == SPRUCE_WOOD_STAIRS
+                || id == BIRCH_WOOD_STAIRS
+                || id == JUNGLE_WOOD_STAIRS
                 || id == WALL_SIGN
                 || id == LEVER
                 || id == STONE_PRESSURE_PLATE
@@ -442,9 +503,14 @@ public final class BlockType {
                 || id == PISTON
                 || id == BED
                 || id == STONE_BUTTON
+                || id == WOODEN_BUTTON
+                || id == TRIPWIRE_HOOK
+                || id == TRIPWIRE
                 || id == CLOTH
                 || id == LOG
                 || id == DOUBLE_STEP
+                || id == WOODEN_DOUBLE_SLAB
+                || id == WOODEN_SLAB
                 || id == STEP
                 || id == CACTUS
                 || id == SILVERFISH_BLOCK
@@ -456,8 +522,11 @@ public final class BlockType {
                 || id == VINES
                 || id == NETHER_WART
                 || id == FENCE_GATE
+                || id == COBBLESTONE_WALL
                 || id == BREWING_STAND
                 || id == CAULDRON
+                || id == FLOWER_POT
+                || id == MOB_HEAD
                 || id == END_PORTAL_FRAME;
     }
 
@@ -497,12 +566,16 @@ public final class BlockType {
                 || id == REDSTONE_TORCH_OFF
                 || id == REDSTONE_REPEATER_OFF
                 || id == REDSTONE_REPEATER_ON
+        		|| id == REDSTONE_LAMP_ON
+                || id == REDSTONE_LAMP_OFF
                 || id == STONE_BUTTON
                 || id == REDSTONE_WIRE
                 || id == STICKY_PISTON
                 || id == PISTON
                 || id == WOODEN_DOOR
                 || id == IRON_DOOR
+                || id == TRIPWIRE_HOOK
+                || id == COMMAND_BLOCK
                 || id == TRAPDOOR;
     }
     
@@ -519,6 +592,8 @@ public final class BlockType {
                 || id == LOG
                 || id == SAPLING
                 || id == TALL_GRASS
+                || id == WOODEN_DOUBLE_SLAB
+                || id == WOODEN_SLAB
                 || id == STONE_BRICKS;
     }
     
@@ -538,6 +613,7 @@ public final class BlockType {
                 || id == TORCH
                 || id == WOODEN_STAIRS
                 || id == CHEST
+                || id == ENDER_CHEST
                 || id == FURNACE
                 || id == BURNING_FURNACE
                 || id == SIGN_POST
@@ -550,15 +626,22 @@ public final class BlockType {
         		|| id == REDSTONE_TORCH_ON
                 || id == REDSTONE_TORCH_OFF
                 || id == STONE_BUTTON
+                || id == WOODEN_BUTTON
                 || id == PUMPKIN
                 || id == JACKOLANTERN
+                || id == COCOA_POD
                 || id == REDSTONE_REPEATER_OFF
                 || id == REDSTONE_REPEATER_ON
                 || id == TRAPDOOR
+                || id == TRIPWIRE_HOOK
         		|| id == FENCE_GATE
                 || id == BRICK_STAIRS
                 || id == STONE_BRICK_STAIRS
         		|| id == NETHER_BRICK_STAIRS
+        		|| id == SANDSTONE_STAIRS
+        		|| id == SPRUCE_WOOD_STAIRS
+        		|| id == BIRCH_WOOD_STAIRS
+        		|| id == JUNGLE_WOOD_STAIRS
                 || id == BREWING_STAND
                 ;
     }

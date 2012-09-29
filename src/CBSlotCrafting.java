@@ -16,11 +16,11 @@ public class CBSlotCrafting extends OSlotCrafting
 	}
 	
 	@Override
-	public void c(OItemStack paramOItemStack)
+	public void b(OItemStack paramOItemStack)
 	{
 		if(!(this.craftMatrix instanceof OInventoryCrafting))
 		{
-			super.c(paramOItemStack);
+			super.b(paramOItemStack);
 			return;
 		}
 		
@@ -37,7 +37,7 @@ public class CBSlotCrafting extends OSlotCrafting
 			{
 				if(!(oirecipe instanceof CBEnchantRecipe))
 				{
-					super.c(paramOItemStack);
+					super.b(paramOItemStack);
 					return;
 				}
 				
@@ -48,36 +48,36 @@ public class CBSlotCrafting extends OSlotCrafting
 		
 		if(cbrecipe == null)
 		{
-			super.c(paramOItemStack);
+			super.b(paramOItemStack);
 			return;
 		}
 		
-		b(paramOItemStack);
+		c(paramOItemStack);
 		
 		cbrecipe.decrStackSizes((OEntityPlayerMP)thePlayer, oinvcrafting);
 		
-		for(int i = 0; i < this.craftMatrix.c(); i++)
+		for(int i = 0; i < this.craftMatrix.i_(); i++)
 		{
-			OItemStack oitemstack = this.craftMatrix.g_(i);
+			OItemStack oitemstack = this.craftMatrix.a(i);
 			
 			if (oitemstack == null)
             {
                 continue;
             }
 
-            if (!oitemstack.a().k())
+            if (!oitemstack.b().r())
             {
                 continue;
             }
 
-            OItemStack oitemstack1 = new OItemStack(oitemstack.a().j());
+            OItemStack oitemstack1 = new OItemStack(oitemstack.b().q());
 
-            if (oitemstack.a().e(oitemstack) && thePlayer.k.a(oitemstack1))
+            if (oitemstack.b().h(oitemstack) && thePlayer.by.a(oitemstack1))
             {
                 continue;
             }
 
-            if (craftMatrix.g_(i) == null)
+            if (craftMatrix.a(i) == null)
             {
                 craftMatrix.a(i, oitemstack1);
             }

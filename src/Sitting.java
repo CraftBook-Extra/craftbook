@@ -24,7 +24,7 @@ public class Sitting
 		player.setZ(z);
 		
 		OEntityPlayerMP eplayer = (OEntityPlayerMP) player.getEntity();
-		eplayer.bs = rotation;
+		eplayer.z = rotation;
 		
 		OWorldServer oworld = world.getWorld();
 		EntitySitting esitting = new EntitySitting(types, oworld, player.getX(), player.getY(), player.getZ(), offsety);
@@ -40,7 +40,7 @@ public class Sitting
 			return;
 		
 		UtilEntity.mountEntity(eplayer, (OEntity)null);
-		eplayer.a.a(player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch(), player.getWorld().getType().getId(), player.getWorld().getName());
+		eplayer.a.a(player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch());
 	}
 	
 	/*

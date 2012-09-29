@@ -130,7 +130,7 @@ public class EnchantCraft
     	{
 	    	origBlockWorkbench = OBlock.m[Block.Type.Workbench.getType()];
 	        OBlock.m[Block.Type.Workbench.getType()] = null;
-	        OBlock.m[Block.Type.Workbench.getType()] = new CBWorkbench(Block.Type.Workbench.getType()).a("workbench");
+	        OBlock.m[Block.Type.Workbench.getType()] = new CBWorkbench(Block.Type.Workbench.getType()).b("workbench");
     	}
 		CraftBookListener.logger.info("CraftBook Enchant recipes loaded: "+EnchantCraft.recipes.length);
 	}
@@ -311,7 +311,7 @@ public class EnchantCraft
 				if(oitemstack == null)
 					continue;
 				
-				items[(row * ROWS) + col] = oitemstack.j();
+				items[(row * ROWS) + col] = oitemstack.l();
 				if(row + 1 > height)
 					height = row + 1;
 				if(col + 1 > width)

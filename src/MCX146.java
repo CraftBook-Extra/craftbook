@@ -240,9 +240,9 @@ public class MCX146 extends BaseIC {
 			for(Player player : players)
 			{
 				if(AREA.containsPoint(AREA.getCBWorld(),
-									OMathHelper.b(player.getX()),
-									OMathHelper.b(player.getY()),
-									OMathHelper.b(player.getZ()) )
+									OMathHelper.c(player.getX()),
+									OMathHelper.c(player.getY()),
+									OMathHelper.c(player.getZ()) )
 					)
 				{
 					output = true;

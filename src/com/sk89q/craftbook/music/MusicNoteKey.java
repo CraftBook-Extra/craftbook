@@ -16,9 +16,9 @@ public class MusicNoteKey
 		this.key = key;
 	}
 	
-	public void addNote(int type, byte pitch)
+	public void addNote(int type, byte pitch, float volume)
 	{
-		addNote(new MusicNote(type, pitch));
+		addNote(new MusicNote(type, pitch, volume));
 	}
 	
 	public void addNote(MusicNote note)

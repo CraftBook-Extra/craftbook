@@ -52,10 +52,10 @@ public class MC1241 extends MC1240 {
             Vector firePos = chip.getBlockPosition().add(backDir);
             OWorldServer oworld = CraftBook.getOWorldServer(chip.getCBWorld());
             OEntityArrow arrow = new OEntityArrow(oworld);
-            arrow.c(firePos.getBlockX() + 0.5, firePos.getBlockY() + 0.5,
+            arrow.b(firePos.getBlockX() + 0.5, firePos.getBlockY() + 0.5,
                     firePos.getBlockZ() + 0.5, 0, 0);
-            oworld.b(arrow);
-            arrow.a(backDir.getBlockX(), vertVel, backDir.getBlockZ(),
+            oworld.d(arrow);
+            arrow.c(backDir.getBlockX(), vertVel, backDir.getBlockZ(),
                     speed, spread);
         }
     }
