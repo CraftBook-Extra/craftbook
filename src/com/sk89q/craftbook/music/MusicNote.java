@@ -8,35 +8,42 @@ public class MusicNote
 	public static final String HAT = "hat";
 	public static final String BASS_ATTACK = "bassattack";
 	
-	public final String type;
+	public final int type;
 	public final float pitch;
+	public final int pitchIndex;
 	public final float volume;
 	
-	public MusicNote(String type, float pitch, float volume)
+	public MusicNote(int type, float pitch, int pitchIndex, float volume)
 	{
 		this.type = type;
 		this.pitch = pitch;
+		this.pitchIndex = pitchIndex;
 		this.volume = volume;
-	}
-	
-	public MusicNote(String type, byte pitch, float volume)
-	{
-		this(type, (float)Math.pow(2.0D, (double)(pitch - 12) / 12.0D), volume);
 	}
 	
 	public MusicNote(int type, byte pitch, float volume)
 	{
-		this(getTypeName(type), pitch, volume);
+		this(type, (float)Math.pow(2.0D, (double)(pitch - 12) / 12.0D), pitch, volume);
 	}
 	
-	public String getType()
+	public int getType()
 	{
 		return type;
+	}
+	
+	public String getTypeName()
+	{
+		return MusicNote.getTypeName(type);
 	}
 	
 	public float getPitch()
 	{
 		return pitch;
+	}
+	
+	public float getPitchIndex()
+	{
+		return pitchIndex;
 	}
 	
 	public static String getTypeName(int type)

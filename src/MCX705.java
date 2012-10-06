@@ -150,7 +150,9 @@ public class MCX705 extends MCX700 {
 												noteblockPos.getBlockZ(),
 												null,
 												(byte) 1,
-												false);
+												false,
+												chip.getMode() == 'd'
+												);
     		
     		music.put(time, player);
     		

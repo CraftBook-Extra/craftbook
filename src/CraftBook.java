@@ -180,6 +180,9 @@ public class CraftBook extends Plugin {
         stateThread.start();
         
         CBWarp.reload();
+        
+        if(Sitting.enabled)
+        	EntitySitting.updateTrackers();
     }
 
     /**

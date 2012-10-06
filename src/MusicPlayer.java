@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.sk89q.craftbook.BlockType;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.HistoryHashMap;
 import com.sk89q.craftbook.music.IMusicPlayer;
@@ -22,6 +23,7 @@ public class MusicPlayer implements IMusicPlayer
 	private static final Logger logger = Logger.getLogger("Minecraft.CraftBook");
 	
 	private final boolean LOOP;
+	private final boolean DISPLAY_NOTES;
 	private final int MAX_BEAT_DURATION;
 	private final int MAX_TEXT_LINES;
 	private final int MAX_PLAYLIST_TRACKS;
@@ -45,14 +47,15 @@ public class MusicPlayer implements IMusicPlayer
 	
 	private Map<String,RadioObject> radios;
 	
-	public MusicPlayer(String data, CraftBookWorld cbworld, int x, int y, int z, PropertiesFile properties, byte type, boolean loop)
+	public MusicPlayer(String data, CraftBookWorld cbworld, int x, int y, int z, PropertiesFile properties, byte type, boolean loop, boolean displayNotes)
 	{
-		this(data, cbworld, x, y, z, properties, type, loop, false);
+		this(data, cbworld, x, y, z, properties, type, loop, displayNotes, false);
 	}
 	
-	public MusicPlayer(String data, CraftBookWorld cbworld, int x, int y, int z, PropertiesFile properties, byte type, boolean loop, boolean isStation)
+	public MusicPlayer(String data, CraftBookWorld cbworld, int x, int y, int z, PropertiesFile properties, byte type, boolean loop, boolean displayNotes, boolean isStation)
 	{
 		this.LOOP = loop;
+		this.DISPLAY_NOTES = displayNotes;
 		
 		this.x = x;
 		this.y = y;
@@ -248,14 +251,24 @@ public class MusicPlayer implements IMusicPlayer
 	{
 		for(MusicNote note : notes)
 		{
-			etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket62LevelSound("note."+note.type, x+0.5D, y+0.5D, z+0.5D, note.volume, note.pitch), cbworld.name());
+			etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket62LevelSound("note."+note.getTypeName(), x+0.5D, y+0.5D, z+0.5D, note.volume, note.pitch), cbworld.name());
+			
+			if(DISPLAY_NOTES)
+			{
+				etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(x, y, z, BlockType.NOTE_BLOCK, note.type, note.pitchIndex), cbworld.name());
+			}
 			
 			if(radios != null)
 			{
 				for(RadioObject radio : radios.values())
 				{
 					etc.getMCServer().ab().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(),
-							new OPacket62LevelSound("note."+note.type, radio.X+0.5D, radio.Y+0.5D, radio.Z+0.5D, note.volume, note.pitch), cbworld.name());
+							new OPacket62LevelSound("note."+note.getTypeName(), radio.X+0.5D, radio.Y+0.5D, radio.Z+0.5D, note.volume, note.pitch), cbworld.name());
+					
+					if(radio.displayNotes)
+					{
+						etc.getMCServer().ab().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(radio.X, radio.Y, radio.Z, BlockType.NOTE_BLOCK, note.type, note.pitchIndex), cbworld.name());
+					}
 				}
 			}
 		}

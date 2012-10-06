@@ -166,7 +166,8 @@ public class MCX701 extends MCX700 {
 												noteblockPos.getBlockZ(),
 												listener.properties,
 												(byte) 0,
-												chip.getMode() == 'r',
+												chip.getMode() == 'r' || chip.getMode() == 'R',
+												chip.getMode() == 'd' || chip.getMode() == 'R',
 												true);
     		
     		music.put(chip.getText().getLine4(), player);

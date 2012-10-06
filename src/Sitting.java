@@ -17,7 +17,7 @@ public class Sitting
 		ALL
 	};
 	
-	protected static void sit(Player player, SitType[] types, World world, double x, double y, double z, float rotation, double offsety)
+	protected static void sit(Player player, SitType[] types, World world, double x, double y, double z, float rotation, double offsety, double mountedOffsetY)
 	{
 		player.setX(x);
 		player.setY(y);
@@ -27,9 +27,9 @@ public class Sitting
 		eplayer.z = rotation;
 		
 		OWorldServer oworld = world.getWorld();
-		EntitySitting esitting = new EntitySitting(types, oworld, player.getX(), player.getY(), player.getZ(), offsety);
+		EntitySitting esitting = new EntitySitting(types, oworld, player.getX(), player.getY(), player.getZ(), offsety, mountedOffsetY);
 		
-		UtilEntity.spawnEntityInWorld(oworld, esitting);
+		esitting.spawn(world);
 		UtilEntity.mountEntity(eplayer, esitting);
 	}
 	

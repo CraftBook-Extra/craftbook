@@ -135,7 +135,7 @@ public class MCX256 extends BaseIC {
 				double diff = Math.sqrt(Math.pow(x-xcenter, 2.0D) + Math.pow(z-zcenter, 2.0D));
 				if(diff < radius+0.5 && ( fill || (!fill && diff > radius-0.5) ))
 				{
-					world.a(new OEntityLightningBolt(world, x, y, z));
+					world.c(new OEntityLightningBolt(world, x, y, z));
 				}
 			}
 		}

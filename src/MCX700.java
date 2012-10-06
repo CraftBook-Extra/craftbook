@@ -161,7 +161,9 @@ public class MCX700 extends BaseIC {
 												noteblockPos.getBlockZ(),
 												listener.properties,
 												(byte) 0,
-												chip.getMode() == 'r');
+												chip.getMode() == 'r' || chip.getMode() == 'R',
+												chip.getMode() == 'd' || chip.getMode() == 'R'
+												);
     		
     		music.put(""+curtime, player);
     		

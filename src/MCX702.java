@@ -166,7 +166,8 @@ public class MCX702 extends BaseIC {
     	
     	RadioObject radio = new RadioObject(noteblock.getBlockX(), noteblock.getBlockY(), noteblock.getBlockZ(),
     										sign.getBlockX(), sign.getBlockY(), sign.getBlockZ(),
-    										getMessage
+    										getMessage,
+    										chip.getMode() == 'd'
     										);
     	
     	player.addRadio(id, radio);

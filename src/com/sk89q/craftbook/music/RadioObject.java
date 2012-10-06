@@ -11,8 +11,9 @@ public class RadioObject
 	public final int SIGN_Z;
 	
 	public boolean sendMessages;
+	public boolean displayNotes;
 	
-	public RadioObject(int x, int y, int z, int signX, int signY, int signZ, boolean messages)
+	public RadioObject(int x, int y, int z, int signX, int signY, int signZ, boolean messages, boolean displayNotes)
 	{
 		X = x;
 		Y = y;
@@ -23,5 +24,6 @@ public class RadioObject
 		SIGN_Z = signZ;
 		
 		sendMessages = messages;
+		this.displayNotes = displayNotes;
 	}
 }

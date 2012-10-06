@@ -1,3 +1,20 @@
+2.0extra18.1:
+- added IC mode to display notes with Music ICs
+    - add the character 'd' (without quotes) at the end of [MCU70x]
+        - ex: [MCU701]d
+        - must be lower case
+        - to loop and display notes use 'R' (upper case)
+    - thanks Emppu for the suggestion!
+- fixed the Sitting feature to work almost the same as it originally did
+    - Due to changes to Minecraft, players in the sitting position (such as
+        sitting in a minecart, boat, etc) do not send updates to other
+        players showing changes to rotation and head movement.
+        - This was likely done by the Minecraft devs to reduce server lag
+        - I have made changes to send these updates when using the Sitting
+            feature, but only every 200 ticks.
+- fixed [MCX256] not working
+    - thanks lacrosse1991 for the bug report!
+
 2.0extra18.0:
 - updated to minecraft 1.3.2
 - added [MCX292] & [MCU292] CHEST HAS ITEM
