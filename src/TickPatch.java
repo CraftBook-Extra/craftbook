@@ -135,7 +135,7 @@ public class TickPatch extends OEntityTracker {
             	field.setAccessible(true);
             	field.set(patch, tickTrack);
             	
-            	field = oworld.getClass().getDeclaredField("L");
+                field = oworld.getClass().getDeclaredField("K");
             	field.setAccessible(true);
             	field.set(oworld, patch );
             } catch (SecurityException e2) {
