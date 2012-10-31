@@ -194,7 +194,7 @@ public class MCX140 extends BaseIC {
 			
 			OWorldServer oworld = CraftBook.getOWorldServer(AREA.getCBWorld());
 			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.f.iterator(); it.hasNext();)
+    		Iterator it = oworld.e.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
     			
