@@ -55,13 +55,13 @@ public class EntitySittingTracker extends OEntityTrackerEntry
 			OPacket opacket = new OPacket32EntityLook(player.getId(), (byte)rot, (byte)pit);
 			
 			BaseEntity entity = new BaseEntity(this.a);
-			etc.getMCServer().ab().a(oplayer, entity.getX(), entity.getY(), entity.getZ(), 64.0D, entity.getWorld().getType().getId(), opacket, entity.getWorld().getName());
+			etc.getMCServer().ad().a(oplayer, entity.getX(), entity.getY(), entity.getZ(), 64.0D, entity.getWorld().getType().getId(), opacket, entity.getWorld().getName());
 			
-			int headMotion = OMathHelper.d(oplayer.am() * 256.0F / 360.0F);
+			int headMotion = OMathHelper.d(oplayer.ap() * 256.0F / 360.0F);
 			if(Math.abs(headMotion - this.i) >= 4)
 			{
 				opacket = new OPacket35EntityHeadRotation(player.getId(), (byte)headMotion);
-				etc.getMCServer().ab().a(oplayer, entity.getX(), entity.getY(), entity.getZ(), 64.0D, entity.getWorld().getType().getId(), opacket, entity.getWorld().getName());
+				etc.getMCServer().ad().a(oplayer, entity.getX(), entity.getY(), entity.getZ(), 64.0D, entity.getWorld().getType().getId(), opacket, entity.getWorld().getName());
 				this.i = headMotion;
 			}
 			

@@ -132,7 +132,7 @@ public class MCM112 extends BaseIC {
         	}
     		OEntityPig op = (OEntityPig) (mob.getEntity());
 			// Check for saddle and rider
-			if (op.n() == false || (mob.getEntity()).n == null) {
+			if (op.m() == false || (mob.getEntity()).n == null) {
 				continue;
 			}
         	

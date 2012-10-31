@@ -157,7 +157,7 @@ public class EntitySitting extends OEntityEnderEye
 			|| id == 107 //fence gate
 			|| id == 113 //nether brick fence
 			|| id == 139 //cobblestone wall
-			|| OBlock.m[id].e(world.getWorld(), x, y, z) == null)
+			|| OBlock.p[id].e(world.getWorld(), x, y, z) == null)
 			return false;
 		return true;
 	}
@@ -176,7 +176,7 @@ public class EntitySitting extends OEntityEnderEye
 	
 	@Override
 	//onUpdate
-	public void h_()
+	public void j_()
 	{
 		if(this.n != null && this.n.L)
 		{
@@ -223,7 +223,7 @@ public class EntitySitting extends OEntityEnderEye
 	
 	@Override
 	//canTriggerWalking
-	protected boolean e_()
+	protected boolean f_()
 	{
 		return false;
 	}
@@ -257,8 +257,8 @@ public class EntitySitting extends OEntityEnderEye
 		Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
         while(worldIter.hasNext())
         {
-        	Map.Entry<String, OWorldServer[]> entry = (Map.Entry<String, OWorldServer[]>)worldIter.next();
-        	OWorldServer[] oworlds = (OWorldServer[])entry.getValue();
+        	Map.Entry<String, OWorldServer[]> entry = worldIter.next();
+        	OWorldServer[] oworlds = entry.getValue();
         	
         	for(int i = 0; i < oworlds.length; i++)
         	{

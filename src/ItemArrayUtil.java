@@ -28,7 +28,7 @@ public class ItemArrayUtil {
     /**
      * Move the contents of an inventory to a chest block bag.
      * 
-     * @param minecart
+     * @param from
      * @param bag
      */
     public static void moveItemArrayToChestBag(ItemArray<?> from,
@@ -320,7 +320,7 @@ public class ItemArrayUtil {
      */
     protected static int getStackMax(Item item)
     {
-    	return OItem.e[item.getItemId()].j();
+    	return OItem.e[item.getItemId()].k();
     }
     
     /*

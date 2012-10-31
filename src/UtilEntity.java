@@ -245,7 +245,7 @@ public class UtilEntity
 					if(entityName.equals("Sheep") && (entity.getEntity() instanceof OEntitySheep))
 			    	{
 			    		OEntitySheep sheep = (OEntitySheep)entity.getEntity();
-			    		return color == sheep.n();
+			    		return color == sheep.m();
 			    	}
 			    	else if(entityName.equals("Creeper") && (entity.getEntity() instanceof OEntityCreeper))
 			    	{
@@ -253,7 +253,7 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityCreeper creeper = (OEntityCreeper)entity.getEntity();
-			    		return (color == 0) ^ creeper.n();
+			    		return (color == 0) ^ creeper.m();
 			    	}
 			    	else if(entityName.equals("Wolf") && (entity.getEntity() instanceof OEntityWolf))
 			    	{
@@ -261,9 +261,9 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityWolf wolf = (OEntityWolf)entity.getEntity();
-			    		return (color == 2 && wolf.bu())
-			    				|| (color == 1 && wolf.o())
-			    				|| (color == 0 && !wolf.bu() && !wolf.o() && !wolf.n());
+			    		return (color == 2 && wolf.bG())
+			    				|| (color == 1 && wolf.n())
+			    				|| (color == 0 && !wolf.bG() && !wolf.n() && !wolf.m());
 			    	}
 			    	else if(entityName.equals("Ozelot") && (entity.getEntity() instanceof OEntityOcelot))
 			    	{
@@ -271,8 +271,8 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityOcelot ocelot = (OEntityOcelot)entity.getEntity();
-			    		return (color == 1 && ocelot.o())
-			    				|| (color == 0 && !ocelot.o() && !ocelot.n());
+			    		return (color == 1 && ocelot.n())
+			    				|| (color == 0 && !ocelot.n() && !ocelot.m());
 			    	}
 			    	else if(entityName.equals("Pig") && (entity.getEntity() instanceof OEntityPig))
 			    	{
@@ -280,7 +280,7 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityPig pig = (OEntityPig)entity.getEntity();
-			    		return (color == 0) ^ pig.n();
+			    		return (color == 0) ^ pig.m();
 			    	}
 				}
 				

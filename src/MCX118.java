@@ -264,8 +264,8 @@ public class MCX118 extends BaseIC {
     				&& !(obj instanceof OEntityBoat)
     				&& !(obj instanceof OEntityEnderEye)
     				&& !(obj instanceof OEntityFishHook)
-    				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).p().isEmpty() )
-    				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).p().isEmpty() )
+    				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).o().isEmpty() )
+    				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).o().isEmpty() )
     				)
     			{
     				entities.add(new BaseEntity((OEntity)obj));
