@@ -251,23 +251,23 @@ public class MusicPlayer implements IMusicPlayer
 	{
 		for(MusicNote note : notes)
 		{
-			etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket62LevelSound("note."+note.getTypeName(), x+0.5D, y+0.5D, z+0.5D, note.volume, note.pitch), cbworld.name());
+			etc.getMCServer().ad().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket62LevelSound("note."+note.getTypeName(), x+0.5D, y+0.5D, z+0.5D, note.volume, note.pitch), cbworld.name());
 			
 			if(DISPLAY_NOTES)
 			{
-				etc.getMCServer().ab().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(x, y, z, BlockType.NOTE_BLOCK, note.type, note.pitchIndex), cbworld.name());
+				etc.getMCServer().ad().a(x, y, z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(x, y, z, BlockType.NOTE_BLOCK, note.type, note.pitchIndex), cbworld.name());
 			}
 			
 			if(radios != null)
 			{
 				for(RadioObject radio : radios.values())
 				{
-					etc.getMCServer().ab().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(),
+					etc.getMCServer().ad().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(),
 							new OPacket62LevelSound("note."+note.getTypeName(), radio.X+0.5D, radio.Y+0.5D, radio.Z+0.5D, note.volume, note.pitch), cbworld.name());
 					
 					if(radio.displayNotes)
 					{
-						etc.getMCServer().ab().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(radio.X, radio.Y, radio.Z, BlockType.NOTE_BLOCK, note.type, note.pitchIndex), cbworld.name());
+						etc.getMCServer().ad().a(radio.X, radio.Y, radio.Z, 64.0D, cbworld.dimension(), new OPacket54PlayNoteBlock(radio.X, radio.Y, radio.Z, BlockType.NOTE_BLOCK, note.type, note.pitchIndex), cbworld.name());
 					}
 				}
 			}

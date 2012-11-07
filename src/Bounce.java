@@ -94,7 +94,7 @@ public class Bounce
 		{
 			OEntity oentity = entity.getEntity();
 			oentity.x = applyForce;
-			etc.getMCServer().ab().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
+			etc.getMCServer().ad().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
 			return true;
 		}
 		return false;
@@ -170,7 +170,7 @@ public class Bounce
 				oentity.w = applyForce[0];
 				oentity.x = applyForce[1];
 				oentity.y = applyForce[2];
-				etc.getMCServer().ab().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
+				etc.getMCServer().ad().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
 			}
 		}
 	}

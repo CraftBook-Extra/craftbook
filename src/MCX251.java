@@ -155,6 +155,7 @@ public class MCX251 extends BaseIC {
         	data = 2256;
         }
         
-        etc.getMCServer().ab().a(x, y, z, 64.0D, chip.getCBWorld().dimension(), new OPacket61DoorChange(sfxType.getId(), x, y, z, data), chip.getCBWorld().name());
+        // 14mRh4X0r: Add true here by default, it is ignored for anything but wither sounds (see http://wiki.vg/Protocol#Sound_Or_Particle_Effect_.280x3D.29)
+        etc.getMCServer().ad().a(x, y, z, 64.0D, chip.getCBWorld().dimension(), new OPacket61DoorChange(sfxType.getId(), x, y, z, data, true), chip.getCBWorld().name());
     }
 }

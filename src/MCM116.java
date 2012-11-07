@@ -189,12 +189,12 @@ public class MCM116 extends BaseIC {
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("riddenpig")) && (oent instanceof OEntityPig)) {
 					OEntityPig op = (OEntityPig) oent;
 					// Check for saddle
-					if (op.n() == true && oent.n != null) {
+					if (op.m() == true && oent.n != null) {
 						match = true;
 					}
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("saddledpig")) && (oent instanceof OEntityPig)) {
 					OEntityPig op = (OEntityPig) oent;
-					if (op.n() == true) {
+					if (op.m() == true) {
 						match = true;
 					}
 				} else if ((line.equalsIgnoreCase("mob") || line.equalsIgnoreCase("blaze")) && (oent instanceof OEntityBlaze)) {
