@@ -95,7 +95,7 @@ public class EntitySitting extends OEntityEnderEye
 		int i1 = OMathHelper.c(this.t / 16.0D);
 		int i2 = OMathHelper.c(this.v / 16.0D);
 		oworld.e(i1, i2).a(this);
-		oworld.f.add(this);
+		oworld.e.add(this);
 		
 		addEntityTrackerList(world);
 		
