@@ -336,7 +336,7 @@ public class MCX209 extends BaseIC {
 	    	        		}
 	    					else if(type[0] == 0 && bType != type[1])
 	    	        		{
-	    	        			break;
+	    	        			continue;
 	    	        		}
 	    				}
 	    				else
@@ -350,7 +350,7 @@ public class MCX209 extends BaseIC {
 	    					}
 	    					else if(type[0] == 0 && bType != 0)
 	    					{
-	    						break;
+	    						continue;
 	    					}
 	    				}
 	    			}
