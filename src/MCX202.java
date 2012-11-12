@@ -80,7 +80,7 @@ public class MCX202 extends MCX201 {
         int item = getItem(id);
 
         World world = CraftBook.getWorld(chip.getCBWorld());
-        if (item > 0 && !(item >= 21 && item <= 34) && item != 36) {
+        if (item > 0) {
             Vector pos = chip.getBlockPosition();
             int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             int x = pos.getBlockX();

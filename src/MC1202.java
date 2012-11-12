@@ -114,7 +114,7 @@ public class MC1202 extends BaseIC {
 
         int item = getItem(id);
 
-        if (item > 0 && !(item >= 21 && item <= 34) && item != 36) {
+        if (item > 0) {
             Vector pos = chip.getBlockPosition();
             int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             int x = pos.getBlockX();

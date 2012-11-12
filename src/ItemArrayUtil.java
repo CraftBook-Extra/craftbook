@@ -328,14 +328,6 @@ public class ItemArrayUtil {
      */
     private static boolean isSameColor(Item item1, Item item2)
     {
-    	/*if(item1.getItemId() != BlockType.CLOTH &&
-    		item1.getItemId() != BlockType.LOG &&
-    		item1.getItemId() != 351 //dye
-    		)
-    	{
-    		return true;
-    	}
-    	*/
     	return item1.getDamage() == item2.getDamage();
     }
 
