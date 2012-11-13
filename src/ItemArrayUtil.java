@@ -1,5 +1,3 @@
-import com.sk89q.craftbook.BlockType;
-
 // $Id$
 /*
  * CraftBook
