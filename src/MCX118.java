@@ -218,12 +218,8 @@ public class MCX118 extends BaseIC {
 				case 2:
 					return true;
 				case 3:
-					if((entity.isMob() || entity.isAnimal()) && entity instanceof Mob)
-					{
-						Mob mob = (Mob) entity;
-						if(SETTINGS.isEmpty() || mob.getName().equalsIgnoreCase(SETTINGS))
+						if(SETTINGS.isEmpty() || entity.getName().equalsIgnoreCase(SETTINGS))
 							return true;
-					}
 					break;
 				case 4:
 				case 5:
@@ -238,6 +234,7 @@ public class MCX118 extends BaseIC {
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
 			
 			for(@SuppressWarnings("rawtypes")
+			//NOTCHCODE: (World.unloadedEntityList: f ?) - or should it be World.loadedEntityList
     		Iterator it = oworld.f.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
@@ -255,6 +252,7 @@ public class MCX118 extends BaseIC {
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
 			
 			for(@SuppressWarnings("rawtypes")
+			//NOTCHCODE: (World.unloadedEntityList: f ?)
     		Iterator it = oworld.f.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
@@ -264,8 +262,10 @@ public class MCX118 extends BaseIC {
     				&& !(obj instanceof OEntityBoat)
     				&& !(obj instanceof OEntityEnderEye)
     				&& !(obj instanceof OEntityFishHook)
+    				//NOTCHCODE: String EntityTameable.getOwnerName(): o()
     				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).o().isEmpty() )
     				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).o().isEmpty() )
+    				
     				)
     			{
     				entities.add(new BaseEntity((OEntity)obj));
