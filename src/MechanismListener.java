@@ -1040,7 +1040,7 @@ public class MechanismListener extends CraftBookDelegateListener {
                         + Colors.Yellow + "] "
                         + Colors.White
                         + current + " A");
-            } else {
+            //} else {
                 //player.sendMessage(Colors.Yellow + "Ammeter: " + Colors.Red + "Not supported.");
             }
 
