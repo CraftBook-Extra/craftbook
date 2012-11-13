@@ -332,7 +332,7 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityPig pig = (OEntityPig)entity;
-    		pig.e(true);
+    		pig.f(true);
     	}
 	}
     
