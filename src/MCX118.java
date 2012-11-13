@@ -135,8 +135,7 @@ public class MCX118 extends BaseIC {
 		@Override
 		public void run()
 		{
-			@SuppressWarnings("rawtypes")
-			List entities = null;
+			List<? extends BaseEntity> entities = null;
 			
 			try
 			{
@@ -173,9 +172,8 @@ public class MCX118 extends BaseIC {
 			
 			boolean found = false;
 			
-			for(Object obj: entities)
+			for(BaseEntity entity: entities)
 			{
-				BaseEntity entity = (BaseEntity)obj;
 				if(entity.getWorld().getType().getId() != WORLD.getType().getId())
 					continue;
 				
@@ -233,9 +231,7 @@ public class MCX118 extends BaseIC {
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
 			
-			for(@SuppressWarnings("rawtypes")
-			//NOTCHCODE: (World.unloadedEntityList: f ?) - or should it be World.loadedEntityList
-    		Iterator it = oworld.f.iterator(); it.hasNext();)
+			for(Iterator<?> it = oworld.e.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
     			if(!(obj instanceof OEntityPlayerMP))
@@ -251,9 +247,7 @@ public class MCX118 extends BaseIC {
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
 			
-			for(@SuppressWarnings("rawtypes")
-			//NOTCHCODE: (World.unloadedEntityList: f ?)
-    		Iterator it = oworld.f.iterator(); it.hasNext();)
+			for(Iterator<?> it = oworld.e.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
     			if(!(obj instanceof OEntityPlayerMP)
