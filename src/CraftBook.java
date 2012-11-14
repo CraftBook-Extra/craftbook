@@ -18,6 +18,8 @@
 */
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -113,6 +115,8 @@ public class CraftBook extends Plugin {
      */
 	private final CraftBookDelegateListener inventories = 
     		new InventoryListener(this, listener);
+	
+	protected static CBData cbdata;
     
     private PluginInterface cbRequest = new CBHookFunc();
     
@@ -125,6 +129,56 @@ public class CraftBook extends Plugin {
     public void initialize() {
     	World defaultWorld = etc.getServer().getDefaultWorld();
         TickPatch.applyPatch(defaultWorld);
+        
+        OWorld odefaultWorld = defaultWorld.getWorld();
+        OWorldSavedData wdata = odefaultWorld.B.a(CBData.class, "craftbook");
+        
+        if(wdata != null && !(wdata instanceof CBData))
+        {
+        	//CraftBook was reloaded. Need to remove previous CBData and replace with
+        	//this version's CBData, which requires a reload of the data file.
+        	if(wdata.d())
+        	{
+        		//force save-all
+        		odefaultWorld.B.a();
+        	}
+        	
+        	try {
+            	Field field = odefaultWorld.B.getClass().getDeclaredField("b");
+            	field.setAccessible(true);
+            	
+            	@SuppressWarnings("rawtypes")
+				HashMap loadedDataMap = (HashMap)field.get(odefaultWorld.B);
+            	
+            	field = odefaultWorld.B.getClass().getDeclaredField("c");
+            	field.setAccessible(true);
+            	
+            	@SuppressWarnings("rawtypes")
+				ArrayList loadedDataList = (ArrayList)field.get(odefaultWorld.B);
+            	
+            	loadedDataList.remove(loadedDataMap.remove("craftbook"));
+            } catch (SecurityException e) {
+            	e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+            	e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+            	e.printStackTrace();
+            } catch (IllegalAccessException e) {
+    			e.printStackTrace();
+    		}
+        	
+        	wdata = odefaultWorld.B.a(CBData.class, "craftbook");
+        }
+        
+        if(wdata == null)
+        {
+        	CraftBook.cbdata = new CBData();
+			odefaultWorld.B.a("craftbook", CraftBook.cbdata);
+        }
+        else
+        {
+        	CraftBook.cbdata = (CBData)wdata;
+        }
 
         registerHook(listener, "COMMAND", PluginListener.Priority.MEDIUM);
         registerHook(listener, "DISCONNECT", PluginListener.Priority.MEDIUM);
@@ -257,12 +311,12 @@ public class CraftBook extends Plugin {
         	for(int i = 0; i < oworlds.length; i++)
         	{
 	    		for(@SuppressWarnings("rawtypes")
-	    		Iterator it = oworlds[i].f.iterator(); it.hasNext();)
+	    		Iterator it = oworlds[i].e.iterator(); it.hasNext();)
 	    		{
 	    			Object obj = it.next();
 	    			if(obj instanceof EntitySitting)
 	    			{
-	    				((EntitySitting)obj).y();
+	    				((EntitySitting)obj).x();
 	    			}
 	    		}
         	}
@@ -571,7 +625,7 @@ public class CraftBook extends Plugin {
 			World world = CraftBook.getWorld(cbworld);
 			boolean found = false;
 			for(@SuppressWarnings("rawtypes")
-    		Iterator it = world.getWorld().f.iterator(); it.hasNext();)
+    		Iterator it = world.getWorld().e.iterator(); it.hasNext();)
     		{
 				Object obj = it.next();
     			

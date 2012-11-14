@@ -101,7 +101,7 @@ public class MCX235 extends BaseIC {
     	switch(type)
     	{
     		case 0:
-    			etc.getMCServer().ab().a(packet);
+    			etc.getMCServer().ad().a(packet);
     			break;
     		case 1:
     			Player player = etc.getServer().matchPlayer(id);

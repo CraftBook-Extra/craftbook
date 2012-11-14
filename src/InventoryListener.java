@@ -40,8 +40,8 @@ public class InventoryListener extends CraftBookDelegateListener {
      * Loads CraftBooks's configuration from file.
      */
     public void loadConfiguration() {
-    	
-    	InventoryListener.allowEnchantableItemStacking = properties.getBoolean("allow-enchantable-item-stacking", false);
+    	if(properties.containsKey("allow-enchantable-item-stacking"))
+    		InventoryListener.allowEnchantableItemStacking = properties.getBoolean("allow-enchantable-item-stacking", false);
     }
 
     /**

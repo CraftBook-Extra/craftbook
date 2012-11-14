@@ -33,7 +33,7 @@ public class CBSlotCrafting extends OSlotCrafting
 		for(int i = 0; i < recipes.size(); i++)
 		{
 			OIRecipe oirecipe = (OIRecipe)recipes.get(i);
-			if(oirecipe.a(oinvcrafting))
+			if(oirecipe.a(oinvcrafting, thePlayer.p))
 			{
 				if(!(oirecipe instanceof CBEnchantRecipe))
 				{
@@ -56,7 +56,7 @@ public class CBSlotCrafting extends OSlotCrafting
 		
 		cbrecipe.decrStackSizes((OEntityPlayerMP)thePlayer, oinvcrafting);
 		
-		for(int i = 0; i < this.craftMatrix.i_(); i++)
+		for(int i = 0; i < this.craftMatrix.k_(); i++)
 		{
 			OItemStack oitemstack = this.craftMatrix.a(i);
 			
@@ -65,14 +65,14 @@ public class CBSlotCrafting extends OSlotCrafting
                 continue;
             }
 
-            if (!oitemstack.b().r())
+            if (!oitemstack.b().s())
             {
                 continue;
             }
 
-            OItemStack oitemstack1 = new OItemStack(oitemstack.b().q());
+            OItemStack oitemstack1 = new OItemStack(oitemstack.b().r());
 
-            if (oitemstack.b().h(oitemstack) && thePlayer.by.a(oitemstack1))
+            if (oitemstack.b().h(oitemstack) && thePlayer.bK.a(oitemstack1))
             {
                 continue;
             }
@@ -83,7 +83,7 @@ public class CBSlotCrafting extends OSlotCrafting
             }
             else
             {
-                thePlayer.b(oitemstack1);
+                thePlayer.c(oitemstack1);
             }
 		}
 	}

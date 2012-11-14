@@ -132,7 +132,7 @@ public class MCM112 extends BaseIC {
         	}
     		OEntityPig op = (OEntityPig) (mob.getEntity());
 			// Check for saddle and rider
-			if (op.n() == false || (mob.getEntity()).n == null) {
+			if (op.m() == false || (mob.getEntity()).n == null) {
 				continue;
 			}
         	
@@ -152,7 +152,7 @@ public class MCM112 extends BaseIC {
         		// Reset the pig to Wander so it loses any previous target
         		OEntity oent = mob.getEntity();
         		OEntityAIWander mobAI = new OEntityAIWander((OEntityCreature)oent, 1);
-        		mobAI.e();
+        		mobAI.c();
         	} else {
         		continue;
         	}
@@ -172,7 +172,7 @@ public class MCM112 extends BaseIC {
         			oworld.c(bx, by, bz, 0);
         			oworld.h(bx, by, bz, bdata);
         			oworld.h(bx, by - 1, bz, bdata);
-        			oworld.d(bx, by, bz, bx, by, bz);
+        			oworld.e(bx, by, bz, bx, by, bz);
         		}
     		}
 

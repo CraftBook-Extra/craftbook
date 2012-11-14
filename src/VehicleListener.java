@@ -2686,7 +2686,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             	if(info == null)
             		return false;
             	
-            	OItemStack iStack = player.getEntity().by.g();
+            	OItemStack iStack = player.getEntity().bK.g();
             	if(iStack != null && player.getItemInHand() >= 0) {
             		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info)) || 
             			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info))) {

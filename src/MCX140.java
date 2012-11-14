@@ -100,7 +100,7 @@ public class MCX140 extends BaseIC {
     		)
     	{
 	    	int width = 3;
-	    	int height = 1;
+	    	int height = defaultHeight();
 	    	int length = 3;
 	    	int offx = 0;
 	    	int offy = 1;
@@ -159,6 +159,11 @@ public class MCX140 extends BaseIC {
     	}
     }
     
+    protected int defaultHeight()
+    {
+    	return 1;
+    }
+    
     protected void detectEntity(World world, Vector lever, BlockArea area, ChipState chip)
     {
     	SignText text = UtilIC.getSignTextWithExtension(chip);
@@ -194,7 +199,7 @@ public class MCX140 extends BaseIC {
 			
 			OWorldServer oworld = CraftBook.getOWorldServer(AREA.getCBWorld());
 			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.f.iterator(); it.hasNext();)
+    		Iterator it = oworld.e.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
     			

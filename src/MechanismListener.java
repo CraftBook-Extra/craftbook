@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -45,6 +46,7 @@ public class MechanismListener extends CraftBookDelegateListener {
      */
     private Map<String,Long> lastCopySave =
             new HashMap<String,Long>();
+    protected static Map<WorldBlockVector, CBBookInventory> bookshelves = new HashMap<WorldBlockVector, CBBookInventory>();
     
     private boolean checkPermissions;
     private boolean checkCreatePermissions;
@@ -70,6 +72,8 @@ public class MechanismListener extends CraftBookDelegateListener {
     private boolean enableAmmeter = true;
     private boolean usePageReader = true;
     private boolean usePageWriter = false;
+    private boolean useBookShelf = false;
+    private boolean bookshelfNeedsPower = false;
     private int pageMaxCharacters = 400;
     private int maxPages = 20;
     private boolean usePageSwitches = true;
@@ -183,6 +187,10 @@ public class MechanismListener extends CraftBookDelegateListener {
 				Sitting.globalHealingRate = rate;
 			}
 		}
+		if(properties.containsKey("bookshelf-enabled"))
+			useBookShelf = properties.getBoolean("bookshelf-enabled", false);
+		if(properties.containsKey("bookshelf-require-power"))
+        	bookshelfNeedsPower = properties.getBoolean("bookshelf-require-power", false);
         dropBookshelves = properties.getBoolean("drop-bookshelves", true);
         try {
             dropAppleChance = Double.parseDouble(properties.getString("apple-drop-chance", "0.5")) / 100.0;
@@ -487,9 +495,14 @@ public class MechanismListener extends CraftBookDelegateListener {
         } else if (blockType == BlockType.BOOKCASE) {
         	
             if (dropBookshelves && (block.getStatus() == 3 || block.getStatus() == 2) && checkPermission(player, "/bookshelfdrops")) {
+            	destroyBookshelf(block);
             	world.dropItem(
                             block.getX(), block.getY(), block.getZ(),
                             BlockType.BOOKCASE);
+            }
+            else if(block.getStatus() == 0 && player.isCreativeMode())
+            {
+            	destroyBookshelf(block);
             }
             else if(usePageReader && block.getStatus() == 0 && checkPermission(player, "/readpages"))
             {
@@ -504,6 +517,13 @@ public class MechanismListener extends CraftBookDelegateListener {
         }
 
         return false;
+    }
+    
+    private void destroyBookshelf(Block block)
+    {
+    	WorldBlockVector wloc = new WorldBlockVector(CraftBook.getCBWorld(block.getWorld()), block.getX(), block.getY(), block.getZ());
+    	if(bookshelves.remove(wloc) != null)
+    		CraftBook.cbdata.markDirty();
     }
 
     /**
@@ -1123,6 +1143,52 @@ public class MechanismListener extends CraftBookDelegateListener {
             	return true;
         	}
         }
+        
+        // Book storage
+        if(useBookShelf
+        		&& blockType == BlockType.BOOKCASE
+        		&& (itemInHand == 0 || itemInHand == 340 || itemInHand == 386 || itemInHand == 387)
+        		&& (!bookshelfNeedsPower || (blockClicked.isPowered() || blockClicked.isIndirectlyPowered()) )
+        		&& (player.canUseCommand("/createcbbookshelf") || player.canUseCommand("/accesscbbookshelf") )
+        		)
+        {
+        	int x = blockClicked.getX();
+            int y = blockClicked.getY();
+            int z = blockClicked.getZ();
+            
+    		WorldBlockVector wloc = new WorldBlockVector(cbworld, x, y, z);
+    		CBBookInventory cbbookinv = bookshelves.get(wloc);
+    		if(cbbookinv == null && player.canUseCommand("/createcbbookshelf") )
+    		{
+    			cbbookinv = new CBBookInventory();
+    			cbbookinv.cbworld = cbworld;
+    			cbbookinv.x = x;
+    			cbbookinv.y = y;
+    			cbbookinv.z = z;
+    			bookshelves.put(wloc, cbbookinv);
+    			CraftBook.cbdata.markDirty();
+    		}
+    		
+    		if(cbbookinv != null)
+    		{
+	    		OEntityPlayerMP oplayer = player.getEntity();
+	    		PlayerSettings setting = CraftBookListener.getPlayerSettings(player);
+	    		if(setting != null)
+	    		{
+	    			if (oplayer.bM != oplayer.bL)
+		    		{
+		    			oplayer.i();
+		    		}
+	    			
+	    			setting.getNextWindowId();
+	    			oplayer.a.b(new OPacket100OpenWindow(setting.currentWindowId, 0, cbbookinv.b(), cbbookinv.k_()));
+	    			oplayer.bM = new CBContainerShelf(oplayer.bK, cbbookinv);
+	    			oplayer.bM.c = setting.currentWindowId;
+	    			oplayer.bM.a((OICrafting)oplayer);
+	    		}
+	    		return true;
+    		}
+        }
 
         // Book reading
         if (useBookshelves
@@ -1369,7 +1435,7 @@ public class MechanismListener extends CraftBookDelegateListener {
                 	if(!CBHooked.getBoolean(CBHook.SIGN_MECH, new Object[] {CBPluginInterface.CBSignMech.CONVERT_EXP, sign, player}))
                 		return true;
                 	
-                	player.getEntity().a(levels); //remove levels
+                	player.getEntity().a(-levels); //remove levels
                 	
                 	while(bottles > 64)
                 	{
@@ -2475,5 +2541,46 @@ public class MechanismListener extends CraftBookDelegateListener {
         lastCopySave.remove(player.getName());
         MCX236.players.remove(player);
         MCX238.players.remove(player);
+    }
+    
+    public static void readFromNBT(ONBTTagCompound nbtcompound)
+    {
+    	if(bookshelves != null)
+    	{
+    		bookshelves.clear();
+	    	ONBTTagList nbttag = nbtcompound.m("BookShelf");
+	    	if(nbttag != null)
+	    	{
+	    		for(int i = 0; i < nbttag.c(); i++)
+	    		{
+	    			ONBTTagCompound nbtcomp = (ONBTTagCompound) nbttag.b(i);
+	    			CBBookInventory cbbookinv = new CBBookInventory();
+	    			cbbookinv.readFromNBT(nbtcomp);
+	    			
+	    			WorldBlockVector loc = new WorldBlockVector(cbbookinv.cbworld, cbbookinv.x, cbbookinv.y, cbbookinv.z);
+	    			bookshelves.put(loc, cbbookinv);
+	    		}
+	    	}
+    	}
+    }
+    
+    public static void writeToNBT(ONBTTagCompound nbtcompound)
+    {
+    	ONBTTagList addtag = new ONBTTagList();
+    	ONBTTagCompound addnbt;
+    	if(bookshelves != null && bookshelves.size() > 0)
+    	{
+    		Iterator<Map.Entry<WorldBlockVector, CBBookInventory>> it = bookshelves.entrySet().iterator();
+			while (it.hasNext())
+			{
+				Map.Entry<WorldBlockVector, CBBookInventory> item = (Map.Entry<WorldBlockVector, CBBookInventory>) it.next();
+				CBBookInventory bookinv = item.getValue();
+				addnbt = new ONBTTagCompound();
+				bookinv.writeToNBT(addnbt);
+				addtag.a((ONBTBase)addnbt);
+			}
+			
+			nbtcompound.a("BookShelf", (ONBTBase)addtag);
+    	}
     }
 }

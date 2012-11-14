@@ -17,10 +17,10 @@ public class CBWorkbench extends OBlockWorkbench
 	{
 		boolean output = super.a(oworld, x, y, z, eplayer, direction, offsetx, offsety, offsetz);
 		
-		if(!(eplayer.bA instanceof OContainerWorkbench))
+		if(!(eplayer.bM instanceof OContainerWorkbench))
 			return output;
 		
-		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bA;
+		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bM;
 		
 		@SuppressWarnings("rawtypes")
 		List inventorySlots = ocontainerwb.b;

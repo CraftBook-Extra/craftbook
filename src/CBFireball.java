@@ -29,11 +29,11 @@ public class CBFireball extends OEntityFireball
 	@Override
 	protected void a(OMovingObjectPosition paramOMovingObjectPosition)
 	{
-		if (!this.p.K) {
+		if (!this.p.J) {
 	      if ((paramOMovingObjectPosition.g != null) && 
 	        (paramOMovingObjectPosition.g.a(ODamageSource.a(this, this.a), 6)));
-	      this.p.a(null, this.t, this.u, this.v, this.power, true);
-	      y();
+	      this.p.a(null, this.t, this.u, this.v, this.power, true, this.p.K().b("mobGriefing"));
+	      x();
 	    }
 	}
 }
@@ -46,7 +46,7 @@ class EntityCreatureX extends OEntityCreature
 	}
 
 	@Override
-	public int aM()
+	public int aS()
 	{
 		return 1;
 	}
