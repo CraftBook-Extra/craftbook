@@ -151,7 +151,7 @@ public class MCX216 extends BaseIC {
 						double diffY = target.getBlockY() - itemEnt.getY();
 						double diffZ = target.getBlockZ() - itemEnt.getZ();
 						
-						if ((diffX * diffX + diffY * diffY + diffZ * diffZ) < 6) {
+						if ((diffX * diffX + diffY * diffY + diffZ * diffZ) < 9) {
 							itemEnt.destroy();
 
 							world.setBlockAt(getBlockByItem(this.itemId), target.getBlockX(), target.getBlockY(), target.getBlockZ());
@@ -174,10 +174,6 @@ public class MCX216 extends BaseIC {
 			case 392: return 142;
 			default : return 0;
 			}
-			//if (itemId == 295) return 59;
-			//if (itemId == 6) return 6;
-			//if (itemId == 372) return 115;
-			//return 0;
 		}
 	}
 }

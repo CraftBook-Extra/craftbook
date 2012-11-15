@@ -522,17 +522,20 @@ public class RedstoneListener extends CraftBookDelegateListener
                 } else {
                 	
                 	String options = line2.substring(8);
+                	//why is this switch here? - nosefish
             		switch(options.length())
             		{
             			case 1:
             			case 2:
-            				break;
+            				//break; //this break broke input swapping when only specifying one set
             			case 3:
+            				break; //moved break here to fix swapping only inputs or only outputs. Let's hope this doesn't break stuff
             			case 4:
             			case 7:
             				options = options.substring(1);
             				break;
             		}
+            		
             		
                 	if(len > 9)
                 	{
@@ -548,7 +551,7 @@ public class RedstoneListener extends CraftBookDelegateListener
 	                		if(orders[0] == null && orders[1] == null)
 	                		{
 	                			options = "";
-	                			//player.sendMessage(Colors.Rose + "Unrecognized options: " + line2.substring(8));
+	                			player.sendMessage(Colors.Rose + "Unrecognized options: " + line2.substring(8));
 	                		}
 	                		else
 	                			options = line2.substring(8);
