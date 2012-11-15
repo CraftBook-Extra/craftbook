@@ -100,7 +100,7 @@ public class MCX140 extends BaseIC {
     		)
     	{
 	    	int width = 3;
-	    	int height = 1;
+	    	int height = defaultHeight();
 	    	int length = 3;
 	    	int offx = 0;
 	    	int offy = 1;
@@ -157,6 +157,11 @@ public class MCX140 extends BaseIC {
     			chip.getText().supressUpdate();
     		}
     	}
+    }
+    
+    protected int defaultHeight()
+    {
+    	return 1;
     }
     
     protected void detectEntity(World world, Vector lever, BlockArea area, ChipState chip)

@@ -1,3 +1,53 @@
+2.0extra19.0:
+- updated to minecraft 1.4.2
+- added [MCU304] REPEL FLOOR+
+    - "bounces" any entity (mob, animal, boat, etc) specified.
+    - sign settings are the same as [MCU144] except line 3.
+        - line 3 is used to set an optional "repel" force
+        - if left blank, the force will be set to 2
+    - due to limits, this IC depends on the speed of a server to work properly
+        - If entities are dying instead of "bouncing" you may need to increase
+            the height of the bounce area, which can be set on the 4th line of
+            the sign (similar to [MCU144]).
+        - Any sudden server slow down (such as when saving map data) may cause
+            entities that are "bouncing" to fall to their death instead of
+            bounce back up.
+    - this IC is not recommended to bounce players. It is better to use the
+        bounce ICs and feature instead, since they are designed to bounce
+        players.
+    - thanks Link for the suggestion!
+- added Bookshelf feature
+    - allows players to store books in bookshelf blocks.
+    - this feature is disabled by default
+    - to create a bookshelf that can store books:
+        - the player first requires permission to
+            /createcbbookshelf
+        - right click any bookshelf with an empty hand or while holding a book
+        - after right clicking, an inventory will show up that allows you to store
+            books
+    - to access a bookshelf storage:
+        - the player requires permission to
+            /accesscbbookshelf
+        - right click any bookshelf storage block with an empty hand or while
+            holding a book
+        - if the player has permission to /createcbbookshelf then they do NOT
+            need permission to /accesscbbookshelf
+            - a player that can create can also access bookshelf storages.
+            - The access permission (/accesscbbookshelf) is so that players can
+                access bookshelf storages, but can not create bookshelf storages
+    - this feature can be set to require the bookshelf to either be directly or
+        indirectly powered
+        - if a bookshelf is directly or indirectly powered, the book storage can
+            be accessed
+        - if a bookshelf is not powered, then the storage will not show
+        - in other words: powered = unlocked; not powered = locked
+        - this is set in the craftbook.properties file, and by default is disabled
+    - bookshelf storage data can be found in the "craftbook.dat" file located in
+        the "data" folder within the "world" folder.
+    - thanks svdragster for the suggestion!
+- fixed an unchecked property that was causing the craftbook.properties file to be
+    rewritten, removing any comments.
+
 2.0extra18.1:
 - added IC mode to display notes with Music ICs
     - add the character 'd' (without quotes) at the end of [MCU70x]

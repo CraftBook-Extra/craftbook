@@ -459,6 +459,7 @@ public class RedstoneListener extends CraftBookDelegateListener
         internalRegisterIC("MCU301", new MCX301(), ICType.UISO);
         internalRegisterIC("MCU302", new MCX302(), ICType.UISO);
         internalRegisterIC("MCU303", new MCX303(), ICType.UISO);
+        internalRegisterIC("MCU304", new MCX304(), ICType.UISO);
         internalRegisterIC("MCU440", new MCX440(), ICType.UISO);
         internalRegisterIC("MCU700", new MCX700(), ICType.UISO);
         internalRegisterIC("MCU705", new MCX705(), ICType.UISO);
@@ -756,7 +757,7 @@ public class RedstoneListener extends CraftBookDelegateListener
                     			|| id.equals("MCU220") || id.equals("MCU221") || id.equals("MCU222")
                     			|| id.equals("MCX228")
                     			|| id.equals("MCU292") || id.equals("MCU293")
-                    			|| id.equals("MCU300") || id.equals("MCU301") || id.equals("MCU302") || id.equals("MCU303") )
+                    			|| id.equals("MCU300") || id.equals("MCU301") || id.equals("MCU302") || id.equals("MCU303") || id.equals("MCU304") )
                     		ic.think(cbworld, pt, changed, signText, sign, craftBook.getDelay(cbworld), mode, abc, def, thisListener);
                         else
                         	ic.think(cbworld, pt, changed, signText, sign, craftBook.getDelay(cbworld), mode, abc, def, null);

@@ -233,6 +233,7 @@ public class MCX118 extends BaseIC {
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
 			
 			for(Iterator<?> it = oworld.e.iterator(); it.hasNext();)
+
     		{
     			Object obj = it.next();
     			if(!(obj instanceof OEntityPlayerMP))
@@ -247,7 +248,6 @@ public class MCX118 extends BaseIC {
 		private List<BaseEntity> entitiesExceptPlayersItems(OWorld oworld)
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
-			
 			for(Iterator<?> it = oworld.e.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
@@ -257,10 +257,8 @@ public class MCX118 extends BaseIC {
     				&& !(obj instanceof OEntityBoat)
     				&& !(obj instanceof OEntityEnderEye)
     				&& !(obj instanceof OEntityFishHook)
-    				//NOTCHCODE: String EntityTameable.getOwnerName(): o()
     				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).o().isEmpty() )
     				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).o().isEmpty() )
-    				
     				)
     			{
     				entities.add(new BaseEntity((OEntity)obj));

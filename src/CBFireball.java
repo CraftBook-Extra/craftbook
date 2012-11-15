@@ -30,11 +30,10 @@ public class CBFireball extends OEntityFireball
 	protected void a(OMovingObjectPosition paramOMovingObjectPosition)
 	{
 		if (!this.p.J) {
-	        if (paramOMovingObjectPosition.g != null) {
-                paramOMovingObjectPosition.g.a(ODamageSource.a(this, this.a), 6);
-            }
-	        this.p.a(null, this.t, this.u, this.v, this.power, true);
-	        x();
+	      if ((paramOMovingObjectPosition.g != null) && 
+	        (paramOMovingObjectPosition.g.a(ODamageSource.a(this, this.a), 6)));
+	      this.p.a(null, this.t, this.u, this.v, this.power, true, this.p.K().b("mobGriefing"));
+	      x();
 	    }
 	}
 }

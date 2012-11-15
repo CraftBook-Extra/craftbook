@@ -144,7 +144,7 @@ public class MC1250 extends BaseIC {
                     if (arrowY < lastY) {
                         etc.getServer().addToServerQueue(new Runnable() {
                             public void run() {
-                            	arrow.y();
+                            	arrow.x();
                             	//arrow.bi.f(arrow);
                                 
                                 // Make TNT explode

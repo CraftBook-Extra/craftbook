@@ -111,7 +111,7 @@ public class EntitySitting extends OEntityEnderEye
 			
 			trackedEntitySet.add(sitEntry);
 			trackedEntityHashTable.a(BASE_ENTITY.getId(), sitEntry);
-			sitEntry.b(world.getWorld().i);
+			sitEntry.b(world.getWorld().h);
 			
 			OIntHashMap entityIdMap = entityAccess.entityIdMap;
 			entityIdMap.a(BASE_ENTITY.getId(), this);
@@ -295,7 +295,7 @@ public class EntitySitting extends OEntityEnderEye
         		worldclass = worldclass.getSuperclass();
         	}
         	
-            Field field3 = worldclass.getDeclaredField("T");
+        	Field field3 = worldclass.getDeclaredField("T");
         	field3.setAccessible(true);
         	
         	EntityAccessObject entityAccess = new EntityAccessObject((Set)field2.get(tracker),

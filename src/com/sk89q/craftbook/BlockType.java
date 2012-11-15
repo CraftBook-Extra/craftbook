@@ -172,6 +172,7 @@ public final class BlockType {
     public static final int POTATOES = 142;
     public static final int WOODEN_BUTTON = 143;
     public static final int MOB_HEAD = 144;
+    public static final int ANVIL = 145;
 
     /**
      * Stores a list of dropped blocks for blocks.
@@ -315,6 +316,7 @@ public final class BlockType {
         blockDrops.put(142, 392);
         blockDrops.put(143, 143);
         blockDrops.put(144, 144);
+        blockDrops.put(145, 145);
     }
 
     /**

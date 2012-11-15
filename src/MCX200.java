@@ -293,7 +293,7 @@ public class MCX200 extends BaseIC {
     	if(entity instanceof OEntitySheep)
     	{
     		OEntitySheep sheep = (OEntitySheep)entity;
-    		sheep.b(color);
+    		sheep.r(color);
     	}
     	else if(entity instanceof OEntityCreeper)
     	{
@@ -332,6 +332,7 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityPig pig = (OEntityPig)entity;
+
     		//OEntityPig.setSaddled(boolean)
     		pig.f(true);
     	}
