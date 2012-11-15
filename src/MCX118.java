@@ -63,6 +63,7 @@ public class MCX118 extends BaseIC {
      */
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
+		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
         String id = sign.getLine3().toLowerCase();
 
         if (id.length() != 0)
@@ -106,7 +107,7 @@ public class MCX118 extends BaseIC {
     		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
     		World world = CraftBook.getWorld(chip.getCBWorld());
     		
-        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, chip.getText().getLine3(), 0, false);
+        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, UtilIC.getSignTextWithExtension(chip).getLine3(), 0, false);
         	etc.getServer().addToServerQueue(nearbyFinder);
     	}
     }
