@@ -192,8 +192,9 @@ public class MCX121Pass
 		FileOutputStream fos = null;
 		BufferedWriter writer = null;
 		
-		//only allows a storing of 100 passwords
-		String[] txt = new String[100];
+		//only allows a storing of 100 passwords - why? this is totally arbitrary. - nosefish
+		//increasing the limit to 1024 (arbitrary? sure!), but this will have to be recoded eventually
+		String[] txt = new String[1024];
 		
 		boolean write = false;
 		
