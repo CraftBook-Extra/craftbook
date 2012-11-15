@@ -257,8 +257,8 @@ public class EntitySitting extends OEntityEnderEye
 		Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
         while(worldIter.hasNext())
         {
-        	Map.Entry<String, OWorldServer[]> entry = (Map.Entry<String, OWorldServer[]>)worldIter.next();
-        	OWorldServer[] oworlds = (OWorldServer[])entry.getValue();
+        	Map.Entry<String, OWorldServer[]> entry = worldIter.next();
+        	OWorldServer[] oworlds = entry.getValue();
         	
         	for(int i = 0; i < oworlds.length; i++)
         	{

@@ -63,6 +63,7 @@ public class MCX118 extends BaseIC {
      */
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
+		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
         String id = sign.getLine3().toLowerCase();
 
         if (id.length() != 0)
@@ -106,7 +107,7 @@ public class MCX118 extends BaseIC {
     		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
     		World world = CraftBook.getWorld(chip.getCBWorld());
     		
-        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, chip.getText().getLine3(), 0, false);
+        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, UtilIC.getSignTextWithExtension(chip).getLine3(), 0, false);
         	etc.getServer().addToServerQueue(nearbyFinder);
     	}
     }
@@ -135,8 +136,7 @@ public class MCX118 extends BaseIC {
 		@Override
 		public void run()
 		{
-			@SuppressWarnings("rawtypes")
-			List entities = null;
+			List<? extends BaseEntity> entities = null;
 			
 			try
 			{
@@ -173,9 +173,8 @@ public class MCX118 extends BaseIC {
 			
 			boolean found = false;
 			
-			for(Object obj: entities)
+			for(BaseEntity entity: entities)
 			{
-				BaseEntity entity = (BaseEntity)obj;
 				if(entity.getWorld().getType().getId() != WORLD.getType().getId())
 					continue;
 				
@@ -218,12 +217,8 @@ public class MCX118 extends BaseIC {
 				case 2:
 					return true;
 				case 3:
-					if((entity.isMob() || entity.isAnimal()) && entity instanceof Mob)
-					{
-						Mob mob = (Mob) entity;
-						if(SETTINGS.isEmpty() || mob.getName().equalsIgnoreCase(SETTINGS))
+						if(SETTINGS.isEmpty() || entity.getName().equalsIgnoreCase(SETTINGS))
 							return true;
-					}
 					break;
 				case 4:
 				case 5:
@@ -237,8 +232,8 @@ public class MCX118 extends BaseIC {
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
 			
-			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.e.iterator(); it.hasNext();)
+			for(Iterator<?> it = oworld.e.iterator(); it.hasNext();)
+
     		{
     			Object obj = it.next();
     			if(!(obj instanceof OEntityPlayerMP))
@@ -253,9 +248,7 @@ public class MCX118 extends BaseIC {
 		private List<BaseEntity> entitiesExceptPlayersItems(OWorld oworld)
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
-			
-			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.e.iterator(); it.hasNext();)
+			for(Iterator<?> it = oworld.e.iterator(); it.hasNext();)
     		{
     			Object obj = it.next();
     			if(!(obj instanceof OEntityPlayerMP)

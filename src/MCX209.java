@@ -315,6 +315,10 @@ public class MCX209 extends BaseIC {
     		endY = 0;
     	else if(endY > CraftBook.MAP_BLOCK_HEIGHT - 1)
     		endY = CraftBook.MAP_BLOCK_HEIGHT - 1;
+    	// ignore direction of logs when removing to avoid breaking existing machines
+    	if (!set && type[1]==BlockType.LOG) {
+    		type[2] = type[2] & 3;
+    	}
     	
     	for(int x = startX; x < endX; x++)
         {
@@ -336,12 +340,18 @@ public class MCX209 extends BaseIC {
 	    	        		}
 	    					else if(type[0] == 0 && bType != type[1])
 	    	        		{
-	    	        			break;
+	    	        			continue;
 	    	        		}
 	    				}
 	    				else
 	    				{
 	    					int bData = CraftBook.getBlockData(world, x, y , z);
+	    			    	// logs are different from all other blocks - 
+	    			    	// they use their data value for both color and direction.
+	    			    	// Clear direction before storing - 2 bits for color remain
+	    			    	if (bType==BlockType.LOG) {
+	    			    		bData = bData & 3;
+	    			    	}
 	    					
 	    					//clear
 	    					if(bType == type[1] && (!BlockType.isColorTypeBlock(bType) || bData == type[2]))
@@ -350,7 +360,7 @@ public class MCX209 extends BaseIC {
 	    					}
 	    					else if(type[0] == 0 && bType != 0)
 	    					{
-	    						break;
+	    						continue;
 	    					}
 	    				}
 	    			}

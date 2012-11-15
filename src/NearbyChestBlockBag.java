@@ -68,6 +68,12 @@ public class NearbyChestBlockBag extends BlockBag {
     	fetchBlock(id, (byte)-1);
     }
     public void fetchBlock(int id, int data) throws BlockSourceException {
+    	// logs are different from all other blocks - 
+    	// they use their data value for both color and direction
+    	// clear direction before fetching
+    	if (id==BlockType.LOG){
+    		data=data&3;
+    	}
         try {
             for (ComparableInventory c : chests) {
                 Inventory chest = c.getInventory();
@@ -189,6 +195,12 @@ public class NearbyChestBlockBag extends BlockBag {
     	storeBlock(id, data, amount, null);
     }
     public void storeBlock(int id, int data, int amount, Enchantment[] enchants) throws BlockSourceException {
+    	// logs are different from all other blocks - 
+    	// they use their data value for both color and direction
+    	// clear direction before storing - 2 bits for color remain
+    	if (id==BlockType.LOG) {
+    		data = data & 3;
+    	}
     	try {
             for (ComparableInventory c : chests) {
                 Inventory chest = c.getInventory();

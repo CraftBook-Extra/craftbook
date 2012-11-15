@@ -109,6 +109,7 @@ public class CBEnchantRecipe extends OShapedRecipes
 	}
 	
 	@Override
+
 	public boolean a(OInventoryCrafting paramOInventoryCrafting, OWorld paramOWorld)
 	{
 		for (int i = 0; i <= 3 - this.recipeWidth; i++)
