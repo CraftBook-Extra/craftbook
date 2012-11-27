@@ -295,7 +295,7 @@ public class EntitySitting extends OEntityEnderEye
         		worldclass = worldclass.getSuperclass();
         	}
         	
-        	Field field3 = worldclass.getDeclaredField("T");
+        	Field field3 = worldclass.getDeclaredField("U");
         	field3.setAccessible(true);
         	
         	EntityAccessObject entityAccess = new EntityAccessObject((Set)field2.get(tracker),

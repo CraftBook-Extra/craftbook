@@ -17,10 +17,10 @@ public class CBWorkbench extends OBlockWorkbench
 	{
 		boolean output = super.a(oworld, x, y, z, eplayer, direction, offsetx, offsety, offsetz);
 		
-		if(!(eplayer.bM instanceof OContainerWorkbench))
+		if(!(eplayer.bK instanceof OContainerWorkbench))
 			return output;
 		
-		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bM;
+		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bK;
 		
 		@SuppressWarnings("rawtypes")
 		List inventorySlots = ocontainerwb.b;
@@ -31,7 +31,7 @@ public class CBWorkbench extends OBlockWorkbench
 			{
 				if(inventorySlots.get(i) instanceof OSlotCrafting)
 				{
-					CBSlotCrafting cbslot = new CBSlotCrafting(eplayer, ocontainerwb.e, ocontainerwb.f, 0, 124, 35);
+					CBSlotCrafting cbslot = new CBSlotCrafting(eplayer, ocontainerwb.a, ocontainerwb.f, 0, 124, 35);
 					inventorySlots.set(i, cbslot);
 					
 					return output;

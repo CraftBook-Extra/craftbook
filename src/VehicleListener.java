@@ -125,7 +125,6 @@ public class VehicleListener extends CraftBookDelegateListener {
     	}
     };
     private MinecartCollisionType minecartCollisionType = MinecartCollisionType.DEFAULT;
-    private boolean usingMinecartOWorldFile = false;
     
     private int minecartMaxSpeed = 100; //higher values than 100 may cause minecarts to derail
     private double minecartBoostFull = 2;
@@ -162,8 +161,6 @@ public class VehicleListener extends CraftBookDelegateListener {
         	minecartEnableWarpBlock = properties.getBoolean("minecart-enable-warpblock", true);
         if(properties.containsKey("minecart-enable-destroyblock"))
         	minecartEnableDestroyBlock = properties.getBoolean("minecart-enable-destroyblock", false);
-        if(properties.containsKey("minecart-using-oworld-server-file"))
-        	usingMinecartOWorldFile = properties.getBoolean("minecart-using-oworld-server-file", false);
         
         minecart25xBoostBlock = StringUtil.getPropColorInt(properties.getString("minecart-25x-boost-block"), BlockType.GOLD_ORE, 0);
         minecart100xBoostBlock = StringUtil.getPropColorInt(properties.getString("minecart-100x-boost-block"), BlockType.GOLD_BLOCK, 0);
@@ -214,10 +211,6 @@ public class VehicleListener extends CraftBookDelegateListener {
         	try
         	{
         		minecartCollisionType = MinecartCollisionType.valueOf(mct);
-        		if(minecartCollisionType.REQUIRES_OWORLD && !usingMinecartOWorldFile)
-        		{
-        			minecartCollisionType = MinecartCollisionType.DEFAULT;
-        		}
         	}
         	catch(IllegalArgumentException e)
         	{
@@ -2423,7 +2416,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                 }
     		}
     	}
-    	else if(minecartCollisionType.REQUIRES_OWORLD && usingMinecartOWorldFile)
+    	else if(minecartCollisionType.REQUIRES_OWORLD)
     	{
     		if(minecartCollisionType == MinecartCollisionType.NONE)
     		{
@@ -2503,6 +2496,9 @@ public class VehicleListener extends CraftBookDelegateListener {
     
     private void plowMinecart(Minecart minecart1, Minecart minecart2)
     {
+    	if(UtilEntity.isDead(minecart1.getEntity()) || UtilEntity.isDead(minecart2.getEntity()))
+    		return;
+    	
     	if(minecart1.getType() != Minecart.Type.StorageCart && minecart2.getType() != Minecart.Type.StorageCart
 			&& ((minecart1.getPassenger() == null) ^ (minecart2.getPassenger() == null))
 			)
@@ -2686,7 +2682,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             	if(info == null)
             		return false;
             	
-            	OItemStack iStack = player.getEntity().bK.g();
+            	OItemStack iStack = player.getEntity().bI.g();
             	if(iStack != null && player.getItemInHand() >= 0) {
             		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info)) || 
             			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info))) {

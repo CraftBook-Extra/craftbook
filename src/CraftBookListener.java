@@ -587,7 +587,7 @@ public class CraftBookListener extends PluginListener {
     	PlayerSettings settings = new PlayerSettings();
     	
     	try {
-        	Field field = player.getEntity().getClass().getSuperclass().getSuperclass().getDeclaredField("bm");
+        	Field field = player.getEntity().getClass().getSuperclass().getSuperclass().getDeclaredField("bl");
         	field.setAccessible(true);
         	
         	settings.activePotionsMap = (HashMap)field.get(player.getEntity());

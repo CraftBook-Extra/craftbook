@@ -1,14 +1,13 @@
 
 public class CBContainerShelf extends OContainer
 {
-	private OIInventory e;
+	private OIInventory a;
 	private int f;
 	
 	public CBContainerShelf(OIInventory oiinventory, OIInventory oiinventory1)
 	{
-		this.e = oiinventory1;
+		this.a = oiinventory1;
         this.f = oiinventory1.k_() / 9;
-        oiinventory1.l_();
         
         int i = (this.f - 4) * 18;
 
@@ -36,40 +35,44 @@ public class CBContainerShelf extends OContainer
 	//[NOTE] below is a complete copy of OContainerChest
 	
 	
-	public boolean c(OEntityPlayer paramOEntityPlayer)
-	{
-		return this.e.a(paramOEntityPlayer);
-	}
+	  public boolean a(OEntityPlayer paramOEntityPlayer)
+	  {
+	    return this.a.a_(paramOEntityPlayer);
+	  }
 
-	public OItemStack b(OEntityPlayer paramOEntityPlayer, int paramInt)
-	{
-		OItemStack localOItemStack1 = null;
-		OSlot localOSlot = (OSlot)this.b.get(paramInt);
-		if ((localOSlot != null) && (localOSlot.d())) {
-			OItemStack localOItemStack2 = localOSlot.c();
-			localOItemStack1 = localOItemStack2.l();
-		
-			if (paramInt < this.f * 9) {
-				if (!a(localOItemStack2, this.f * 9, this.b.size(), true)) {
-					return null;
-				}
-			}
-			else if (!a(localOItemStack2, 0, this.f * 9, false)) {
-				return null;
-			}
-		
-			if (localOItemStack2.a == 0)
-				localOSlot.c(null);
-			else {
-				localOSlot.e();
-			}
-		}
-		return localOItemStack1;
-	}
+	  public OItemStack b(OEntityPlayer paramOEntityPlayer, int paramInt)
+	  {
+	    OItemStack localOItemStack1 = null;
+	    OSlot localOSlot = (OSlot)this.c.get(paramInt);
+	    if ((localOSlot != null) && (localOSlot.d())) {
+	      OItemStack localOItemStack2 = localOSlot.c();
+	      localOItemStack1 = localOItemStack2.l();
 
-	public void a(OEntityPlayer paramOEntityPlayer)
-	{
-		super.a(paramOEntityPlayer);
-		this.e.f();
-	}
+	      if (paramInt < this.f * 9) {
+	        if (!a(localOItemStack2, this.f * 9, this.c.size(), true)) {
+	          return null;
+	        }
+	      }
+	      else if (!a(localOItemStack2, 0, this.f * 9, false)) {
+	        return null;
+	      }
+
+	      if (localOItemStack2.a == 0)
+	        localOSlot.c(null);
+	      else {
+	        localOSlot.e();
+	      }
+	    }
+	    return localOItemStack1;
+	  }
+
+	  public void b(OEntityPlayer paramOEntityPlayer)
+	  {
+	    super.b(paramOEntityPlayer);
+	    this.a.f();
+	  }
+
+	  public OIInventory d() {
+	    return this.a;
+	  }
 }

@@ -1175,16 +1175,16 @@ public class MechanismListener extends CraftBookDelegateListener {
 	    		PlayerSettings setting = CraftBookListener.getPlayerSettings(player);
 	    		if(setting != null)
 	    		{
-	    			if (oplayer.bM != oplayer.bL)
+	    			if (oplayer.bK != oplayer.bJ)
 		    		{
 		    			oplayer.i();
 		    		}
 	    			
 	    			setting.getNextWindowId();
 	    			oplayer.a.b(new OPacket100OpenWindow(setting.currentWindowId, 0, cbbookinv.b(), cbbookinv.k_()));
-	    			oplayer.bM = new CBContainerShelf(oplayer.bK, cbbookinv);
-	    			oplayer.bM.c = setting.currentWindowId;
-	    			oplayer.bM.a((OICrafting)oplayer);
+	    			oplayer.bK = new CBContainerShelf(oplayer.bI, cbbookinv);
+	    			oplayer.bK.d = setting.currentWindowId;
+	    			oplayer.bK.a((OICrafting)oplayer);
 	    		}
 	    		return true;
     		}

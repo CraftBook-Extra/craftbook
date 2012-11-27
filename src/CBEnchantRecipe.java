@@ -325,7 +325,7 @@ public class CBEnchantRecipe extends OShapedRecipes
 				if(recipeItem.getAmount() > 1)
 				{
 					invItemStack = inventory.a(slot);
-					eplayer.a.b(new OPacket103SetSlot(eplayer.bM.c, slot + 1, invItemStack));
+					eplayer.a.b(new OPacket103SetSlot(eplayer.bK.d, slot + 1, invItemStack));
 				}
 			}
 		}

@@ -261,9 +261,9 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityWolf wolf = (OEntityWolf)entity.getEntity();
-			    		return (color == 2 && wolf.bG())
+			    		return (color == 2 && wolf.bK())
 			    				|| (color == 1 && wolf.n())
-			    				|| (color == 0 && !wolf.bG() && !wolf.n() && !wolf.m());
+			    				|| (color == 0 && !wolf.bK() && !wolf.n() && !wolf.m());
 			    	}
 			    	else if(entityName.equals("Ozelot") && (entity.getEntity() instanceof OEntityOcelot))
 			    	{

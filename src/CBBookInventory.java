@@ -27,7 +27,7 @@ public class CBBookInventory implements OIInventory
 
 	@Override
 	//isUseableByPlayer
-	public boolean a(OEntityPlayer oplayer)
+	public boolean a_(OEntityPlayer oplayer)
 	{
 		return !locked;
 	}
