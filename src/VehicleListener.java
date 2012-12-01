@@ -109,6 +109,7 @@ public class VehicleListener extends CraftBookDelegateListener {
     	NONE(true),
     	PHASE(true),
     	PHASE_PLOW(true),
+    	PHANTOM(true),
     	SMASH(true),
     	SMASH_SCALED(true),
     	RAM(true),
@@ -2437,7 +2438,8 @@ public class VehicleListener extends CraftBookDelegateListener {
     			
     			return true;
     		}
-    		else if(minecartCollisionType == MinecartCollisionType.SMASH
+    		else if(minecartCollisionType == MinecartCollisionType.PHANTOM
+    				|| minecartCollisionType == MinecartCollisionType.SMASH
     				|| minecartCollisionType == MinecartCollisionType.SMASH_SCALED
     				|| minecartCollisionType == MinecartCollisionType.RAM
     				|| minecartCollisionType == MinecartCollisionType.RAM_SCALED
@@ -2446,6 +2448,7 @@ public class VehicleListener extends CraftBookDelegateListener {
     				)
     		{
     			if(collisioner.getEntity() instanceof OEntityMinecart
+    				&& minecartCollisionType != MinecartCollisionType.PHANTOM
     				&& minecartCollisionType != MinecartCollisionType.SMASH
     				&& minecartCollisionType != MinecartCollisionType.SMASH_SCALED
     				)
@@ -2464,27 +2467,30 @@ public class VehicleListener extends CraftBookDelegateListener {
 						return false;
 					}
 					
-    				if( (!collisioner.isPlayer()
-    						|| minecart1.getPassenger() == null
-    						|| minecart1.getPassenger().getEntity().hashCode() != collisioner.getEntity().hashCode()
-    						)
-    					&& (!collisioner.isPlayer()
-    						|| minecartCollisionType == MinecartCollisionType.NO_MERCY
-    						|| minecartCollisionType == MinecartCollisionType.NO_MERCY_SCALED
-    						)
-    					)
-	    			{
-	    				int damage = 20;
-	    				
-	    				if(minecartCollisionType == MinecartCollisionType.SMASH_SCALED
-	    					|| minecartCollisionType == MinecartCollisionType.RAM_SCALED
-	    					|| minecartCollisionType == MinecartCollisionType.NO_MERCY_SCALED)
-	    				{
-	    					damage = (int)Math.ceil((s / minecartMaxSpeed) * 20 * 2);
-	    				}
-	    				
-	    				collisioner.getEntity().a(ODamageSource.k, damage);
-	    			}
+					if(minecartCollisionType != MinecartCollisionType.PHANTOM)
+					{
+	    				if( (!collisioner.isPlayer()
+	    						|| minecart1.getPassenger() == null
+	    						|| minecart1.getPassenger().getEntity().hashCode() != collisioner.getEntity().hashCode()
+	    						)
+	    					&& (!collisioner.isPlayer()
+	    						|| minecartCollisionType == MinecartCollisionType.NO_MERCY
+	    						|| minecartCollisionType == MinecartCollisionType.NO_MERCY_SCALED
+	    						)
+	    					)
+		    			{
+		    				int damage = 20;
+		    				
+		    				if(minecartCollisionType == MinecartCollisionType.SMASH_SCALED
+		    					|| minecartCollisionType == MinecartCollisionType.RAM_SCALED
+		    					|| minecartCollisionType == MinecartCollisionType.NO_MERCY_SCALED)
+		    				{
+		    					damage = (int)Math.ceil((s / minecartMaxSpeed) * 20 * 2);
+		    				}
+		    				
+		    				collisioner.getEntity().a(ODamageSource.k, damage);
+		    			}
+					}
     			}
     			
     			return true;

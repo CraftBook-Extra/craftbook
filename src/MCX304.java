@@ -82,7 +82,7 @@ public class MCX304 extends MCX140 {
     	}
     	else
     	{
-    		settings = "PLAYER";
+    		settings = "CREATURE";
     	}
     	
     	if(!sign.getLine3().isEmpty())

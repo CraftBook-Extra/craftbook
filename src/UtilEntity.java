@@ -90,6 +90,8 @@ public class UtilEntity
     	
     	return entityType.equalsIgnoreCase("MOB")
     			|| entityType.equalsIgnoreCase("ANIMAL")
+    			|| entityType.equalsIgnoreCase("CREATURE")
+    			|| entityType.equalsIgnoreCase("LIVING")
     			|| Mob.isValid(entityType)
     			;
     }
@@ -214,7 +216,15 @@ public class UtilEntity
 		if(entity == null)
     		return false;
 		
-		if(entityName.equalsIgnoreCase("MOB"))
+		if(entityName.equalsIgnoreCase("LIVING"))
+    	{
+    		return entity.isLiving();
+    	}
+		else if(entityName.equalsIgnoreCase("CREATURE"))
+    	{
+    		return entity.isMob() || entity.isAnimal();
+    	}
+		else if(entityName.equalsIgnoreCase("MOB"))
     	{
     		return entity.isMob();
     	}

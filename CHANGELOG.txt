@@ -1,3 +1,15 @@
+2.0extra19.2:
+- added "phantom" minecart collision type
+    - Minecarts will pass through dropped items, mobs, animals, and players
+    - Minecarts can still be pushed if going "slow"
+    - thanks Link for the suggestion!
+- added "CREATURE" and "LIVING" options for ICs such as [MCX140], [MCU140],
+    [MCX142], [MCU142], [MCX144], [MCU144], [MCU304]
+    - CREATURE includes both mobs and animals
+    - LIVING includes mobs, animals, and players
+    - thanks Link for the suggestion!
+- updated [MCU304] to default to "CREATURE" instead of "PLAYER"
+
 2.0extra19.1:
 - updated to minecraft 1.4.5
 
