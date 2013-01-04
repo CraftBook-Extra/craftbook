@@ -222,16 +222,16 @@ public class MCX203 extends BaseIC {
 				//boolean found = false;
 		        for(ItemEntity itemEnt : items)
 		        {
-		        	OEntityItem eitem = itemEnt.getEntity();
+		        	Item citem = itemEnt.getItem();
 		        	
-		        	if(!UtilEntity.isDead(eitem) && eitem.a.a > 0 && (item == -1 || (eitem.a.c == item && (color < 0 || eitem.a.j() == color) )))
+		        	if(!UtilEntity.isDead(itemEnt.getEntity()) && citem.getAmount() > 0 && (item == -1 || (citem.getItemId() == item && (color < 0 || citem.getDamage() == color) )))
 					{
 						double diffX = x - itemEnt.getX();
 						double diffY = y - itemEnt.getY();
 						double diffZ = z - itemEnt.getZ();
 						
 						if(((diffX * diffX + diffY * diffY + diffZ * diffZ) < distance)
-							&& source.hasAvailableSlotSpace(eitem.a.c, (byte)eitem.a.j(), eitem.a.a))
+							&& source.hasAvailableSlotSpace(citem.getItemId(), (byte)citem.getDamage(), citem.getAmount()))
 						{
 							//found = true;
 
@@ -244,7 +244,7 @@ public class MCX203 extends BaseIC {
 							
 							//store
 							try {
-		                        source.storeBlock(eitem.a.c, eitem.a.j(), eitem.a.a, enchants);
+		                        source.storeBlock(citem.getItemId(), (byte)citem.getDamage(), citem.getAmount(), enchants);
 		                    } catch (BlockSourceException e) {
 		                        break;
 		                    }

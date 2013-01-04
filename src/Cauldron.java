@@ -223,7 +223,7 @@ public class Cauldron {
                 			if(invitem != null
                 				&& invitem.getItemId() == cbitem.id()
                 				&& (cbitem.color() == -1 || invitem.getDamage() == cbitem.color())
-                				&& invitem.getAmount() < ItemArrayUtil.getStackMax(invitem)
+                				&& invitem.getAmount() < invitem.getMaxAmount()
                 				)
                 			{
                 				invitem.setAmount(invitem.getAmount() + 1);

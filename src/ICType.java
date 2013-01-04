@@ -270,7 +270,8 @@ public enum ICType {
 					Redstone.isHighBinary(cbworld, inVec[2], true),
 					changedRedstoneInput.equals(inVec[0]) ||
 					changedRedstoneInput.equals(inVec[1]) ||
-					changedRedstoneInput.equals(inVec[2])
+					changedRedstoneInput.equals(inVec[2]) ||
+					changedRedstoneInput.equals(pt.subtract(0, 1, 0))
     		);
     		
     	}

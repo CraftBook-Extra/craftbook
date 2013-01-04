@@ -72,7 +72,7 @@ public class CBSlotCrafting extends OSlotCrafting
 
             OItemStack oitemstack1 = new OItemStack(oitemstack.b().r());
 
-            if (oitemstack.b().h(oitemstack) && thePlayer.bI.a(oitemstack1))
+            if (oitemstack.b().j(oitemstack) && thePlayer.bJ.a(oitemstack1))
             {
                 continue;
             }

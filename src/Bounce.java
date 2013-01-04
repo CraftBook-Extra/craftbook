@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.sk89q.craftbook.BlockArea;
 import com.sk89q.craftbook.BlockType;
@@ -19,6 +20,8 @@ public class Bounce
 	protected static int[] blockBounce = new int[]{0, -1};
 	protected static int[] blockSoft = new int[]{0, -1};
 	protected static int force = 3;
+	
+	protected static boolean bounceCreatures = false;
 	
 	protected static int maxICForce = 8;
 	public static ArrayList<Integer> allowedICBlocks;
@@ -255,5 +258,45 @@ public class Bounce
 		}
 		
 		return false;
+	}
+	
+	protected static void bounceCreatures()
+	{
+		Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
+        while(worldIter.hasNext())
+        {
+        	Map.Entry<String, OWorldServer[]> entry = (Map.Entry<String, OWorldServer[]>)worldIter.next();
+        	OWorldServer[] oworlds = (OWorldServer[])entry.getValue();
+        	
+        	for(int i = 0; i < oworlds.length; i++)
+        	{
+	    		for(@SuppressWarnings("rawtypes")
+	    		Iterator it = oworlds[i].e.iterator(); it.hasNext();)
+	    		{
+	    			Object obj = it.next();
+	    			if(obj instanceof OEntityCreature)
+	    			{
+	    				BaseEntity entity = new BaseEntity((OEntity)obj);
+	    				OEntity oentity = entity.getEntity();
+	    				Location loc = new Location();
+	    		        loc.x = oentity.q;
+	    		        loc.y = oentity.r;
+	    		        loc.z = oentity.s;
+	    		        loc.rotX = entity.getRotation();
+	    		        loc.rotY = entity.getPitch();
+	    		        loc.dimension = entity.getWorld().getType().getId();
+	    		        
+	    		        Location loc2 = new Location();
+	    		        loc.x = entity.getX();
+	    		        loc.y = entity.getY();
+	    		        loc.z = entity.getZ();
+	    		        loc.rotX = entity.getRotation();
+	    		        loc.rotY = entity.getPitch();
+	    		        loc.dimension = entity.getWorld().getType().getId();
+	    				bounce(entity, loc, loc2);
+	    			}
+	    		}
+        	}
+        }
 	}
 }

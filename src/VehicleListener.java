@@ -954,7 +954,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                             					&& cartItems[i].getDamage() == cbItem.color()
                             					&& UtilItem.enchantsAreEqual(cartItems[i].getEnchantments(), cbItem.enchantments())
                             					&& cartItems[i].getAmount() > 0
-                            					&& cartItems[i].getAmount() < ItemArrayUtil.getStackMax(cartItems[i])
+                            					&& cartItems[i].getAmount() < cartItems[i].getMaxAmount()
                             					)
                             				{
                             					cartItems[i].setAmount(cartItems[i].getAmount() + 1);
@@ -1999,6 +1999,205 @@ public class VehicleListener extends CraftBookDelegateListener {
         
         return false;
     }
+    
+    public boolean onBlockRightClick(Player player, Block blockClicked, Item itemInHand)
+    {
+    	if(blockClicked.getType() == BlockType.DISPENSER)
+    	{
+    		World world = player.getWorld();
+    		int under = CraftBook.getBlockID(world, blockClicked.getX(), blockClicked.getY() - 1, blockClicked.getZ());
+    		if(under == BlockType.SIGN_POST || under == BlockType.WALL_SIGN)
+    		{
+	    		ComplexBlock cblock = world.getComplexBlock(blockClicked.getX(), blockClicked.getY() - 1, blockClicked.getZ());
+
+	            if(cblock instanceof Sign && ((Sign)cblock).getText(1).equalsIgnoreCase("[SpawnCart]"))
+	            {
+	            	if(!player.canUseCommand("/cbspawncart"))
+	            	{
+	            		return true;
+	            	}
+	            }
+    		}
+    	}
+    	return false;
+    }
+    
+    public boolean onDispense(Dispenser dispenser, BaseEntity tobedispensed)
+    {
+    	World world = dispenser.getWorld();
+    	
+    	int under = CraftBook.getBlockID(world, dispenser.getX(), dispenser.getY()-1, dispenser.getZ());
+    	if(under == BlockType.SIGN_POST || under == BlockType.WALL_SIGN)
+    	{
+    		Sign sign = (Sign)world.getComplexBlock(dispenser.getX(), dispenser.getY()-1, dispenser.getZ());
+    		if(sign.getText(1).equalsIgnoreCase("[SpawnCart]"))
+    		{
+    			int offset = 1;
+    			if(!sign.getText(3).isEmpty())
+    			{
+    				offset = Integer.parseInt(sign.getText(3));
+    			}
+    			Vector rail = new Vector(dispenser.getX(), dispenser.getY()+offset, dispenser.getZ());
+    			
+    			if(!BlockType.isRail(CraftBook.getBlockID(world, rail)))
+    			{
+    				if(offset == 1 && sign.getText(3).isEmpty())
+    				{
+    					offset++;
+    					rail = new Vector(dispenser.getX(), dispenser.getY()+offset, dispenser.getZ());
+    					if(!BlockType.isRail(CraftBook.getBlockID(world, rail)))
+            			{
+            				//no rail, so no spawn
+            				return true;
+            			}
+    				}
+    				else
+    				{
+	    				//no rail, so no spawn
+	    				return true;
+    				}
+    			}
+    			
+    			Item item = dispenser.getItemFromSlot(0);
+    			
+    			int cartid = 328;
+    			if(item != null)
+    			{
+    				//no real need to confirm it is a minecart type
+    				cartid = item.getItemId();
+    			}
+    			
+    			Minecart minecart = dispenseSpawn(cartid, world, dispenser, rail);
+    			
+    			String line3 = sign.getText(2);
+    			if(!line3.isEmpty())
+    			{
+    				if(minecart.getType() == Minecart.Type.Minecart && line3.equalsIgnoreCase("LOAD"))
+    				{
+    					OEntityPlayer eplayer = world.getWorld().a(minecart.getEntity(), 3.0D);
+                    
+	                    if(eplayer != null)
+	                	{
+	                    	UtilEntity.mountEntity(eplayer, minecart.getEntity());
+	                	}
+    				}
+    			}
+    			
+    			return true;
+    		}
+    	}
+    	
+		Vector rail = new Vector(dispenser.getX(), dispenser.getY()+1, dispenser.getZ());
+		int over = CraftBook.getBlockID(world, rail);
+		
+		if(!BlockType.isRail(over))
+		{
+			rail = new Vector(dispenser.getX(), dispenser.getY()+2, dispenser.getZ());
+			over = CraftBook.getBlockID(world, rail);
+		}
+		
+		if(!BlockType.isRail(over))
+		{
+			return false;
+		}
+    	
+    	Item[] items = dispenser.getContents();
+    	
+    	for(int i = 0; i < items.length; i++)
+    	{
+    		if(items[i] != null)
+    		{
+    			int id = items[i].getItemId();
+    			if(id == 328
+    				|| id == 342
+    				|| id == 343
+    				)
+    			{
+    				if(items[i].getAmount()-1 <= 0)
+    				{
+    					items[i] = null;
+    					dispenser.setContents(items);
+    					dispenser.update();
+    				}
+    				else
+    				{
+    					items[i].setAmount(items[i].getAmount()-1);
+    				}
+    				
+    				dispenseSpawn(id, world, dispenser, rail);
+    				
+    				break;
+    			}
+    		}
+    	}
+    	
+    	return true;
+    }
+    
+    private Minecart dispenseSpawn(int cartid, World world, Dispenser dispenser, Vector rail)
+    {
+    	int carttype = 0;
+		switch(cartid)
+		{
+			case 328:
+				carttype = 0;
+				break;
+			case 342:
+				carttype = 1;
+				break;
+			case 343:
+				carttype = 2;
+				break;
+		}
+    	
+    	Minecart minecart = spawnMinecart(CraftBook.getCBWorld(world), rail.getX()+0.5D, rail.getY(), rail.getZ()+0.5D, carttype);
+		
+		int data = CraftBook.getBlockData(world, dispenser.getX(), dispenser.getY(), dispenser.getZ());
+		int raildata = CraftBook.getBlockData(world, rail);
+		int railtype = CraftBook.getBlockID(world, rail);
+		
+		if(railtype == BlockType.POWERED_RAIL || railtype == BlockType.DETECTOR_RAIL)
+		{
+			raildata = raildata & 0x7;
+		}
+		
+		Vector motion = null;
+		if(data == 2
+			&& (raildata == 0 || raildata == 4 || raildata == 5 || raildata == 8 || raildata == 9)
+			)
+		{
+			//north
+			motion = new Vector(0, 0, -minecartBoostLaunch);
+		}
+		else if(data == 3
+				&& (raildata == 0 || raildata == 4 || raildata == 5 || raildata == 6 || raildata == 7)
+				)
+		{
+			//south
+			motion = new Vector(0, 0, minecartBoostLaunch);
+		}
+		else if(data == 4
+				&& (raildata == 1 || raildata == 2 || raildata == 3 || raildata == 7 || raildata == 8)
+				)
+		{
+			//west
+			motion = new Vector(-minecartBoostLaunch, 0, 0);
+		}
+		else if(data == 5
+				&& (raildata == 1 || raildata == 2 || raildata == 3 || raildata == 6 || raildata == 9)
+				)
+		{
+			//east
+			motion = new Vector(minecartBoostLaunch, 0, 0);
+		}
+		
+		if(motion != null)
+		{
+			minecart.setMotion(motion.getX(), motion.getY(), motion.getZ());
+		}
+		
+		return minecart;
+    }
 
     /**
      * Called when a sign is updated.
@@ -2271,6 +2470,57 @@ public class VehicleListener extends CraftBookDelegateListener {
                 }
                 
                 player.sendMessage(Colors.Gold + "Warp sign detected.");
+            } else {
+                player.sendMessage(Colors.Rose
+                        + "Minecart control blocks are disabled on this server.");
+            }
+            // SpawnCart
+        } else if (line2.equalsIgnoreCase("[SpawnCart]")) {
+        	if(!player.canUseCommand("/cbspawncart"))
+        	{
+        		player.sendMessage(Colors.Rose + "You do not have permission to make that.");
+                CraftBook.dropSign(world, sign.getX(), sign.getY(), sign.getZ());
+                return true;
+        	}
+        	
+        	sign.setText(1, "[SpawnCart]");
+            sign.update();
+            
+            if (minecartControlBlocks) {
+                
+                if(!line1.isEmpty())
+                {
+                	sign.setText(0, "");
+                	sign.update();
+                }
+                
+                String line3 = sign.getText(2);
+                if(!line3.isEmpty())
+                {
+                	if(!line3.equalsIgnoreCase("LOAD"))
+            		{
+            			player.sendMessage(Colors.Rose + "Invalid value on Line 3.");
+                        CraftBook.dropSign(world, sign.getX(), sign.getY(), sign.getZ());
+                        return true;
+            		}
+                }
+                
+                String line4 = sign.getText(3);
+                if(!line4.isEmpty())
+                {
+                	try
+                	{
+                		Integer.parseInt(line4);
+                	}
+                	catch(NumberFormatException e)
+                	{
+                		player.sendMessage(Colors.Rose + "Line 4 must be a number.");
+                        CraftBook.dropSign(world, sign.getX(), sign.getY(), sign.getZ());
+                        return true;
+                	}
+                }
+                
+                player.sendMessage(Colors.Gold + "SpawnCart sign detected.");
             } else {
                 player.sendMessage(Colors.Rose
                         + "Minecart control blocks are disabled on this server.");
@@ -2688,7 +2938,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             	if(info == null)
             		return false;
             	
-            	OItemStack iStack = player.getEntity().bI.g();
+            	OItemStack iStack = player.getEntity().bJ.g();
             	if(iStack != null && player.getItemInHand() >= 0) {
             		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info)) || 
             			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info))) {

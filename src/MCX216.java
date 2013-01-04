@@ -144,9 +144,9 @@ public class MCX216 extends BaseIC {
 		        	return;
 		        
 		        for(ItemEntity itemEnt : items) {
-		        	OEntityItem eitem = itemEnt.getEntity();
+		            Item citem = itemEnt.getItem();
 		        	
-		        	if(!UtilEntity.isDead(eitem) && eitem.a.a > 0 && eitem.a.c == this.itemId && (this.damVal == -1 || (this.damVal == -1 || eitem.a.j() == this.damVal))) {
+		        	if(!UtilEntity.isDead(itemEnt.getEntity()) && citem.getAmount() > 0 && citem.getItemId() == this.itemId && (this.damVal == -1 || (this.damVal == -1 || citem.getDamage() == this.damVal))) {
 						double diffX = target.getBlockX() - itemEnt.getX();
 						double diffY = target.getBlockY() - itemEnt.getY();
 						double diffZ = target.getBlockZ() - itemEnt.getZ();
@@ -155,7 +155,7 @@ public class MCX216 extends BaseIC {
 							itemEnt.destroy();
 
 							world.setBlockAt(getBlockByItem(this.itemId), target.getBlockX(), target.getBlockY(), target.getBlockZ());
-							world.setBlockData(target.getBlockX(), target.getBlockY(), target.getBlockZ(), eitem.a.j());
+							world.setBlockData(target.getBlockX(), target.getBlockY(), target.getBlockZ(), citem.getDamage());
 
 							break;
 						}

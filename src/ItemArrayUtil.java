@@ -83,7 +83,7 @@ public class ItemArrayUtil {
                                 throw new TransferredItemException();
                             } else {
                             	
-                            	int maxStack = getStackMax(chestItem);
+                            	int maxStack = chestItem.getMaxAmount();
                             	
                             	if (chestItem.getItemId() == cartItem.getItemId()
                             			&& isSameColor(chestItem, cartItem)
@@ -172,7 +172,7 @@ public class ItemArrayUtil {
         	int maxStack = 0;
         	if(toItem != null)
         	{
-        		maxStack = getStackMax(toItem);
+        		maxStack = toItem.getMaxAmount();
         		if(toItem.getAmount() >= maxStack
         			|| (itemType > 0 && (itemType != toItem.getItemId() || (itemColor != -1 && itemColor != toItem.getDamage()) ))
         			)
@@ -236,7 +236,7 @@ public class ItemArrayUtil {
         			}
         			
         			//if not max, re-check slot
-        			maxStack = getStackMax(toItems[toSlot]);
+        			maxStack = toItems[toSlot].getMaxAmount();
         			if(toItems[toSlot].getAmount() < maxStack)
         			{
         				toSlot--;
@@ -313,14 +313,6 @@ public class ItemArrayUtil {
                 itemArray.setSlot(contents[i], i);
             }
         }
-    }
-    
-    /*
-     * assumes item is valid
-     */
-    protected static int getStackMax(Item item)
-    {
-    	return OItem.e[item.getItemId()].k();
     }
     
     /*

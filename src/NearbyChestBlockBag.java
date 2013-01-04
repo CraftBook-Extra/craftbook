@@ -246,7 +246,7 @@ public class NearbyChestBlockBag extends BlockBag {
                 	
                     if (itemArray[i] != null) {
                         // Found an item
-                    	int itemMax = ItemArrayUtil.getStackMax(itemArray[i]);
+                    	int itemMax = itemArray[i].getMaxAmount();
                         if (itemArray[i].getItemId() == id &&
                         	(data == -1 || itemArray[i].getDamage() == data) &&
                             itemArray[i].getAmount() < itemMax &&
@@ -318,7 +318,7 @@ public class NearbyChestBlockBag extends BlockBag {
             for (int i = 0; itemArray.length > i; i++) {
                 if (itemArray[i] != null) {
                     // Found an item
-                	int itemMax = ItemArrayUtil.getStackMax(itemArray[i]);
+                	int itemMax = itemArray[i].getMaxAmount();
                     if (itemArray[i].getItemId() == id &&
                     	(color == -1 || itemArray[i].getDamage() == color) &&
                         itemArray[i].getAmount() < itemMax) {

@@ -647,6 +647,18 @@ public final class BlockType {
                 || id == BREWING_STAND
                 ;
     }
+    
+    /**
+     * Returns true if a block is a rail type.
+     *
+     * @param id
+     * @return
+     */
+    public static boolean isRail(int id) {
+        return id == MINECART_TRACKS
+                || id == POWERED_RAIL
+                || id == DETECTOR_RAIL;
+    }
 
     /**
      * Get the block or item that would have been dropped. If nothing is

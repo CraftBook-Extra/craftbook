@@ -131,7 +131,7 @@ public class CraftBook extends Plugin {
         TickPatch.applyPatch(defaultWorld);
         
         OWorld odefaultWorld = defaultWorld.getWorld();
-        OWorldSavedData wdata = odefaultWorld.B.a(CBData.class, "craftbook");
+        OWorldSavedData wdata = odefaultWorld.a(CBData.class, "craftbook");
         
         if(wdata != null && !(wdata instanceof CBData))
         {
@@ -140,21 +140,21 @@ public class CraftBook extends Plugin {
         	if(wdata.d())
         	{
         		//force save-all
-        		odefaultWorld.B.a();
+        		odefaultWorld.A.a();
         	}
         	
         	try {
-            	Field field = odefaultWorld.B.getClass().getDeclaredField("b");
+            	Field field = odefaultWorld.A.getClass().getDeclaredField("b");
             	field.setAccessible(true);
             	
             	@SuppressWarnings("rawtypes")
-				HashMap loadedDataMap = (HashMap)field.get(odefaultWorld.B);
+				HashMap loadedDataMap = (HashMap)field.get(odefaultWorld.A);
             	
-            	field = odefaultWorld.B.getClass().getDeclaredField("c");
+            	field = odefaultWorld.A.getClass().getDeclaredField("c");
             	field.setAccessible(true);
             	
             	@SuppressWarnings("rawtypes")
-				ArrayList loadedDataList = (ArrayList)field.get(odefaultWorld.B);
+				ArrayList loadedDataList = (ArrayList)field.get(odefaultWorld.A);
             	
             	loadedDataList.remove(loadedDataMap.remove("craftbook"));
             } catch (SecurityException e) {
@@ -167,13 +167,13 @@ public class CraftBook extends Plugin {
     			e.printStackTrace();
     		}
         	
-        	wdata = odefaultWorld.B.a(CBData.class, "craftbook");
+        	wdata = odefaultWorld.A.a(CBData.class, "craftbook");
         }
         
         if(wdata == null)
         {
         	CraftBook.cbdata = new CBData();
-			odefaultWorld.B.a("craftbook", CraftBook.cbdata);
+			odefaultWorld.A.a("craftbook", CraftBook.cbdata);
         }
         else
         {
@@ -205,6 +205,7 @@ public class CraftBook extends Plugin {
         registerHook(vehicle, "DISCONNECT", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "SIGN_CHANGE", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "BLOCK_PLACE", PluginListener.Priority.LOW);
+        registerHook(vehicle, "BLOCK_RIGHTCLICKED", PluginListener.Priority.LOW);
         registerHook(vehicle, "COMMAND", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "VEHICLE_POSITIONCHANGE", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "VEHICLE_UPDATE", PluginListener.Priority.MEDIUM);
@@ -212,6 +213,7 @@ public class CraftBook extends Plugin {
         registerHook(vehicle, "VEHICLE_ENTERED", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "VEHICLE_DESTROYED", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "VEHICLE_COLLISION", PluginListener.Priority.MEDIUM);
+        registerHook(vehicle, "DISPENSE", PluginListener.Priority.MEDIUM);
         listener.registerDelegate(vehicle);
         
         // Our hook-free inventories listener

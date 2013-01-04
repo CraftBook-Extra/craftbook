@@ -242,6 +242,11 @@ public class RedstoneListener extends CraftBookDelegateListener
         		}
         	}
         }
+        
+        if(properties.containsKey("bounce-creatures"))
+        {
+        	Bounce.bounceCreatures = properties.getBoolean("bounce-creatures", false);
+        }
 
         icList.clear();
         
@@ -776,6 +781,13 @@ public class RedstoneListener extends CraftBookDelegateListener
     }
 
     public void onTick() {
+    	
+    	//[NOTE]: Placing Bounce here instead of Mech to re-use onTick. If more onTick is needed in Mech, then move.
+    	if(Bounce.bounceCreatures)
+    	{
+    		Bounce.bounceCreatures();
+    	}
+    	
         if(!enableSelfTriggeredICs) return;
         
         Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();

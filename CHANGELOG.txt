@@ -1,3 +1,57 @@
+2.0extra20.0:
+- updated to minecraft 1.4.6
+- added ability to bounce creatures (mobs or animals) on bounce-blocks
+    - disabled by default
+    - set the craftbook.properties setting "bounce-creatures=" to "true" to
+        enable.
+    - thanks Link for the suggestion!
+- added [SpawnCart] feature for minecarts
+    - allows you to spawn minecarts above the [SpawnCart] block
+    - the [SpawnCart] block is the Dispenser block.
+    - there are two ways to make a [SpawnCart]
+        - without a [SpawnCart] sign:
+            - simply place a rail over any Dispenser block or on the block
+                directly above the Dispenser block
+            - then fill the Dispenser block with the minecart types you want to
+                spawn above.
+            - minecarts will spawn onto the rail, removing one minecart from the
+                Dispenser block each time.
+            - this works just like normal Dispenser blocks with a rail infront.
+                This just spawns minecarts ontop instead.
+        - with a [SpawnCart] sign (to spawn infinite amount of minecarts):
+            - creating a [SpawnCart] sign requires permission to the command:
+                /cbspawncart
+            - place the [SpawnCart] sign directly under the Dispenser block
+                - optional:
+                    - type "load" on the 3rd line to load any nearby player
+                        into the minecart when it spawns
+                    - on the 4th line, type a y-offset number for how high or
+                        low to spawn the minecart. A rail MUST be at the
+                        location.
+            - place a rail directly above or on the block directly above the
+                Dispenser block. Or if using the optional y-offset, place the
+                rail at the y-offset.
+            - place a minecart in the *1st slot* of the Dispenser block
+                - the minecart type in the 1st slot will be the type of minecart
+                    that spawns
+                    - Ex: placing a storage cart in the 1st slot spawns storage
+                        carts, placing a powered cart in the 1st slot spawns
+                        powered carts, etc
+                    - if left empty, normal minecarts will spawn
+            - for protection, players will need permission to the same
+                /cbspawncart command in order to view the items in the Dispenser
+                blocks above [SpawnCart] signs.
+                - this is so that normal players can not change the type of
+                    minecart that spawns.
+    - Spawned minecarts will be boosted in the direction the Dispenser block
+        points to. To prevent boosting, set the direction of the Dispenser block
+        to be perpendicular to the direction of the rail.
+        - Ex: if the rail goes North and South, then point the Dispenser block
+            West or East to prevent boosting.
+    - thanks svdragster for the suggestion!
+- fixed issue with toggling ICs with redstone both infront and under the sign
+    - thanks 14mRh4X0r for the bug report!
+
 2.0extra19.2:
 - added "phantom" minecart collision type
     - Minecarts will pass through dropped items, mobs, animals, and players
