@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -236,9 +237,6 @@ public class CraftBook extends Plugin {
         stateThread.start();
         
         CBWarp.reload();
-        
-        if(Sitting.enabled)
-        	EntitySitting.updateTrackers();
     }
 
     /**
@@ -312,15 +310,14 @@ public class CraftBook extends Plugin {
         	
         	for(int i = 0; i < oworlds.length; i++)
         	{
-	    		for(@SuppressWarnings("rawtypes")
-	    		Iterator it = oworlds[i].e.iterator(); it.hasNext();)
-	    		{
-	    			Object obj = it.next();
-	    			if(obj instanceof EntitySitting)
-	    			{
-	    				((EntitySitting)obj).x();
-	    			}
-	    		}
+        	    List<BaseEntity> entities = oworlds[i].world.getEntityList();
+        	    for(BaseEntity entity : entities)
+        	    {
+        	        if(entity != null && entity.getEntity() instanceof EntitySitting)
+        	        {
+        	            entity.destroy();
+        	        }
+        	    }
         	}
         }
         
@@ -626,28 +623,23 @@ public class CraftBook extends Plugin {
 		{
 			World world = CraftBook.getWorld(cbworld);
 			boolean found = false;
-			for(@SuppressWarnings("rawtypes")
-    		Iterator it = world.getWorld().e.iterator(); it.hasNext();)
-    		{
-				Object obj = it.next();
-    			
-    			if(!(obj instanceof OEntityPlayerMP))
-    			{
-    				continue;
-    			}
-    			
-    			if(((OEntityPlayerMP)obj).hashCode() == player.getEntity().hashCode())
-    			{
-    				found = true;
-    				break;
-    			}
-    		}
+			
+			List<BaseEntity> entities = world.getEntityList();
+			for(BaseEntity entity : entities)
+			{
+			    if(entity.isPlayer() && entity.getEntity().hashCode() == player.getEntity().hashCode())
+			    {
+			        found = true;
+                    break;
+			    }
+			}
 			
 			if(!found)
 			{
-				UtilEntity.spawnEntityInWorld(world.getWorld(), player.getEntity());
-				player.getEntity().b(wLocation.getX(), player.getY(), wLocation.getZ(), player.getRotation(), player.getPitch());
-				world.getWorld().a(player.getEntity(), false);
+			    UtilEntity.setOWorld(world.getWorld(), player.getEntity());
+			    player.teleportTo(wLocation.getX(), player.getY(), wLocation.getZ(), player.getRotation(), player.getPitch());
+			    player.spawn();
+			    UtilEntity.updateEntityWithOptionalForce(world.getWorld(), player.getEntity(), false);
 			}
 		}
     }
@@ -660,7 +652,7 @@ public class CraftBook extends Plugin {
      */
     public static void teleportEntity(BaseEntity entity, WorldLocation wLocation)
     {
-    	if(entity == null || UtilEntity.isDead(entity.getEntity()))
+    	if(entity == null || entity.isDead())
     		return;
     	
     	CraftBookWorld cbworld = wLocation.getCBWorld();
@@ -680,38 +672,38 @@ public class CraftBook extends Plugin {
     	if(worldType.getId() != cbworld.dimension() || !entity.getWorld().getName().equals(cbworld.name()))
     	{
     		World newWorld = CraftBook.getWorld(cbworld);
-    		OEntity rider = UtilEntity.riddenByEntity(entity.getEntity());
+    		BaseEntity rider = entity.getRiddenByEntity();
     		
     		if(rider != null)
     		{
-    			UtilEntity.mountEntity(rider, entity.getEntity());
-    			if(rider instanceof OEntityPlayerMP)
+    		    entity.setRiddenByEntity(rider);
+    			if(rider.isPlayer())
     			{
-    				CraftBook.teleportPlayer(new Player((OEntityPlayerMP)rider), wLocation);
+    				CraftBook.teleportPlayer((Player)rider, wLocation);
     			}
     			else
     			{
-    				CraftBook.teleportEntity(new BaseEntity((OEntity)rider), wLocation);
+    				CraftBook.teleportEntity(rider, wLocation);
     			}
     		}
     		
-    		oldWorld.getWorld().f(entity.getEntity());
-    		entity.getEntity().L = false;
+    		UtilEntity.removeEntity(oldWorld.getWorld(), entity.getEntity());
+    		UtilEntity.setDead(entity.getEntity(), false);
     		
     		wLocation = wLocation.add(0.0D, 0.6200000047683716D, 0.0D);
     		
-    		oldWorld.getWorld().a(entity.getEntity(), false);
+    		UtilEntity.updateEntityWithOptionalForce(oldWorld.getWorld(), entity.getEntity(), false);
     		
     		entity.teleportTo(Util.worldLocationToLocation(wLocation));
+    		entity.spawn();
     		
-    		UtilEntity.spawnEntityInWorld(newWorld.getWorld(), entity.getEntity());
-    		newWorld.getWorld().a(entity.getEntity(), false);
+    		UtilEntity.updateEntityWithOptionalForce(newWorld.getWorld(), entity.getEntity(), false);
     		
-    		entity.getEntity().a(newWorld.getWorld());
+    		UtilEntity.setOWorld(newWorld.getWorld(), entity.getEntity());
     		
     		if(rider != null)
     		{
-    			UtilEntity.mountEntity(rider, entity.getEntity());
+    		    entity.setRiddenByEntity(rider);
     		}
     	}
     	

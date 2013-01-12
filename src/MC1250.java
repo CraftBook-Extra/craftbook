@@ -92,11 +92,11 @@ public class MC1250 extends BaseIC {
                 return;
             }
             
-            OWorldServer oworld = CraftBook.getOWorldServer(chip.getCBWorld());
-            if(oworld == null)
+            World world = CraftBook.getWorld(chip.getCBWorld());
+            if(world == null)
             	return;
             
-            OEntityArrow arrow = shoot(oworld, x + 0.5, y + 1.5, z + 0.5);
+            Arrow arrow = shoot(world, x + 0.5, y + 1.5, z + 0.5);
 
             Firework instance = new Firework(arrow);
             (new Thread(instance)).start();
@@ -114,7 +114,7 @@ public class MC1250 extends BaseIC {
         /**
          * Arrow.
          */
-        private OEntityArrow arrow;
+        private Arrow arrow;
         /**
          * Expiration time.
          */
@@ -125,10 +125,10 @@ public class MC1250 extends BaseIC {
          * 
          * @param arrow
          */
-        public Firework(OEntityArrow arrow) {
+        public Firework(Arrow arrow) {
             expireTime = System.currentTimeMillis() + 5000;
             this.arrow = arrow;
-            lastY = arrow.u;
+            lastY = arrow.getY();
         }
 
         /**
@@ -137,18 +137,18 @@ public class MC1250 extends BaseIC {
         public void run() {
             try {
                 while (true) {
-                    final double arrowX = arrow.t;
-                    final double arrowY = arrow.u;
-                    final double arrowZ = arrow.v;
+                    final double arrowX = arrow.getX();
+                    final double arrowY = arrow.getY();
+                    final double arrowZ = arrow.getZ();
                     
                     if (arrowY < lastY) {
                         etc.getServer().addToServerQueue(new Runnable() {
                             public void run() {
-                            	arrow.x();
+                            	arrow.destroy();
                             	//arrow.bi.f(arrow);
                                 
                                 // Make TNT explode
-                                explodeTNT(arrow.p, arrowX, arrowY, arrowZ);
+                                explodeTNT(arrow.getWorld(), arrowX, arrowY, arrowZ);
                                 //explodeTNT(arrow.aL, 
                                         //arrowX + r.nextDouble() * 2 - 1,
                                         //arrowY + r.nextDouble() * 1,
@@ -180,11 +180,14 @@ public class MC1250 extends BaseIC {
      * @param spread
      * @param vertVel
      */
-    protected OEntityArrow shoot(OWorldServer oworld, double x, double y, double z) {
-        OEntityArrow arrow = new OEntityArrow(oworld);
-        arrow.b(x, y, z, 0, 0);
-        oworld.d(arrow);
-        arrow.c(0, 50D, 0, 1.05F, 20);
+    protected Arrow shoot(World world, double x, double y, double z) {
+        Arrow arrow = new Arrow(world);
+        arrow.teleportTo(x - 0.5D,
+                         y,
+                         z - 0.5D,
+                         0, 0);
+        arrow.spawn();
+        UtilEntity.setThrowableHeading(arrow.getEntity(), 0, 50D, 0, 1.05F, 20);
         return arrow;
     }
     
@@ -195,10 +198,10 @@ public class MC1250 extends BaseIC {
      * @param y
      * @param z
      */
-    protected static void explodeTNT(OWorld oworld, double x, double y, double z) {
+    protected static void explodeTNT(World world, double x, double y, double z) {
         // Make TNT explode
-    	OEntityTNTPrimed tnt = new OEntityTNTPrimed(oworld);
-        tnt.b(x, y, z);
-        tnt.j_();
+    	OEntityTNTPrimed tnt = new OEntityTNTPrimed(world.getWorld());
+        UtilEntity.setPosition(tnt, x, y, z);
+        UtilEntity.onUpdate(tnt);
     }
 }

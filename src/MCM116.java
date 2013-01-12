@@ -256,7 +256,7 @@ public class MCM116 extends BaseIC {
 				}
 			}
 
-			boolean output = aboveEnt != null && !UtilEntity.isDead(aboveEnt.getEntity());
+			boolean output = aboveEnt != null && !aboveEnt.isDead();
 
 			Redstone.setOutput(CraftBook.getCBWorld(WORLD), LEVER, output);
 		}

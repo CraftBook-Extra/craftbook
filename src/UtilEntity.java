@@ -19,39 +19,82 @@
 
 public class UtilEntity
 {
-	protected static OEntity riddenByEntity(OEntity oentity)
-	{
-		return oentity.n;
-	}
-	
-	protected static OEntity ridingEntity(OEntity oentity)
-	{
-		return oentity.o;
-	}
-	
-	protected static double getMountedYOffset(OEntity oentity)
-	{
-		return oentity.X();
-	}
-	
-	/*
-	 * oentity will mount mountEntity
-	 */
-	protected static void mountEntity(OEntity oentity, OEntity mountEntity)
-	{
-		oentity.a(mountEntity);
-	}
-	
-	protected static boolean spawnEntityInWorld(OWorld oworld, OEntity oentity)
-	{
-		return oworld.d(oentity);
-	}
-	
-	protected static boolean isDead(OEntity oentity)
-	{
-		return oentity.L;
-	}
-	
+    protected static double prevX(OEntity oentity)
+    {
+        return oentity.q;
+    }
+    
+    protected static double prevY(OEntity oentity)
+    {
+        return oentity.r;
+    }
+    
+    protected static double prevZ(OEntity oentity)
+    {
+        return oentity.s;
+    }
+    
+    protected static void setPosition(OEntity oentity, double x, double y, double z)
+    {
+        oentity.b(x, y, z);
+    }
+    
+    //mainly used to set "false"
+    protected static void setDead(OEntity oentity, boolean isDead)
+    {
+        oentity.L = isDead;
+    }
+    
+    protected static void dismount(OEntity oentity)
+    {
+        oentity.a((OEntity)null);
+    }
+    
+    protected static void setOWorld(OWorld oworld, OEntity oentity)
+    {
+        oentity.a(oworld);
+    }
+    
+    protected static void removeEntity(OWorld oworld, OEntity oentity)
+    {
+        oworld.f(oentity);
+    }
+    
+    protected static void onUpdate(OEntity oentity)
+    {
+        oentity.j_();
+    }
+    
+    protected static void updateEntityWithOptionalForce(OWorld oworld, OEntity oentity, boolean forceUpdate)
+    {
+        oworld.a(oentity, forceUpdate);
+    }
+    
+    protected static double getMountedYOffset(OEntity oentity)
+    {
+        return oentity.X();
+    }
+    
+    protected static OEntityPlayer getClosestPlayerToEntity(OWorld oworld, OEntity oentity, double distance)
+    {
+        return oworld.a(oentity, distance);
+    }
+    
+    protected static void setPlayerLocation(OEntityPlayerMP oplayer, double x, double y, double z, float rotation, float pitch)
+    {
+        oplayer.a.a(x, y, z, rotation, pitch);
+    }
+    
+    protected static void sendPacket(OEntityPlayerMP oplayer, OPacket opacket)
+    {
+        oplayer.a.b(opacket);
+    }
+    
+    protected static void setThrowableHeading(OIProjectile oprojectile, double x, double y, double z, float speed, float spread)
+    {
+        oprojectile.c(x, y, z, speed, spread);
+    }
+    
 	protected static boolean isValidEntityTypeID(String args)
     {
     	String[] values = parseEntityArgs(args);

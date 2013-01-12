@@ -224,7 +224,7 @@ public class MCX203 extends BaseIC {
 		        {
 		        	Item citem = itemEnt.getItem();
 		        	
-		        	if(!UtilEntity.isDead(itemEnt.getEntity()) && citem.getAmount() > 0 && (item == -1 || (citem.getItemId() == item && (color < 0 || citem.getDamage() == color) )))
+		        	if(!itemEnt.isDead() && citem.getAmount() > 0 && (item == -1 || (citem.getItemId() == item && (color < 0 || citem.getDamage() == color) )))
 					{
 						double diffX = x - itemEnt.getX();
 						double diffY = y - itemEnt.getY();

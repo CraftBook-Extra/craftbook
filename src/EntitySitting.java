@@ -1,12 +1,3 @@
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-
-
 /*
  * Minecraft Sitting Mod
  * Copyright (C) 2011  M4411K4
@@ -32,8 +23,6 @@ import java.util.Set;
 
 public class EntitySitting extends OEntityEnderEye
 {
-	private static final Map<World,EntityAccessObject> ENTITY_ACCESS = new HashMap<World,EntityAccessObject>();
-	
 	private final BaseEntity BASE_ENTITY;
 	
 	private final double OFFSET_Y;
@@ -96,26 +85,6 @@ public class EntitySitting extends OEntityEnderEye
 		int i2 = OMathHelper.c(this.v / 16.0D);
 		oworld.e(i1, i2).a(this);
 		oworld.e.add(this);
-		
-		addEntityTrackerList(world);
-		
-		EntityAccessObject entityAccess = ENTITY_ACCESS.get(world);
-		
-		if(entityAccess != null)
-		{
-			@SuppressWarnings("rawtypes")
-			Set trackedEntitySet = entityAccess.trackedEntitySet;
-			OIntHashMap trackedEntityHashTable = entityAccess.trackedEntityHashTable;
-			
-			EntitySittingTracker sitEntry = new EntitySittingTracker(this, 160, 999999999, true);
-			
-			trackedEntitySet.add(sitEntry);
-			trackedEntityHashTable.a(BASE_ENTITY.getId(), sitEntry);
-			sitEntry.b(world.getWorld().h);
-			
-			OIntHashMap entityIdMap = entityAccess.entityIdMap;
-			entityIdMap.a(BASE_ENTITY.getId(), this);
-		}
 	}
 	
 	public static boolean isChairBlock(int id)
@@ -250,69 +219,5 @@ public class EntitySitting extends OEntityEnderEye
 	public void a(ONBTTagCompound paramONBTTagCompound)
 	{
 		
-	}
-	
-	public static void updateTrackers()
-	{
-		Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
-        while(worldIter.hasNext())
-        {
-        	Map.Entry<String, OWorldServer[]> entry = (Map.Entry<String, OWorldServer[]>)worldIter.next();
-        	OWorldServer[] oworlds = (OWorldServer[])entry.getValue();
-        	
-        	for(int i = 0; i < oworlds.length; i++)
-        	{
-        		addEntityTrackerList(oworlds[i].world);
-        	}
-        }
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void addEntityTrackerList(World world)
-	{
-		if(world == null || ENTITY_ACCESS.containsKey(world))
-		{
-			return;
-		}
-		
-		OEntityTracker tracker = world.getEntityTracker().getTracker();
-		try {
-			Class trackerclass = tracker.getClass();
-			while(OEntityTracker.class != trackerclass)
-			{
-				trackerclass = trackerclass.getSuperclass();
-			}
-			
-        	Field field = trackerclass.getDeclaredField("c");
-        	field.setAccessible(true);
-        	
-        	Field field2 = trackerclass.getDeclaredField("b");
-        	field2.setAccessible(true);
-        	
-        	Class worldclass = world.getWorld().getClass();
-        	while(OWorldServer.class != worldclass)
-        	{
-        		worldclass = worldclass.getSuperclass();
-        	}
-        	
-        	Field field3 = worldclass.getDeclaredField("T");
-        	field3.setAccessible(true);
-        	
-        	EntityAccessObject entityAccess = new EntityAccessObject((Set)field2.get(tracker),
-        															(OIntHashMap)field.get(tracker),
-        															(OIntHashMap)field3.get(world.getWorld())
-        															);
-        	
-        	ENTITY_ACCESS.put(world, entityAccess);
-        	
-        } catch (SecurityException e) {
-        	e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-        	e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-        	e.printStackTrace();
-        } catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
 	}
 }

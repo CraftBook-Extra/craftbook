@@ -139,12 +139,13 @@ public class MC1240 extends BaseIC {
         Vector backDir = chip.getBlockPosition().subtract(
                 chip.getPosition());
         Vector firePos = chip.getBlockPosition().add(backDir);
-        OWorldServer oworld = CraftBook.getOWorldServer(chip.getCBWorld());
-        OEntityArrow arrow = new OEntityArrow(oworld);
-        arrow.b(firePos.getBlockX() + 0.5, firePos.getBlockY() + 0.5,
-                firePos.getBlockZ() + 0.5, 0, 0);
-        oworld.d(arrow);
-        arrow.c(backDir.getBlockX(), vertVel, backDir.getBlockZ(),
-                speed, spread);
+        World world = CraftBook.getWorld(chip.getCBWorld());
+        Arrow arrow = new Arrow(world);
+        arrow.teleportTo(firePos.getBlockX(), //+ 0.5,
+                        firePos.getBlockY() + 0.5,
+                        firePos.getBlockZ(), //+ 0.5,
+                        0, 0);
+        arrow.spawn();
+        UtilEntity.setThrowableHeading(arrow.getEntity(), backDir.getBlockX(), vertVel, backDir.getBlockZ(), speed, spread);
     }
 }

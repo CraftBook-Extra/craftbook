@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -95,9 +96,8 @@ public class Bounce
 		
 		if(applyForce != 0)
 		{
-			OEntity oentity = entity.getEntity();
-			oentity.x = applyForce;
-			etc.getMCServer().ad().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
+		    entity.setMotionY(applyForce);
+		    Util.sendPacketToDimension(new OPacket28EntityVelocity(entity.getEntity()), cbworld);
 			return true;
 		}
 		return false;
@@ -270,32 +270,30 @@ public class Bounce
         	
         	for(int i = 0; i < oworlds.length; i++)
         	{
-	    		for(@SuppressWarnings("rawtypes")
-	    		Iterator it = oworlds[i].e.iterator(); it.hasNext();)
-	    		{
-	    			Object obj = it.next();
-	    			if(obj instanceof OEntityCreature)
-	    			{
-	    				BaseEntity entity = new BaseEntity((OEntity)obj);
-	    				OEntity oentity = entity.getEntity();
-	    				Location loc = new Location();
-	    		        loc.x = oentity.q;
-	    		        loc.y = oentity.r;
-	    		        loc.z = oentity.s;
-	    		        loc.rotX = entity.getRotation();
-	    		        loc.rotY = entity.getPitch();
-	    		        loc.dimension = entity.getWorld().getType().getId();
-	    		        
-	    		        Location loc2 = new Location();
-	    		        loc.x = entity.getX();
-	    		        loc.y = entity.getY();
-	    		        loc.z = entity.getZ();
-	    		        loc.rotX = entity.getRotation();
-	    		        loc.rotY = entity.getPitch();
-	    		        loc.dimension = entity.getWorld().getType().getId();
-	    				bounce(entity, loc, loc2);
-	    			}
-	    		}
+        	    List<BaseEntity> entities = oworlds[i].world.getEntityList();
+        	    for(BaseEntity entity : entities)
+        	    {
+        	        if(entity != null && entity.getEntity() instanceof OEntityCreature)
+                    {
+                        OEntity oentity = entity.getEntity();
+                        Location loc = new Location();
+                        loc.x = UtilEntity.prevX(oentity);
+                        loc.y = UtilEntity.prevY(oentity);
+                        loc.z = UtilEntity.prevZ(oentity);
+                        loc.rotX = entity.getRotation();
+                        loc.rotY = entity.getPitch();
+                        loc.dimension = entity.getWorld().getType().getId();
+                        
+                        Location loc2 = new Location();
+                        loc.x = entity.getX();
+                        loc.y = entity.getY();
+                        loc.z = entity.getZ();
+                        loc.rotX = entity.getRotation();
+                        loc.rotY = entity.getPitch();
+                        loc.dimension = entity.getWorld().getType().getId();
+                        bounce(entity, loc, loc2);
+                    }
+        	    }
         	}
         }
 	}

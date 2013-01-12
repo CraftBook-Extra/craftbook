@@ -146,7 +146,7 @@ public class MCX216 extends BaseIC {
 		        for(ItemEntity itemEnt : items) {
 		            Item citem = itemEnt.getItem();
 		        	
-		        	if(!UtilEntity.isDead(itemEnt.getEntity()) && citem.getAmount() > 0 && citem.getItemId() == this.itemId && (this.damVal == -1 || (this.damVal == -1 || citem.getDamage() == this.damVal))) {
+		        	if(!itemEnt.isDead() && citem.getAmount() > 0 && citem.getItemId() == this.itemId && (this.damVal == -1 || (this.damVal == -1 || citem.getDamage() == this.damVal))) {
 						double diffX = target.getBlockX() - itemEnt.getX();
 						double diffY = target.getBlockY() - itemEnt.getY();
 						double diffZ = target.getBlockZ() - itemEnt.getZ();

@@ -274,7 +274,7 @@ public class MCX146 extends BaseIC {
 									if(potion2.getDuration() < 2 * 20)
 									{
 										potion2.setDuration(DURATION);
-										player.getEntity().a.b(new OPacket41EntityEffect(player.getEntity().hashCode(), opeffect));
+										UtilEntity.sendPacket(player.getEntity(), new OPacket41EntityEffect(player.getEntity().hashCode(), opeffect));
 									}
 								}
 								else
@@ -285,7 +285,7 @@ public class MCX146 extends BaseIC {
 										return;
 									}
 									settings.activePotionsMap.put(Integer.valueOf(POTION.getId()), potion.potionEffect);
-									player.getEntity().a.b(new OPacket41EntityEffect(player.getEntity().hashCode(), potion.potionEffect));
+									UtilEntity.sendPacket(player.getEntity(), new OPacket41EntityEffect(player.getEntity().hashCode(), potion.potionEffect));
 								}
 								return;
 							}
@@ -316,7 +316,7 @@ public class MCX146 extends BaseIC {
 					{
 						OPotionEffect opeffect = oplayer.b(OPotion.a[POTION.getId()]);
 						opeffect.a(opotion);
-						oplayer.a.b(new OPacket41EntityEffect(oplayer.hashCode(), oplayer.b(OPotion.a[POTION.getId()])));
+						UtilEntity.sendPacket(oplayer, new OPacket41EntityEffect(oplayer.hashCode(), oplayer.b(OPotion.a[POTION.getId()])));
 					}
 					else
 					{
@@ -327,7 +327,7 @@ public class MCX146 extends BaseIC {
 						}
 						
 						settings.activePotionsMap.put(Integer.valueOf(POTION.getId()), opotion);
-						oplayer.a.b(new OPacket41EntityEffect(oplayer.hashCode(), opotion));
+						UtilEntity.sendPacket(oplayer, new OPacket41EntityEffect(oplayer.hashCode(), opotion));
 					}
 				}
 				else if(AUTO && playerList.containsKey(player))
@@ -357,9 +357,9 @@ public class MCX146 extends BaseIC {
 								if(potionObject.amplifier() >= 0 && potion.getAmplifier() != potionObject.amplifier())
 								{
 									potion.setAmplifier(potionObject.amplifier());
-									player.getEntity().a.b(new OPacket42RemoveEntityEffect(player.getEntity().hashCode(), potion.potionEffect));
+									UtilEntity.sendPacket(player.getEntity(), new OPacket42RemoveEntityEffect(player.getEntity().hashCode(), potion.potionEffect));
 								}
-								player.getEntity().a.b(new OPacket41EntityEffect(player.getEntity().hashCode(), potion.potionEffect));
+								UtilEntity.sendPacket(player.getEntity(), new OPacket41EntityEffect(player.getEntity().hashCode(), potion.potionEffect));
 							}
 							
 							if(potionList.size() <= 0)

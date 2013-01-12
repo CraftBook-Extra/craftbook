@@ -102,12 +102,12 @@ public class MCX237 extends BaseIC {
     	switch(type)
     	{
     		case 0:
-    			etc.getMCServer().ad().a(packet);
+    		    Util.sendPacketToAllPlayers(packet);
     			break;
     		case 1:
     			Player player = etc.getServer().matchPlayer(id);
     	    	if(player != null)
-    	    		player.getEntity().a.b(packet);
+    	    	    UtilEntity.sendPacket(player.getEntity(), packet);
     	    	else
     	    		out = false;
     	    	break;
@@ -115,7 +115,7 @@ public class MCX237 extends BaseIC {
     			for(Player plyr: etc.getServer().getPlayerList())
     	        {
     				if(plyr.isInGroup(id))
-    					plyr.getEntity().a.b(packet);
+    				    UtilEntity.sendPacket(plyr.getEntity(), packet);
     	        }
     			break;
     	}

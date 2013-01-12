@@ -184,10 +184,10 @@ public class MCX116 extends BaseIC {
 	        	}
 			}
 			
-			boolean output = abovePlayer != null && !UtilEntity.isDead(abovePlayer.getEntity());
+			boolean output = abovePlayer != null && !abovePlayer.isDead();
 			if(TNT && output)
 			{
-				MC1250.explodeTNT(WORLD.getWorld(), abovePlayer.getX(), abovePlayer.getY(), abovePlayer.getZ());
+				MC1250.explodeTNT(WORLD, abovePlayer.getX(), abovePlayer.getY(), abovePlayer.getZ());
 			}
 			
 			Redstone.setOutput(CraftBook.getCBWorld(WORLD), LEVER, output);

@@ -898,7 +898,7 @@ public class MechanismListener extends CraftBookDelegateListener {
     		
     		World world = player.getWorld();
     		int data = world.getBlockData(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
-    		if(UtilEntity.ridingEntity(player.getEntity()) != null)
+    		if(player.getRidingEntity() != null)
     		{
     			switch(data)
         		{
@@ -1181,7 +1181,7 @@ public class MechanismListener extends CraftBookDelegateListener {
 		    		}
 	    			
 	    			setting.getNextWindowId();
-	    			oplayer.a.b(new OPacket100OpenWindow(setting.currentWindowId, 0, cbbookinv.b(), cbbookinv.k_()));
+	    			UtilEntity.sendPacket(oplayer, new OPacket100OpenWindow(setting.currentWindowId, 0, cbbookinv.b(), cbbookinv.k_()));
 	    			oplayer.bL = new CBContainerShelf(oplayer.bJ, cbbookinv);
 	    			oplayer.bL.d = setting.currentWindowId;
 	    			oplayer.bL.a((OICrafting)oplayer);
@@ -1662,10 +1662,10 @@ public class MechanismListener extends CraftBookDelegateListener {
         }
         else if(Sitting.enabled && split[0].equalsIgnoreCase("/sit") && player.canUseCommand("/sit"))
         {
-        	OEntity ridingEntity = UtilEntity.ridingEntity(player.getEntity());
+        	BaseEntity ridingEntity = player.getRidingEntity();
 			if(ridingEntity != null)
 			{
-				Sitting.stand(player, 0, UtilEntity.getMountedYOffset(ridingEntity), 0);
+				Sitting.stand(player, 0, UtilEntity.getMountedYOffset(ridingEntity.getEntity()), 0);
 			}
 			else
 			{
@@ -1686,10 +1686,10 @@ public class MechanismListener extends CraftBookDelegateListener {
         }
         else if(Sitting.enabled && split[0].equalsIgnoreCase("/stand") && player.canUseCommand("/stand"))
         {
-        	OEntity ridingEntity = UtilEntity.ridingEntity(player.getEntity());
-        	if(ridingEntity == null || !(ridingEntity instanceof EntitySitting))
+            BaseEntity ridingEntity = player.getRidingEntity();
+        	if(ridingEntity == null || !(ridingEntity.getEntity() instanceof EntitySitting))
         		return true;
-        	Sitting.stand(player, 0, ((EntitySitting)ridingEntity).getOffsetY(), 0);
+        	Sitting.stand(player, 0, ((EntitySitting)ridingEntity.getEntity()).getOffsetY(), 0);
 			
         	return true;
         }

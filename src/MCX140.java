@@ -217,7 +217,7 @@ public class MCX140 extends BaseIC {
 										OMathHelper.c(entity.getZ()) )
     				&& UtilEntity.isValidEntity(entity, ENTITY_NAME)
     				&& (RIDER_NAME == null || RIDER_NAME.isEmpty()
-    					|| (UtilEntity.riddenByEntity(entity.getEntity()) != null && UtilEntity.isValidEntity(new BaseEntity(UtilEntity.riddenByEntity(entity.getEntity())), RIDER_NAME)) )
+    					|| (entity.getRiddenByEntity() != null && UtilEntity.isValidEntity(entity.getRiddenByEntity(), RIDER_NAME)) )
     				)
     			{
     				output = true;

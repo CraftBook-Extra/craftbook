@@ -155,6 +155,6 @@ public class MCX251 extends BaseIC {
         	data = 2256;
         }
         
-        etc.getMCServer().ad().a(x, y, z, 64.0D, chip.getCBWorld().dimension(), new OPacket61DoorChange(sfxType.getId(), x, y, z, data, false), chip.getCBWorld().name());
+        Util.sendPacketToPlayersAroundPoint(chip.getCBWorld(), x, y, z, 64.0D, new OPacket61DoorChange(sfxType.getId(), x, y, z, data, false));
     }
 }

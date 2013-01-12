@@ -34,6 +34,31 @@ import com.sk89q.craftbook.WorldLocation;
  */
 public class Util {
 
+    protected static void sendPacketToDimension(OPacket opacket, CraftBookWorld cbworld)
+    {
+        sendPacketToDimension(opacket, cbworld.name(), cbworld.dimension());
+    }
+    
+    protected static void sendPacketToDimension(OPacket opacket, String worldName, int dimension)
+    {
+        etc.getMCServer().ad().sendPacketToDimension(opacket, worldName, dimension);
+    }
+    
+    protected static void sendPacketToPlayersAroundPoint(CraftBookWorld cbworld, double x, double y, double z, double distance, OPacket opacket)
+    {
+        sendPacketToPlayersAroundPoint(cbworld.name(), cbworld.dimension(), x, y, z, distance, opacket);
+    }
+    
+    protected static void sendPacketToPlayersAroundPoint(String worldName, int dimension, double x, double y, double z, double distance, OPacket opacket)
+    {
+        etc.getMCServer().ad().a(x, y, z, distance, dimension, opacket, worldName);
+    }
+    
+    protected static void sendPacketToAllPlayers(OPacket opacket)
+    {
+        etc.getMCServer().ad().a(opacket);
+    }
+    
     /**
      * Gets the block behind a sign.
      *

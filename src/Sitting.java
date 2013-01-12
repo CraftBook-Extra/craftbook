@@ -30,17 +30,19 @@ public class Sitting
 		EntitySitting esitting = new EntitySitting(types, oworld, player.getX(), player.getY(), player.getZ(), offsety, mountedOffsetY);
 		
 		esitting.spawn(world);
-		UtilEntity.mountEntity(eplayer, esitting);
+		BaseEntity sitting = new BaseEntity(esitting);
+		sitting.setRiddenByEntity(player);
 	}
 	
 	protected static void stand(Player player, double offsetx, double offsety, double offsetz)
 	{
-		OEntityPlayerMP eplayer = (OEntityPlayerMP) player.getEntity();
-		if(!(UtilEntity.ridingEntity(eplayer) instanceof EntitySitting))
-			return;
+	    BaseEntity entity = player.getRidingEntity();
+	    if(entity == null || !(entity.getEntity() instanceof EntitySitting))
+	        return;
 		
-		UtilEntity.mountEntity(eplayer, (OEntity)null);
-		eplayer.a.a(player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch());
+	    player.setRiddenByEntity((BaseEntity)null);
+		UtilEntity.dismount(player.getEntity());
+		UtilEntity.setPlayerLocation(player.getEntity(), player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch());
 	}
 	
 	/*
