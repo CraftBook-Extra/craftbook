@@ -1048,6 +1048,11 @@ public class MechanismListener extends CraftBookDelegateListener {
                     current = 15;
                 }
                 current = 0;
+            } else if (type == BlockType.WOODEN_BUTTON) {
+                if ((data & 0x8) == 0x8) {
+                    current = 15;
+                }
+                current = 0;
             } else if (type == BlockType.REDSTONE_WIRE) {
                 current = data;
             }
@@ -1060,8 +1065,6 @@ public class MechanismListener extends CraftBookDelegateListener {
                         + Colors.Yellow + "] "
                         + Colors.White
                         + current + " A");
-            } else {
-                player.sendMessage(Colors.Yellow + "Ammeter: " + Colors.Red + "Not supported.");
             }
 
             return false;

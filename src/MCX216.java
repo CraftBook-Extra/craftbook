@@ -95,29 +95,22 @@ public class MCX216 extends BaseIC {
 	}
 
 	private boolean plantableItem(int itemId) {
-		boolean isPlantable = false;
-		
-		if (itemId == 6 || itemId == 295 ||	itemId == 372)
-			isPlantable = true;
-		
-		return isPlantable;
+		return (itemId == 6 || itemId == 295 ||	itemId == 372 || itemId == 391 || itemId == 392);
 	}
 	
 	private boolean itemPlantableOnBlock(int itemId, int blockId) {
-		boolean isPlantable = false;
-		
 		if (itemId == 6 && (blockId == 2 || blockId == 3)) {
 			// Saplings can go on Dirt or Grass
-			isPlantable = true;
-		} else if (itemId == 295 && blockId == 60) {
-			// Seeds can only go on farmland
-			isPlantable = true;
+			return true;
+		} else if ( (itemId == 295 || itemId == 391 || itemId == 392) && blockId == 60) {
+			// Seeds, carrots, and potatoes can only go on farmland
+			return true;
 		} else if (itemId == 372 && blockId == 88) {
 			// Netherwart on soulsand
-			isPlantable = true;
+			return true;
 		}
 		
-		return isPlantable;
+		return false;
 	}
 	
 	private class saplingPlanter implements Runnable {
@@ -147,11 +140,11 @@ public class MCX216 extends BaseIC {
 		            Item citem = itemEnt.getItem();
 		        	
 		        	if(!itemEnt.isDead() && citem.getAmount() > 0 && citem.getItemId() == this.itemId && (this.damVal == -1 || (this.damVal == -1 || citem.getDamage() == this.damVal))) {
-						double diffX = target.getBlockX() - itemEnt.getX();
+						double diffX = target.getBlockX() + 0.5D - itemEnt.getX();
 						double diffY = target.getBlockY() - itemEnt.getY();
-						double diffZ = target.getBlockZ() - itemEnt.getZ();
+						double diffZ = target.getBlockZ() + 0.5D - itemEnt.getZ();
 						
-						if ((diffX * diffX + diffY * diffY + diffZ * diffZ) < 6) {
+						if ((diffX * diffX + diffY * diffY + diffZ * diffZ) < 9) {
 							itemEnt.destroy();
 
 							world.setBlockAt(getBlockByItem(this.itemId), target.getBlockX(), target.getBlockY(), target.getBlockZ());
@@ -166,12 +159,14 @@ public class MCX216 extends BaseIC {
 		}
 		
 		private int getBlockByItem(int itemId) {
-			
-			if (itemId == 295) return 59;
-			if (itemId == 6) return 6;
-			if (itemId == 372) return 115;
-				
-			return 0;
+            switch (itemId) {
+            case 295: return 59;
+            case   6: return 6;
+            case 372: return 115;
+            case 391: return 141;
+            case 392: return 142;
+            default : return 0;
+            }
 		}
 	}
 }

@@ -31,4 +31,5 @@ public final class ItemType {
     public static final int MINECART = 328;
     public static final int STORAGE_MINECART = 342;
     public static final int POWERED_MINECART = 343;
+    public static final int BOAT = 333;
 }

@@ -280,6 +280,8 @@ public class Redstone {
             return false;
         } else if (type == BlockType.STONE_BUTTON) {
             return (CraftBook.getBlockData(world, pt) & 0x8) == 0x8;
+        } else if (type == BlockType.WOODEN_BUTTON) {
+            return (CraftBook.getBlockData(world, pt) & 0x8) == 0x8;
         } else if (considerWires && type == BlockType.REDSTONE_WIRE) {
             return CraftBook.getBlockData(world, pt) > 0;
         }

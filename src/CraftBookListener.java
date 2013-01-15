@@ -287,6 +287,12 @@ public class CraftBookListener extends PluginListener {
                         newLevel > 0
                             ? CraftBook.getBlockData(world, x, y, z) | 0x8
                             : CraftBook.getBlockData(world, x, y, z) & 0x7);
+            } else if (type == BlockType.WOODEN_BUTTON) {
+                // Fake data
+                CraftBook.fakeBlockData(cbworld, x, y, z,
+                        newLevel > 0
+                            ? CraftBook.getBlockData(world, x, y, z) | 0x8
+                            : CraftBook.getBlockData(world, x, y, z) & 0x7);
             } else if (type == BlockType.REDSTONE_WIRE) {
                 // Fake data
                 CraftBook.fakeBlockData(cbworld, x, y, z, newLevel);

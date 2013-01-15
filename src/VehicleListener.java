@@ -347,7 +347,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             blockBag.addSingleSourcePosition(cbworld, pt.add(0, 0, -1));
 
             try {
-                Minecart minecart;
+                Minecart minecart = null;
                 
                 if(collectType.equalsIgnoreCase("All"))
                 {
@@ -409,7 +409,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                     try {
                         blockBag.fetchBlock(ItemType.POWERED_MINECART);
                     } catch (BlockSourceException e) {
-                        // Okay, no storage minecarts... but perhaps we can
+                        // Okay, no powered minecarts... but perhaps we can
                         // craft a minecart + chest!
                         if (blockBag.peekBlock(BlockType.FURNACE)) {
                             blockBag.fetchBlock(ItemType.MINECART);
@@ -424,6 +424,12 @@ public class VehicleListener extends CraftBookDelegateListener {
     						depositPt.getY(),
     						depositPt.getZ(),
     						Minecart.Type.PoweredMinecart.getType());
+                } else if (collectType.equalsIgnoreCase("Boat")) {
+                	blockBag.fetchBlock(ItemType.BOAT);
+                   	spawnBoat(cbworld,
+					depositPt.getX(),
+					depositPt.getY(),
+					depositPt.getZ());
                 } else {
                     blockBag.fetchBlock(ItemType.MINECART);
                     minecart = spawnMinecart(cbworld,
@@ -433,7 +439,7 @@ public class VehicleListener extends CraftBookDelegateListener {
     						Minecart.Type.Minecart.getType());
                 }
                 
-                if (push) {
+                if (minecart != null && push) {
                     int data = CraftBook.getBlockData(world, signPos);
                     
                     if (data == 0x0) {
@@ -505,7 +511,9 @@ public class VehicleListener extends CraftBookDelegateListener {
         }
     }
     
-    /**
+
+
+	/**
      * Called when a vehicle changes block
      *
      * @param vehicle the vehicle
@@ -3052,6 +3060,13 @@ public class VehicleListener extends CraftBookDelegateListener {
     	return minecart;
     }
 
+    private Boat spawnBoat(CraftBookWorld cbworld, double x, double y, double z) {
+        World world = CraftBook.getWorld(cbworld);
+        Boat boat = new Boat(world, x, y, z);
+    	return boat;
+		
+	}
+    
     private boolean matchesWildCard(String search, String match) {
     	search = search.toLowerCase();
     	match = match.toLowerCase();
