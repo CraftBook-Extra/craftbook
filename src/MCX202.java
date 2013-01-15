@@ -80,31 +80,30 @@ public class MCX202 extends MCX201 {
         int item = getItem(id);
 
         World world = CraftBook.getWorld(chip.getCBWorld());
-        if (item > 0 && !(item >= 21 && item <= 34) && item != 36) {
-            Vector pos = chip.getBlockPosition();
-            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
-            int x = pos.getBlockX();
-            int z = pos.getBlockZ();
+        Vector pos = chip.getBlockPosition();
+        int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
+        int x = pos.getBlockX();
+        int z = pos.getBlockZ();
 
-            for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
-                if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))) {
-                    int n = 0;
-                    for(n=0;n<quantity;n++)
-                        try {
-                            source.fetchBlock(item);
-                        } catch (BlockSourceException e) {
-                            break;
-                        }
-                    if(n!=0)
-                    {
-                    	if(color >= 0)
-                    		world.dropItem(x, y, z, item, n, color);
-                    	else
-                    		world.dropItem(x, y, z, item, n);
+        for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
+            if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))) {
+                int n = 0;
+                for(n=0;n<quantity;n++)
+                    try {
+                        source.fetchBlock(item);
+                    } catch (BlockSourceException e) {
+                        break;
                     }
-                    return;
+                if(n!=0)
+                {
+                	if(color >= 0)
+                		world.dropItem(x, y, z, item, n, color);
+                	else
+                		world.dropItem(x, y, z, item, n);
                 }
+                return;
             }
         }
-    }
+        }
+    
 }

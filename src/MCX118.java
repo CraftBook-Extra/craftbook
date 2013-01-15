@@ -191,7 +191,13 @@ public class MCX118 extends BaseIC {
 						found = true;
 						if(DESTROY)
 						{
-							entity.destroy();
+							try 
+							{
+								entity.destroy();
+							}
+							catch(ConcurrentModificationException e){
+								e.printStackTrace();
+							}
 						}
 						else
 						{
@@ -218,10 +224,9 @@ public class MCX118 extends BaseIC {
 				case 2:
 					return true;
 				case 3:
-					if((entity.isMob() || entity.isAnimal()) && entity instanceof Mob)
+					if((entity.isMob() || entity.isAnimal()))
 					{
-						Mob mob = (Mob) entity;
-						if(SETTINGS.isEmpty() || mob.getName().equalsIgnoreCase(SETTINGS))
+						if(SETTINGS.isEmpty() || ((entity.getName() != null) && entity.getName().equalsIgnoreCase(SETTINGS)))
 							return true;
 					}
 					break;

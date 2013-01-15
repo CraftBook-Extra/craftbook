@@ -111,19 +111,18 @@ public class MC1201 extends BaseIC {
 
         int item = getItem(id);
 
-        if (item > 0 && !(item >= 21 && item <= 34) && item != 36) {
-            Vector pos = chip.getBlockPosition();
-            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
-            int x = pos.getBlockX();
-            int z = pos.getBlockZ();
+        Vector pos = chip.getBlockPosition();
+        int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
+        int x = pos.getBlockX();
+        int z = pos.getBlockZ();
 
-            World world = CraftBook.getWorld(chip.getCBWorld());
-            for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
-                if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))) {
-                    world.dropItem(x, y, z, item, quantity);
-                    return;
-                }
+        World world = CraftBook.getWorld(chip.getCBWorld());
+        for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
+            if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))) {
+                world.dropItem(x, y, z, item, quantity);
+                return;
             }
         }
     }
+
 }
