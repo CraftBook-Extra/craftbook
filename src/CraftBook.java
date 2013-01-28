@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -42,6 +43,16 @@ public class CraftBook extends Plugin {
      */
     private static final Logger logger = Logger.getLogger("Minecraft.CraftBook");
     private static final File pathToState = new File("world"+File.separator+"craftbook");
+    
+    /**
+     * Submit your Runnables to this instead of making your own threads.
+     * 
+     * Do not modify the world directly in your multithreaded code!
+     * Use cbxScheduler.executeInServer() if you must modify the world from
+     * a Runnable being executed here.<p>
+     * Handle <i>all</i> exceptions inside your Runnables, or you might crash the server!
+     */
+    public static CBXScheduler cbxScheduler;
     
     /**
      * Listener for the plugin system. This listener handles configuration
@@ -201,6 +212,8 @@ public class CraftBook extends Plugin {
         registerHook(redstone, "SIGN_SHOW", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "BLOCK_BROKEN", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "BLOCK_PLACE", PluginListener.Priority.MEDIUM);
+        registerHook(redstone, "CHUNK_LOADED", PluginListener.Priority.MEDIUM);
+        registerHook(redstone, "CHUNK_UNLOAD", PluginListener.Priority.MEDIUM);
         listener.registerDelegate(redstone);
 
         registerHook(vehicle, "DISCONNECT", PluginListener.Priority.MEDIUM);
@@ -264,7 +277,7 @@ public class CraftBook extends Plugin {
     @Override
     public void enable() {
         logger.log(Level.INFO, "CraftBook version " + getVersion() + " loaded");
-
+        CraftBook.cbxScheduler = new CBXScheduler();
         // This will also fire the loadConfiguration() methods of delegates
         listener.loadConfiguration();
         
@@ -327,6 +340,14 @@ public class CraftBook extends Plugin {
         stateManager.save(pathToState);
         
         listener.disable();
+
+        cbxScheduler.shutdown();
+        try {
+        	cbxScheduler.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+        	e.printStackTrace();
+        }
+        cbxScheduler.shutdownNow();
     }
 
     /**

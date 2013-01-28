@@ -20,12 +20,15 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Level;
 
 import olegbl.perlstone32.Perlstone32_1;
@@ -35,7 +38,7 @@ import com.sk89q.craftbook.ic.*;
 import lymia.customic.*;
 import lymia.perlstone.Perlstone_1_0;
 import lymia.plc.PlcLang;
-import lymia.util.Tuple2;
+
 
 /**
  * Event listener for redstone enhancements such as redstone pumpkins and
@@ -55,9 +58,9 @@ public class RedstoneListener extends CraftBookDelegateListener
     private Map<String,RegisteredIC> icList = 
             new HashMap<String,RegisteredIC>(32);
 
-    //[TODO]: create an array of instantICs. One for each world type.
-    private Set<WorldBlockVector> instantICs = 
-            new HashSet<WorldBlockVector>(32);
+    // thread-safe set
+	private Set<WorldBlockVector> instantICs = Collections
+			.newSetFromMap(new ConcurrentHashMap<WorldBlockVector, Boolean>(32));
 
     private HashMap<String,PlcLang> plcLanguageList = 
             new HashMap<String,PlcLang>();
@@ -267,30 +270,24 @@ public class RedstoneListener extends CraftBookDelegateListener
         
         addDefaultICs();
         
-        try {
-        	Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
-            while(worldIter.hasNext())
-            {
-            	Map.Entry<String, OWorldServer[]> entry = (Map.Entry<String, OWorldServer[]>)worldIter.next();
-            	OWorldServer[] oworlds = (OWorldServer[])entry.getValue();
-            	
-            	for(int i = 0; i < oworlds.length; i++)
-                {
-    	            for(Tuple2<Integer,Integer> chunkCoord:ChunkFinder.getLoadedChunks(oworlds[i])) {
-    	            	World world = new World(oworlds[i]);
-    	                int xs = (chunkCoord.a+1)<<4;
-    	                int ys = (chunkCoord.b+1)<<4;
-    	                for(int x=chunkCoord.a<<4;x<xs;x++) 
-    	                    for(int y=0;y<CraftBook.MAP_BLOCK_HEIGHT;y++) 
-    	                        for(int z=chunkCoord.b<<4;z<ys;z++) 
-    	                            if(world.getBlockIdAt(x, y, z)==BlockType.WALL_SIGN)
-    	                                onSignAdded(world, x,y,z);
-    	            }
-                }
-            }
-        } catch(Throwable t) {
-            System.err.println("Chunk finder failed: "+t.getClass());
-            t.printStackTrace();
+        // find instant ICs
+        if (this.enableSelfTriggeredICs) {
+	        for (String worldName : etc.getServer().getLoadedWorldNames()) {
+	        	World[] worldDimensions = etc.getServer().getWorld(worldName);
+	        	for (World world : worldDimensions) {
+	        		for (Chunk chunk:world.getLoadedChunks()){
+	        			try {
+	        				CraftBook.cbxScheduler.execute(new InstantICFinder(chunk));        				
+	        			} catch (RejectedExecutionException e){
+	        				logger.log(Level.SEVERE, "Craftbook could not run the InstantICFinder for chunk ("
+	        						+ chunk.getX()
+	        						+ ", "
+	        						+ chunk.getZ()
+	        						+ "): RejectedExecutionException from cbxScheduler.");
+	        			}
+	        		}
+	        	}
+	        }
         }
     }
     
@@ -620,13 +617,52 @@ public class RedstoneListener extends CraftBookDelegateListener
         return false;
     }
     
-    public void onSignShow(Player player, Sign sign)
-    {
-    	if(!enableSelfTriggeredICs || !updateSelfTriggeredICList || sign.getBlock().getType() != BlockType.WALL_SIGN)
-    		return;
-    	
-    	onSignAdded(CraftBook.getCBWorld(player.getWorld()), sign);
-    }
+	public void onChunkUnload(final Chunk chunk) {
+		if (!updateSelfTriggeredICList || this.instantICs.isEmpty()) {
+			return;
+		}
+		if (CraftBook.cbxScheduler.isShutdown()) {
+			return;
+		}
+		// Race condition: if the chunk gets reloaded before this has processed,
+		// some or all instant ICs in that chunk will be removed from the list
+		// and not work until it is reloaded again.
+		try {
+			CraftBook.cbxScheduler.execute(new InstantICRemover(chunk));
+		} catch (RejectedExecutionException e) {
+			logger.log(Level.WARNING, 
+					"CraftBook could not run the InstantICRemover for chunk ("
+					+ chunk.getX()
+					+ ", "
+					+ chunk.getZ()
+					+ "): RejectedExecutionException from cbxScheduler.");
+		}
+	}
+
+	public void onChunkLoaded(final Chunk chunk) {
+		if (!enableSelfTriggeredICs || !updateSelfTriggeredICList) {
+			return;
+		}
+		if (CraftBook.cbxScheduler.isShutdown()) {
+			return;
+		}
+		// Race condition: if a chunk gets unloaded before this is processed,
+		// the block vectors found here will stay in the instantIC list until
+		// the chunk is loaded and unloaded again. Since they used to remain in
+		// that list forever before these changes were made, it is probably not
+		// a problem.
+		try {
+			CraftBook.cbxScheduler.execute(new InstantICFinder(chunk));
+		} catch (RejectedExecutionException e) {
+			logger.log(Level.WARNING, 
+					"CraftBook could not run the InstantICFinder for chunk ("
+					+ chunk.getX()
+					+ ", "
+					+ chunk.getZ()
+					+ "): RejectedExecutionException from cbxScheduler.");
+		}
+	}
+
 
     /**
      * Handles the wire input at a block in the case when the wire is
@@ -818,19 +854,17 @@ public class RedstoneListener extends CraftBookDelegateListener
     	                continue;
     	            }
     	            String line2 = sign.getText(1);
-    	            if(!line2.startsWith("[MC")) {
-    	                this.instantICs.remove(pt);
-    	                continue;
-    	            }
-    	            
     	            String id = line2.substring(1, 7).toUpperCase();
+    	            
     	            RegisteredIC ic = icList.get(id);
-    	            if (ic == null) {
-    	                sign.setText(1, Colors.Red + line2);
-    	                sign.update();
-    	                this.instantICs.remove(pt);
-    	                continue;
-    	            }
+					if (ic == null) {
+						if (line2.startsWith("[MC")) {
+							sign.setText(1, Colors.Red + line2);
+							sign.update();
+						}
+						this.instantICs.remove(pt);
+						continue;
+					}
     	            
     	            if(ic.type.updateOnce)
     	            {
@@ -866,31 +900,41 @@ public class RedstoneListener extends CraftBookDelegateListener
             }
         }
     }
-    public void onSignAdded(World world, int x, int y, int z) {
-        if(!enableSelfTriggeredICs) return;
-            
-        Sign sign = (Sign)world.getComplexBlock(x,y,z);
-        
-        onSignAdded(CraftBook.getCBWorld(world), sign);
-    }
-    
-    public void onSignAdded(CraftBookWorld cbworld, Sign sign)
-    {
-    	String line2 = sign.getText(1);
-        if(!line2.startsWith("[MC") || line2.length() < 8) return;
-        
-        String id = line2.substring(1, 7).toUpperCase();
-        RegisteredIC ic = icList.get(id);
-        if (ic == null) {
-            sign.setText(1, Colors.Red + line2);
-            sign.update();
-            return;
-        }
 
-        if(!ic.type.isSelfTriggered && !ic.type.updateOnce) return;
-        
-        instantICs.add(new WorldBlockVector(cbworld, sign.getX(),sign.getY(),sign.getZ()));
-    }
+	public void onSignAdded(World world, int x, int y, int z) {
+		Sign sign = (Sign) world.getComplexBlock(x, y, z);
+		onSignAdded(CraftBook.getCBWorld(world), sign);
+	}
+
+	public void onSignAdded(World world, OTileEntitySign oTES) {
+		Sign sign = new Sign((OTileEntitySign) oTES);
+		if (sign.getBlock().getType() == BlockType.WALL_SIGN) {
+			onSignAdded(CraftBook.getCBWorld(sign.getWorld()), sign);
+		}
+	}
+
+	public void onSignAdded(CraftBookWorld cbworld, Sign sign) {
+		String line2 = sign.getText(1);
+		if (line2.length() < 8)
+			return;
+
+		String id = line2.substring(1, 7).toUpperCase();
+		RegisteredIC ic = icList.get(id);
+		if (ic == null) {
+			if (line2.startsWith("[MC")) {
+				sign.setText(1, Colors.Red + line2);
+				sign.update();
+			}
+			return;
+		}
+		if (ic.type.isSelfTriggered && !enableSelfTriggeredICs)
+			return;
+		if (!ic.type.isSelfTriggered && !ic.type.updateOnce)
+			return;
+
+		instantICs.add(new WorldBlockVector(cbworld, sign.getX(), sign.getY(),
+				sign.getZ()));
+	}
     
     public boolean onBlockPlace(Player player, Block blockPlaced, Block blockClicked, Item itemInHand)
     {
@@ -1301,6 +1345,10 @@ public class RedstoneListener extends CraftBookDelegateListener
     	return output;
     }
 
+    // --------------------
+    // private classes
+    // --------------------    
+    
     /**
      * Storage class for registered ICs.
      */
@@ -1348,5 +1396,128 @@ public class RedstoneListener extends CraftBookDelegateListener
             type.think(cbworld, pt, signText, sign, ic, extra);
         }
     }
+    
+	/**
+	 * Registers all instant ICs in a chunk; to be run in the CBXScheduler.
+	 * 
+	 * @author Stefan Steinheimer (nosefish)
+	 * 
+	 */
+	private class InstantICFinder implements Runnable {
+		private final Chunk chunk;
+
+		public InstantICFinder(Chunk chunk) {
+			this.chunk = chunk;
+		}
+		
+		private Object[] getTileEntities() throws InterruptedException {
+			final int maxtries = 1000;
+			int tries = 0;
+			Object[] loadedTileEntities = null;
+			while (tries < maxtries) {
+				tries++;
+				try {
+					// Util.getLoadedTileEntityList() returns a copy, which might fail in rare cases
+					// when the server is modifying the TileEntityList. In that case, we just retry.
+					// Worst thing that can happen on failure is that self-updating ICs don't work until
+					// the chunk is reloaded.
+					loadedTileEntities = Util
+							.getLoadedTileEntityList(chunk);
+				} catch (ConcurrentModificationException e) {
+					logger.log(
+							Level.INFO,
+							"CraftBook: InstantICFinder caught a ConcurrentModificationException. This expected to happen occasionally.");
+					continue;
+				} catch (NullPointerException e) {
+					logger.log(
+							Level.INFO,
+							"CraftBook: InstantICFinder caught a NullPointerException. This expected to happen occasionally.");
+					continue;
+				}
+				break;
+			}
+			return loadedTileEntities;
+		}
+		
+		private List <OTileEntitySign> findSigns(final Object[] loadedTileEntities){
+			final List<OTileEntitySign> foundSigns = new ArrayList<OTileEntitySign>();
+			for (Object oTE : loadedTileEntities) {
+				if (oTE instanceof OTileEntitySign) {
+					foundSigns.add((OTileEntitySign) oTE);
+				}
+			}
+			return foundSigns;
+		}
+
+
+		private void addInstantICSigns(final List<OTileEntitySign> foundSigns){
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					for (OTileEntitySign oTES : foundSigns) {
+						onSignAdded(chunk.getWorld(), oTES);
+					}
+				}
+			});
+		}
+
+		public void run() {
+			try{
+				Object[] loadedTileEntities = getTileEntities();
+
+				if (loadedTileEntities == null) {
+					logger.log(
+							Level.WARNING,
+							"CraftBook: RedstoneListener could not get LoadedTileEntityList for chunk "
+									+ chunk.getX()
+									+ ", "
+									+ chunk.getZ()
+									+ ". Self-updating ICs in this chunk will not work until it is reloaded.");
+				} else {
+					if (loadedTileEntities.length == 0) return;
+					List<OTileEntitySign> foundSigns = findSigns(loadedTileEntities);
+					if (foundSigns.isEmpty()) return;
+					addInstantICSigns(foundSigns);
+				}
+			// no matter what happens, do not crash the server
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+	}
+
+	
+	/**
+	 * Removes all instant ICs in a chunk from the instantICs set; to be run in
+	 * the CBXScheduler.
+	 * 
+	 * @author Stefan Steinheimer (nosefish)
+	 * 
+	 */
+	private class InstantICRemover implements Runnable {
+		Chunk chunk;
+
+		public InstantICRemover(Chunk chunk) {
+			this.chunk = chunk;
+		}
+
+		public void run() {
+			try {
+				List<WorldBlockVector> toRemove = new ArrayList<WorldBlockVector>();
+				for (WorldBlockVector wbv : instantICs) {
+					if (wbv.getX() >= (chunk.getX() << 4)
+							&& wbv.getX() < ((chunk.getX() + 1) << 4)
+							&& wbv.getZ() >= (chunk.getZ() << 4)
+							&& wbv.getZ() < ((chunk.getZ() + 1) << 4)) {
+						toRemove.add(wbv);
+					}
+				}
+				instantICs.removeAll(toRemove);
+			// no matter what happens, do not crash the server
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+	}
+
     
 }

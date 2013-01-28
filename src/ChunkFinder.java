@@ -22,14 +22,23 @@ import java.util.List;
 
 import lymia.util.Tuple2;
 
-/**
+/**Canary provides methods for everything this class can do. Please use those instead.
+ * 
  * Finds all currently loaded chunks in a world. 
  * 
  * @author Lymia
+ * @deprecated
  */
+@Deprecated
 public class ChunkFinder {
     private ChunkFinder() {}
     
+    /**
+     * @deprecated
+     * @param world
+     * @return
+     */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static Tuple2<Integer,Integer>[] getLoadedChunks(OWorld world) {
         List<Tuple2<Integer,Integer>> chunkList = new ArrayList<Tuple2<Integer,Integer>>();

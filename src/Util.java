@@ -524,4 +524,15 @@ public class Util {
 		
 		return location;
 	}
+	
+    /**
+     * 
+     * @param chunk
+     * @return a copy of the values in the chunk's loadedTileEntityMap in array form
+     */
+    
+	public static Object[] getLoadedTileEntityList(Chunk chunk){
+            //Notchian: Chunk.chunkTileEntityMap, Searge: field_76648_i
+            return chunk.chunk.i.values().toArray();
+    }
 }
