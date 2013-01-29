@@ -59,7 +59,7 @@ public class RedstoneListener extends CraftBookDelegateListener
     private Map<String,RegisteredIC> icList = 
             new HashMap<String,RegisteredIC>(32);
 
-    // thread-safe set
+    // thread-safe set containing positions of self-updating ICs
 	private Set<WorldBlockVector> instantICs = Collections
 			.newSetFromMap(new ConcurrentHashMap<WorldBlockVector, Boolean>(32));
 
@@ -105,195 +105,11 @@ public class RedstoneListener extends CraftBookDelegateListener
      */
     @Override
     public void loadConfiguration() {
-        checkCreatePermissions = properties.getBoolean(
-                "check-create-permissions", false);
-
-        redstonePumpkins = properties.getBoolean("redstone-pumpkins", true);
-        redstoneNetherstone = properties.getBoolean("redstone-netherstone", false);
-        redstoneICs = properties.getBoolean("redstone-ics", true);
-        redstonePLCs = properties.getBoolean("redstone-plcs", true);
-        redstonePLCsRequirePermission = properties.getBoolean(
-                "redstone-plcs-require-permission", false);
-        
-        listICs = properties.getBoolean("enable-ic-list",true);
-        listUnusuableICs = properties.getBoolean("ic-list-show-unusuable",true);
-        
-        enableSelfTriggeredICs = properties.getBoolean("enable-self-triggered-ics",true);
-        restrictSelfTriggeredICs = properties.getBoolean("self-triggered-ics-require-premission",false);
-        
-        if(properties.containsKey("chunk-updated-self-triggered-ic-list"))
-        	updateSelfTriggeredICList = properties.getBoolean("chunk-updated-self-triggered-ic-list",false);
-        
-        if(properties.containsKey("ic-chest-collector-max-range"))
-        {
-        	chestCollectorMaxRange = properties.getInt("ic-chest-collector-max-range", 64);
-        	if(chestCollectorMaxRange < 1)
-        		chestCollectorMaxRange = 1;
-        	else if(chestCollectorMaxRange > 64)
-        		chestCollectorMaxRange = 64;
-        }
-        
-        if(properties.containsKey("ic-message-max-range"))
-        {
-        	icMessageMaxRange = properties.getInt("ic-message-max-range", 64);
-        	if(icMessageMaxRange < 1)
-        		icMessageMaxRange = 1;
-        	else if(icMessageMaxRange > 64)
-        		icMessageMaxRange = 64;
-        }
-        
-        if(properties.containsKey("ic-in-area-max-length"))
-        {
-        	icInAreaMaxLength = properties.getInt("ic-in-area-max-length", 64);
-        	if(icInAreaMaxLength < 1)
-        		icInAreaMaxLength = 1;
-        	else if(icInAreaMaxLength > 64)
-        		icInAreaMaxLength = 64;
-        }
-        
-        if(properties.containsKey("ic-potions-allowed"))
-        {
-        	String values = properties.getString("ic-potions-allowed");
-        	if(values != null && !values.isEmpty())
-        	{
-        		String[] args = values.split(",");
-        		
-        		for(PotionType type : PotionType.values())
-        		{
-        			type.allowed = false;
-        		}
-        		
-        		for(int i = 0; i < args.length; i++)
-        		{
-        			PotionType type = PotionType.getEffectFromId(Integer.parseInt(args[i]));
-        			if(type == null)
-        			{
-        				logger.warning("craftbook.properties [ic-potions-allowed] contained invalid value: "+args[i]);
-        				continue;
-        			}
-        			type.allowed = true;
-        		}
-        	}
-        }
-        
-        if(properties.containsKey("ic-particles-allowed"))
-        {
-        	String values = properties.getString("ic-particles-allowed");
-        	if(values != null && !values.isEmpty())
-        	{
-        		String[] args = values.split(",");
-        		
-        		for(ParticleType type : ParticleType.values())
-        		{
-        			type.allowed = false;
-        		}
-        		
-        		for(int i = 0; i < args.length; i++)
-        		{
-        			ParticleType type = ParticleType.getParticle(args[i]);
-        			if(type == null)
-        			{
-        				logger.warning("craftbook.properties [ic-particles-allowed] contained invalid value: "+args[i]);
-        				continue;
-        			}
-        			type.allowed = true;
-        		}
-        	}
-        }
-        
-        if(properties.containsKey("ic-sfx-allowed"))
-        {
-        	String values = properties.getString("ic-sfx-allowed");
-        	if(values != null && !values.isEmpty())
-        	{
-        		String[] args = values.split(",");
-        		
-        		for(SFXType type : SFXType.values())
-        		{
-        			type.allowed = false;
-        		}
-        		
-        		for(int i = 0; i < args.length; i++)
-        		{
-        			SFXType type = SFXType.getEffect(args[i]);
-        			if(type == null)
-        			{
-        				logger.warning("craftbook.properties [ic-sfx-allowed] contained invalid value: "+args[i]);
-        				continue;
-        			}
-        			type.allowed = true;
-        		}
-        	}
-        }
-        
-        if(properties.containsKey("ic-enchantments-allowed"))
-        {
-        	String values = properties.getString("ic-enchantments-allowed");
-        	if(values != null && !values.isEmpty())
-        	{
-        		String[] args = values.split(",");
-        		
-        		for(EnchantmentType type : EnchantmentType.values())
-        		{
-        			type.allowed = false;
-        		}
-        		
-        		for(int i = 0; i < args.length; i++)
-        		{
-        			EnchantmentType type = EnchantmentType.getEnchantment(args[i]);
-        			if(type == null)
-        			{
-        				logger.warning("craftbook.properties [ic-enchantments-allowed] contained invalid value: "+args[i]);
-        				continue;
-        			}
-        			type.allowed = true;
-        		}
-        	}
-        }
-        
-        if(properties.containsKey("bounce-creatures"))
-        {
-        	Bounce.bounceCreatures = properties.getBoolean("bounce-creatures", false);
-        }
-
-        icList.clear();
-        
-        // Load custom ICs
-        if (properties.getBoolean("custom-ics", true)) {
-            try {
-                CustomICLoader.load("custom-ics.txt", this, plcLanguageList);
-                logger.info("Custom ICs for CraftBook loaded");
-            } catch (CustomICException e) {
-                Throwable cause = e.getCause();
-                
-                if (cause != null && !(cause instanceof FileNotFoundException)) {
-                    logger.log(Level.WARNING,
-                            "Failed to load custom IC file: " + e.getMessage());
-                }
-            }
-        }
-        
+    	setPropertyFields();
+    	icList.clear();
+        loadCustomICs();
         addDefaultICs();
-        
-        // find instant ICs
-        if (this.enableSelfTriggeredICs) {
-	        for (String worldName : etc.getServer().getLoadedWorldNames()) {
-	        	World[] worldDimensions = etc.getServer().getWorld(worldName);
-	        	for (World world : worldDimensions) {
-	        		for (Chunk chunk:world.getLoadedChunks()){
-	        			try {
-	        				CraftBook.cbxScheduler.execute(new InstantICFinder(chunk));        				
-	        			} catch (RejectedExecutionException e){
-	        				logger.log(Level.SEVERE, "Craftbook could not run the InstantICFinder for chunk ("
-	        						+ chunk.getX()
-	        						+ ", "
-	        						+ chunk.getZ()
-	        						+ "): RejectedExecutionException from cbxScheduler.");
-	        			}
-	        		}
-	        	}
-	        }
-        }
+        findInstantICs();
     }
     
 
@@ -612,15 +428,11 @@ public class RedstoneListener extends CraftBookDelegateListener
     }
 
     public void onTick() {
-    	
     	//[NOTE]: Placing Bounce here instead of Mech to re-use onTick. If more onTick is needed in Mech, then move.
-    	if(Bounce.bounceCreatures)
-    	{
+    	if(Bounce.bounceCreatures){
     		Bounce.bounceCreatures();
-    	}
-    	
-    	runInstantICs();
-    	
+    	}	
+    	runInstantICs();	
     }
 
 	public void onSignAdded(World world, int x, int y, int z) {
@@ -806,24 +618,21 @@ public class RedstoneListener extends CraftBookDelegateListener
     	if( (item == null || item.getItemId() == 0)
     		&& player.canUseCommand("/cbrightclicksignupdate")
     		&& blockClicked != null
-    		&& blockClicked.getType() == BlockType.WALL_SIGN)
-    	{
+    		&& blockClicked.getType() == BlockType.WALL_SIGN){
+    		// get clicked sign
     		World world = player.getWorld();
-        	
         	Sign sign = (Sign)world.getComplexBlock(blockClicked);
-        	
+        	// check if sign might be an IC
         	String line2 = sign.getText(1);
-        	if(!line2.startsWith("[MC") || line2.length() < 8)
+        	if(line2.length() < 8 || !line2.startsWith("[MC"))
             	return;
-        	
+        	// get IC
         	String id = line2.substring(1, 7).toUpperCase();
         	RegisteredIC ic = icList.get(id);
             if (ic == null)
             	return;
-            
             if(!ic.type.isSelfTriggered)
             	return;
-            
             onSignAdded(CraftBook.getCBWorld(world), sign);
     	}
     }
@@ -915,6 +724,7 @@ public class RedstoneListener extends CraftBookDelegateListener
         icList.put(name, new RegisteredIC(ic, type, isPlc));
     }
 
+    
     public void registerLang(String name, PlcLang language) {
         plcLanguageList.put(name, language);
         craftBook.getStateManager().addStateHolder(name, language);
@@ -923,6 +733,132 @@ public class RedstoneListener extends CraftBookDelegateListener
     // ----------------
     // private methods
     // ----------------
+    
+    /**
+     * populates property fields from the CraftBook.properties file
+     */
+    private void setPropertyFields(){
+        checkCreatePermissions = properties.getBoolean("check-create-permissions", false);
+        redstonePumpkins = properties.getBoolean("redstone-pumpkins", true);
+        redstoneNetherstone = properties.getBoolean("redstone-netherstone", false);
+        redstoneICs = properties.getBoolean("redstone-ics", true);
+        redstonePLCs = properties.getBoolean("redstone-plcs", true);
+        redstonePLCsRequirePermission = properties.getBoolean("redstone-plcs-require-permission", false);
+        listICs = properties.getBoolean("enable-ic-list",true);
+        listUnusuableICs = properties.getBoolean("ic-list-show-unusuable",true);
+        enableSelfTriggeredICs = properties.getBoolean("enable-self-triggered-ics",true);
+        restrictSelfTriggeredICs = properties.getBoolean("self-triggered-ics-require-premission",false);
+       	updateSelfTriggeredICList = properties.getBoolean("chunk-updated-self-triggered-ic-list",true);
+       	Bounce.bounceCreatures = properties.getBoolean("bounce-creatures", false);
+       	if(properties.containsKey("ic-chest-collector-max-range")) {
+        	chestCollectorMaxRange = properties.getInt("ic-chest-collector-max-range", 64);
+        	if(chestCollectorMaxRange < 1)
+        		chestCollectorMaxRange = 1;
+        	else if(chestCollectorMaxRange > 64)
+        		chestCollectorMaxRange = 64;
+        }
+        if(properties.containsKey("ic-message-max-range")) {
+        	icMessageMaxRange = properties.getInt("ic-message-max-range", 64);
+        	if(icMessageMaxRange < 1)
+        		icMessageMaxRange = 1;
+        	else if(icMessageMaxRange > 64)
+        		icMessageMaxRange = 64;
+        }
+        if(properties.containsKey("ic-in-area-max-length")) {
+        	icInAreaMaxLength = properties.getInt("ic-in-area-max-length", 64);
+        	if(icInAreaMaxLength < 1)
+        		icInAreaMaxLength = 1;
+        	else if(icInAreaMaxLength > 64)
+        		icInAreaMaxLength = 64;
+        }
+        if(properties.containsKey("ic-potions-allowed")) {
+        	String values = properties.getString("ic-potions-allowed");
+        	if(values != null && !values.isEmpty()) {
+        		String[] args = values.split(",");
+        		for(PotionType type : PotionType.values()) {
+        			type.allowed = false;
+        		}
+        		for(int i = 0; i < args.length; i++) {
+        			PotionType type = PotionType.getEffectFromId(Integer.parseInt(args[i]));
+        			if(type == null) {
+        				logger.warning("craftbook.properties [ic-potions-allowed] contained invalid value: "+args[i]);
+        				continue;
+        			}
+        			type.allowed = true;
+        		}
+        	}
+        }
+        if(properties.containsKey("ic-particles-allowed")) {
+        	String values = properties.getString("ic-particles-allowed");
+        	if(values != null && !values.isEmpty()) {
+        		String[] args = values.split(",");
+        		for(ParticleType type : ParticleType.values()) {
+        			type.allowed = false;
+        		}
+        		
+        		for(int i = 0; i < args.length; i++) {
+        			ParticleType type = ParticleType.getParticle(args[i]);
+        			if(type == null) {
+        				logger.warning("craftbook.properties [ic-particles-allowed] contained invalid value: "+args[i]);
+        				continue;
+        			}
+        			type.allowed = true;
+        		}
+        	}
+        }
+        if(properties.containsKey("ic-sfx-allowed")) {
+        	String values = properties.getString("ic-sfx-allowed");
+        	if(values != null && !values.isEmpty())	{
+        		String[] args = values.split(",");
+        		for(SFXType type : SFXType.values()) {
+        			type.allowed = false;
+        		}
+        		for(int i = 0; i < args.length; i++) {
+        			SFXType type = SFXType.getEffect(args[i]);
+        			if(type == null) {
+        				logger.warning("craftbook.properties [ic-sfx-allowed] contained invalid value: "+args[i]);
+        				continue;
+        			}
+        			type.allowed = true;
+        		}
+        	}
+        }
+        if(properties.containsKey("ic-enchantments-allowed")) {
+        	String values = properties.getString("ic-enchantments-allowed");
+        	if(values != null && !values.isEmpty()) {
+        		String[] args = values.split(",");        		
+        		for(EnchantmentType type : EnchantmentType.values()) {
+        			type.allowed = false;
+        		}
+        		for(int i = 0; i < args.length; i++) {
+        			EnchantmentType type = EnchantmentType.getEnchantment(args[i]);
+        			if(type == null) {
+        				logger.warning("craftbook.properties [ic-enchantments-allowed] contained invalid value: "+args[i]);
+        				continue;
+        			}
+        			type.allowed = true;
+        		}
+        	}
+        }
+    }
+    
+    /**
+     * loads custom ICs from custom-ics.txt
+     */
+    private void loadCustomICs(){
+	    if (properties.getBoolean("custom-ics", true)) {
+	        try {
+	            CustomICLoader.load("custom-ics.txt", this, plcLanguageList);
+	            logger.info("Custom ICs for CraftBook loaded");
+	        } catch (CustomICException e) {
+	            Throwable cause = e.getCause();
+	            if (cause != null && !(cause instanceof FileNotFoundException)) {
+	                logger.log(Level.WARNING,
+	                        "Failed to load custom IC file: " + e.getMessage());
+	            }
+	        }
+	    }
+    }
     
     /**
      * Populate the IC list with the default ICs.
@@ -937,7 +873,7 @@ public class RedstoneListener extends CraftBookDelegateListener
             internalRegisterIC("MC0260", new MC1260(false), ICType.ZISO);
             internalRegisterIC("MC0261", new MC1261(false), ICType.ZISO);
             internalRegisterIC("MC0262", new MC1262(false), ICType.ZISO);
-            
+            // CBX self-triggred
             internalRegisterIC("MCO116", new MCM116(), ICType.ZISO);
             internalRegisterIC("MCZ027", new MCX027(), ICType.ZISO);
             internalRegisterIC("MCZ116", new MCX116(), ICType.ZISO);
@@ -957,7 +893,7 @@ public class RedstoneListener extends CraftBookDelegateListener
             internalRegisterIC("MCZ238", new MCX238(), ICType.ZISO);
             internalRegisterIC("MCZ295", new MCX295(), ICType.ZISO);
         }
-        
+        // CB SISO
         internalRegisterIC("MC1000", new MC1000(), ICType.SISO);
         internalRegisterIC("MC1001", new MC1001(), ICType.SISO);
         internalRegisterIC("MC1017", new MC1017(), ICType.SISO);
@@ -985,10 +921,10 @@ public class RedstoneListener extends CraftBookDelegateListener
         internalRegisterIC("MC1510", new MC1510(), ICType.SISO);
         internalRegisterIC("MC1511", new MC1511(), ICType.SISO);
         internalRegisterIC("MC1512", new MC1512(), ICType.SISO);
-
+        // CB SI3O
         internalRegisterIC("MC2020", new MC2020(), ICType.SI3O);
         internalRegisterIC("MC2999", new MC2999(), ICType.SI3O);
-        
+        // CB _3ISO
         internalRegisterIC("MC3020", new MC3020(), ICType._3ISO);
         internalRegisterIC("MC3002", new MC3002(), ICType._3ISO);
         internalRegisterIC("MC3003", new MC3003(), ICType._3ISO);
@@ -1008,13 +944,13 @@ public class RedstoneListener extends CraftBookDelegateListener
         internalRegisterIC("MC4100", new MC4100(), ICType._3I3O);
         internalRegisterIC("MC4110", new MC4110(), ICType._3I3O);
         internalRegisterIC("MC4200", new MC4200(), ICType._3I3O);
-
+        // perlstone
         internalRegisterPLC("MC5000", "perlstone_v1.0", ICType.VIVO);
         internalRegisterPLC("MC5001", "perlstone_v1.0", ICType._3I3O);
-        
+        // perlstone32
         internalRegisterPLC("MC5032", "perlstone32_v1", ICType.VIVO);
         internalRegisterPLC("MC5033", "perlstone32_v1", ICType._3I3O);
-        
+        // CBX SISO
         internalRegisterIC("MCX010", new MCX010(), ICType.SISO);
         internalRegisterIC("MCX027", new MCX027(), ICType.SISO);
         internalRegisterIC("MCX111", new MCX111(), ICType.SISO);
@@ -1073,10 +1009,10 @@ public class RedstoneListener extends CraftBookDelegateListener
         internalRegisterIC("MCX515", new MCX515(), ICType.SISO);
         internalRegisterIC("MCX516", new MCX516(), ICType.SISO);
         internalRegisterIC("MCX517", new MCX517(), ICType.SISO);
-        
+        // CBX _3ISO
         internalRegisterIC("MCT233", new MCT233(), ICType._3ISO);
         internalRegisterIC("MCT246", new MCT246(), ICType._3ISO);
-        
+        // CBX UISO
         internalRegisterIC("MCU113", new MCX113(), ICType.UISO);
         internalRegisterIC("MCU131", new MCU131(), ICType.UISO);
         internalRegisterIC("MCU132", new MCU132(), ICType.UISO);
@@ -1098,7 +1034,7 @@ public class RedstoneListener extends CraftBookDelegateListener
         internalRegisterIC("MCU440", new MCX440(), ICType.UISO);
         internalRegisterIC("MCU700", new MCX700(), ICType.UISO);
         internalRegisterIC("MCU705", new MCX705(), ICType.UISO);
-        
+        // CBX MISO
         internalRegisterIC("MCU211", new MCX211(), ICType.MISO);
         internalRegisterIC("MCU212", new MCX212(), ICType.MISO);
         internalRegisterIC("MCU213", new MCX213(), ICType.MISO);
@@ -1106,6 +1042,30 @@ public class RedstoneListener extends CraftBookDelegateListener
         internalRegisterIC("MCU217", new MCX217(), ICType.MISO);
         internalRegisterIC("MCU701", new MCX701(), ICType.MISO);
         internalRegisterIC("MCU702", new MCX702(), ICType.MISO);
+    }
+    
+    /**
+     * Searches for self-updating ICs in all currently loaded chunks and adds them to the instantICs set
+     */
+    private void findInstantICs() {
+        if (this.enableSelfTriggeredICs) {
+	        for (String worldName : etc.getServer().getLoadedWorldNames()) {
+	        	World[] worldDimensions = etc.getServer().getWorld(worldName);
+	        	for (World world : worldDimensions) {
+	        		for (Chunk chunk:world.getLoadedChunks()){
+	        			try {
+	        				CraftBook.cbxScheduler.execute(new InstantICFinder(chunk));        				
+	        			} catch (RejectedExecutionException e){
+	        				logger.log(Level.SEVERE, "Craftbook could not run the InstantICFinder for chunk ("
+	        						+ chunk.getX()
+	        						+ ", "
+	        						+ chunk.getZ()
+	        						+ "): RejectedExecutionException from cbxScheduler.");
+	        			}
+	        		}
+	        	}
+	        }
+        }
     }
 
     /**
@@ -1334,8 +1294,8 @@ public class RedstoneListener extends CraftBookDelegateListener
 	    		public void run(){
 	    			try {
 	    				instantICs.removeAll(toRemove);
-	    			} catch (Exception e) {
-	    				e.printStackTrace();
+	    			} catch (Throwable t) {
+	    				t.printStackTrace();
 	    			}
 	    		}
 	    	});
