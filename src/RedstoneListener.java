@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,6 +94,10 @@ public class RedstoneListener extends CraftBookDelegateListener
         super(craftBook, listener);
         registerLang("perlstone_v1.0",new Perlstone_1_0());
         registerLang("perlstone32_v1",new Perlstone32_1());
+    }
+    
+    public void run() {
+    	onTick();
     }
 
     /**
@@ -291,189 +296,6 @@ public class RedstoneListener extends CraftBookDelegateListener
         }
     }
     
-    /**
-     * Populate the IC list with the default ICs.
-     */
-    private void addDefaultICs() {
-        if (enableSelfTriggeredICs) {
-            internalRegisterIC("MC0020", new MC0020(), ICType.ZISO);
-            internalRegisterIC("MC0111", new MC1111(), ICType.ZISO);
-            internalRegisterIC("MC0230", new MC1230(), ICType.ZISO);
-            internalRegisterIC("MC0420", new MC1420(), ICType.ZISO);
-            internalRegisterIC("MC0500", new MC1500(), ICType.ZISO);
-            internalRegisterIC("MC0260", new MC1260(false), ICType.ZISO);
-            internalRegisterIC("MC0261", new MC1261(false), ICType.ZISO);
-            internalRegisterIC("MC0262", new MC1262(false), ICType.ZISO);
-            
-            internalRegisterIC("MCO116", new MCM116(), ICType.ZISO);
-            internalRegisterIC("MCZ027", new MCX027(), ICType.ZISO);
-            internalRegisterIC("MCZ116", new MCX116(), ICType.ZISO);
-            internalRegisterIC("MCZ117", new MCX117(), ICType.ZISO);
-            internalRegisterIC("MCZ118", new MCX118(), ICType.ZISO);
-            internalRegisterIC("MCZ119", new MCX119(), ICType.ZISO);
-            internalRegisterIC("MCZ120", new MCX120(), ICType.ZISO);
-            internalRegisterIC("MCZ121", new MCX121(), ICType.ZISO);
-            internalRegisterIC("MCZ130", new MCX130(), ICType.ZISO);
-            internalRegisterIC("MCZ133", new MCX133(), ICType.ZISO);
-            internalRegisterIC("MCZ203", new MCX203(), ICType.ZISO);
-            internalRegisterIC("MCZ205", new MCX205(), ICType.ZISO);
-            internalRegisterIC("MCZ216", new MCX216(), ICType.ZISO);
-            internalRegisterIC("MCZ230", new MCX230(), ICType.ZISO);
-            internalRegisterIC("MCZ231", new MCX231(), ICType.ZISO);
-            internalRegisterIC("MCZ236", new MCX236(), ICType.ZISO);
-            internalRegisterIC("MCZ238", new MCX238(), ICType.ZISO);
-            internalRegisterIC("MCZ295", new MCX295(), ICType.ZISO);
-        }
-        
-        internalRegisterIC("MC1000", new MC1000(), ICType.SISO);
-        internalRegisterIC("MC1001", new MC1001(), ICType.SISO);
-        internalRegisterIC("MC1017", new MC1017(), ICType.SISO);
-        internalRegisterIC("MC1018", new MC1018(), ICType.SISO);
-        internalRegisterIC("MC1020", new MC1020(), ICType.SISO);
-        internalRegisterIC("MC1025", new MC1025(), ICType.SISO);
-        internalRegisterIC("MC1110", new MC1110(), ICType.SISO);
-        internalRegisterIC("MC1111", new MC1111(), ICType.SISO);
-        internalRegisterIC("MC1200", new MC1200(), ICType.SISO);
-        internalRegisterIC("MC1201", new MC1201(), ICType.SISO);
-        internalRegisterIC("MC1202", new MC1202(), ICType.SISO);
-        internalRegisterIC("MC1205", new MC1205(), ICType.SISO);
-        internalRegisterIC("MC1206", new MC1206(), ICType.SISO);
-        internalRegisterIC("MC1207", new MC1207(), ICType.SISO);
-        internalRegisterIC("MC1230", new MC1230(), ICType.SISO);
-        internalRegisterIC("MC1231", new MC1231(), ICType.SISO);
-        internalRegisterIC("MC1240", new MC1240(), ICType.SISO);
-        internalRegisterIC("MC1241", new MC1241(), ICType.SISO);
-        internalRegisterIC("MC1250", new MC1250(), ICType.SISO);
-        internalRegisterIC("MC1260", new MC1260(true), ICType.SISO);
-        internalRegisterIC("MC1261", new MC1261(true), ICType.SISO);
-        internalRegisterIC("MC1262", new MC1262(true), ICType.SISO);
-        internalRegisterIC("MC1420", new MC1420(), ICType.SISO);
-        internalRegisterIC("MC1500", new MC1500(), ICType.SISO);
-        internalRegisterIC("MC1510", new MC1510(), ICType.SISO);
-        internalRegisterIC("MC1511", new MC1511(), ICType.SISO);
-        internalRegisterIC("MC1512", new MC1512(), ICType.SISO);
-
-        internalRegisterIC("MC2020", new MC2020(), ICType.SI3O);
-        internalRegisterIC("MC2999", new MC2999(), ICType.SI3O);
-        
-        internalRegisterIC("MC3020", new MC3020(), ICType._3ISO);
-        internalRegisterIC("MC3002", new MC3002(), ICType._3ISO);
-        internalRegisterIC("MC3003", new MC3003(), ICType._3ISO);
-        internalRegisterIC("MC3021", new MC3021(), ICType._3ISO);
-        internalRegisterIC("MC3030", new MC3030(), ICType._3ISO);
-        internalRegisterIC("MC3031", new MC3031(), ICType._3ISO);
-        internalRegisterIC("MC3032", new MC3032(), ICType._3ISO);
-        internalRegisterIC("MC3033", new MC3033(), ICType._3ISO);
-        internalRegisterIC("MC3034", new MC3034(), ICType._3ISO);
-        internalRegisterIC("MC3036", new MC3036(), ICType._3ISO);
-        internalRegisterIC("MC3040", new MC3040(), ICType._3ISO);
-        internalRegisterIC("MC3101", new MC3101(), ICType._3ISO);
-        internalRegisterIC("MC3231", new MC3231(), ICType._3ISO);
-        internalRegisterIC("MC3456", new MC3456(), ICType._3ISO);
-        internalRegisterIC("MC4000", new MC4000(), ICType._3I3O);
-        internalRegisterIC("MC4010", new MC4010(), ICType._3I3O);
-        internalRegisterIC("MC4100", new MC4100(), ICType._3I3O);
-        internalRegisterIC("MC4110", new MC4110(), ICType._3I3O);
-        internalRegisterIC("MC4200", new MC4200(), ICType._3I3O);
-
-        internalRegisterPLC("MC5000", "perlstone_v1.0", ICType.VIVO);
-        internalRegisterPLC("MC5001", "perlstone_v1.0", ICType._3I3O);
-        
-        internalRegisterPLC("MC5032", "perlstone32_v1", ICType.VIVO);
-        internalRegisterPLC("MC5033", "perlstone32_v1", ICType._3I3O);
-        
-        internalRegisterIC("MCX010", new MCX010(), ICType.SISO);
-        internalRegisterIC("MCX027", new MCX027(), ICType.SISO);
-        internalRegisterIC("MCX111", new MCX111(), ICType.SISO);
-        internalRegisterIC("MCM112", new MCM112(), ICType.SISO);
-        internalRegisterIC("MCX112", new MCX112(), ICType.SISO);
-        internalRegisterIC("MCX114", new MCX114(), ICType.SISO);
-        internalRegisterIC("MCX115", new MCX115(), ICType.SISO);
-        internalRegisterIC("MCX116", new MCX116(), ICType.SISO);
-        internalRegisterIC("MCX117", new MCX117(), ICType.SISO);
-        internalRegisterIC("MCX118", new MCX118(), ICType.SISO);
-        internalRegisterIC("MCX119", new MCX119(), ICType.SISO);
-        internalRegisterIC("MCX120", new MCX120(), ICType.SISO);
-        internalRegisterIC("MCX121", new MCX121(), ICType.SISO);
-        internalRegisterIC("MCX130", new MCX130(), ICType.SISO);
-        internalRegisterIC("MCX131", new MCX131(), ICType.SISO);
-        internalRegisterIC("MCX132", new MCX132(), ICType.SISO);
-        internalRegisterIC("MCX133", new MCX133(), ICType.SISO);
-        internalRegisterIC("MCX140", new MCX140(), ICType.SISO);
-        internalRegisterIC("MCX142", new MCX142(), ICType.SISO);
-        internalRegisterIC("MCX144", new MCX144(), ICType.SISO);
-        internalRegisterIC("MCX146", new MCX146(), ICType.SISO);
-        internalRegisterIC("MCX200", new MCX200(), ICType.SISO);
-        internalRegisterIC("MCX201", new MCX201(), ICType.SISO);
-        internalRegisterIC("MCX202", new MCX202(), ICType.SISO);
-        internalRegisterIC("MCX203", new MCX203(), ICType.SISO);
-        internalRegisterIC("MCX204", new MCX204(), ICType.SISO);
-        internalRegisterIC("MCX205", new MCX205(), ICType.SISO);
-        internalRegisterIC("MCX206", new MCX206(), ICType.SISO);
-        internalRegisterIC("MCX207", new MCX207(), ICType.SISO);
-        internalRegisterIC("MCX208", new MCX208(), ICType.SISO);
-        internalRegisterIC("MCX209", new MCX209(), ICType.SISO);
-        internalRegisterIC("MCX210", new MCX210(), ICType.SISO);
-        internalRegisterIC("MCX216", new MCX216(), ICType.SISO);
-        internalRegisterIC("MCX228", new MCX228(), ICType.SISO);
-        internalRegisterIC("MCX230", new MCX230(), ICType.SISO);
-        internalRegisterIC("MCX231", new MCX231(), ICType.SISO);
-        internalRegisterIC("MCX233", new MCX233(), ICType.SISO);
-        internalRegisterIC("MCX235", new MCX235(), ICType.SISO);
-        internalRegisterIC("MCX236", new MCX236(), ICType.SISO);
-        internalRegisterIC("MCX237", new MCX237(), ICType.SISO);
-        internalRegisterIC("MCX238", new MCX238(), ICType.SISO);
-        internalRegisterIC("MCX242", new MCX242(), ICType.SISO);
-        internalRegisterIC("MCX243", new MCX243(), ICType.SISO);
-        internalRegisterIC("MCX244", new MCX244(), ICType.SISO);
-        internalRegisterIC("MCX245", new MCX245(), ICType.SISO);
-        internalRegisterIC("MCX246", new MCX246(), ICType.SISO);
-        internalRegisterIC("MCX250", new MCX250(), ICType.SISO);
-        internalRegisterIC("MCX251", new MCX251(), ICType.SISO);
-        internalRegisterIC("MCX255", new MCX255(), ICType.SISO);
-        internalRegisterIC("MCX256", new MCX256(), ICType.SISO);
-        internalRegisterIC("MCX292", new MCX292(), ICType.SISO);
-        internalRegisterIC("MCX293", new MCX293(), ICType.SISO);
-        internalRegisterIC("MCX295", new MCX295(), ICType.SISO);
-        internalRegisterIC("MCX512", new MCX512(), ICType.SISO);
-        internalRegisterIC("MCX513", new MCX513(), ICType.SISO);
-        internalRegisterIC("MCX515", new MCX515(), ICType.SISO);
-        internalRegisterIC("MCX516", new MCX516(), ICType.SISO);
-        internalRegisterIC("MCX517", new MCX517(), ICType.SISO);
-        
-        internalRegisterIC("MCT233", new MCT233(), ICType._3ISO);
-        internalRegisterIC("MCT246", new MCT246(), ICType._3ISO);
-        
-        internalRegisterIC("MCU113", new MCX113(), ICType.UISO);
-        internalRegisterIC("MCU131", new MCU131(), ICType.UISO);
-        internalRegisterIC("MCU132", new MCU132(), ICType.UISO);
-        internalRegisterIC("MCU140", new MCX140(), ICType.UISO);
-        internalRegisterIC("MCU142", new MCX142(), ICType.UISO);
-        internalRegisterIC("MCU144", new MCX144(), ICType.UISO);
-        internalRegisterIC("MCU146", new MCX146(), ICType.UISO);
-        internalRegisterIC("MCU200", new MCX200(), ICType.UISO);
-        internalRegisterIC("MCU220", new MCX220(), ICType.UISO);
-        internalRegisterIC("MCU221", new MCX221(), ICType.UISO);
-        internalRegisterIC("MCU222", new MCX222(), ICType.UISO);
-        internalRegisterIC("MCU292", new MCX292(), ICType.UISO);
-        internalRegisterIC("MCU293", new MCX293(), ICType.UISO);
-        internalRegisterIC("MCU300", new MCX300(), ICType.UISO);
-        internalRegisterIC("MCU301", new MCX301(), ICType.UISO);
-        internalRegisterIC("MCU302", new MCX302(), ICType.UISO);
-        internalRegisterIC("MCU303", new MCX303(), ICType.UISO);
-        internalRegisterIC("MCU304", new MCX304(), ICType.UISO);
-        internalRegisterIC("MCU440", new MCX440(), ICType.UISO);
-        internalRegisterIC("MCU700", new MCX700(), ICType.UISO);
-        internalRegisterIC("MCU705", new MCX705(), ICType.UISO);
-        
-        internalRegisterIC("MCU211", new MCX211(), ICType.MISO);
-        internalRegisterIC("MCU212", new MCX212(), ICType.MISO);
-        internalRegisterIC("MCU213", new MCX213(), ICType.MISO);
-        internalRegisterIC("MCU214", new MCX214(), ICType.MISO);
-        internalRegisterIC("MCU217", new MCX217(), ICType.MISO);
-        internalRegisterIC("MCU701", new MCX701(), ICType.MISO);
-        internalRegisterIC("MCU702", new MCX702(), ICType.MISO);
-    }
 
     /**
      * Called when a sign is updated.
@@ -617,28 +439,6 @@ public class RedstoneListener extends CraftBookDelegateListener
         return false;
     }
     
-	public void onChunkUnload(final Chunk chunk) {
-		if (!updateSelfTriggeredICList || this.instantICs.isEmpty()) {
-			return;
-		}
-		if (CraftBook.cbxScheduler.isShutdown()) {
-			return;
-		}
-		// Race condition: if the chunk gets reloaded before this has processed,
-		// some or all instant ICs in that chunk will be removed from the list
-		// and not work until it is reloaded again.
-		try {
-			CraftBook.cbxScheduler.execute(new InstantICRemover(chunk));
-		} catch (RejectedExecutionException e) {
-			logger.log(Level.WARNING, 
-					"CraftBook could not run the InstantICRemover for chunk ("
-					+ chunk.getX()
-					+ ", "
-					+ chunk.getZ()
-					+ "): RejectedExecutionException from cbxScheduler.");
-		}
-	}
-
 	public void onChunkLoaded(final Chunk chunk) {
 		if (!enableSelfTriggeredICs || !updateSelfTriggeredICList) {
 			return;
@@ -646,11 +446,6 @@ public class RedstoneListener extends CraftBookDelegateListener
 		if (CraftBook.cbxScheduler.isShutdown()) {
 			return;
 		}
-		// Race condition: if a chunk gets unloaded before this is processed,
-		// the block vectors found here will stay in the instantIC list until
-		// the chunk is loaded and unloaded again. Since they used to remain in
-		// that list forever before these changes were made, it is probably not
-		// a problem.
 		try {
 			CraftBook.cbxScheduler.execute(new InstantICFinder(chunk));
 		} catch (RejectedExecutionException e) {
@@ -824,81 +619,8 @@ public class RedstoneListener extends CraftBookDelegateListener
     		Bounce.bounceCreatures();
     	}
     	
-        if(!enableSelfTriggeredICs) return;
-        
-        Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
-        while(worldIter.hasNext())
-        {
-        	Map.Entry<String, OWorldServer[]> entry = (Map.Entry<String, OWorldServer[]>)worldIter.next();
-        	String oworldLevelName = entry.getKey();
-        	OWorldServer[] oworlds = (OWorldServer[])entry.getValue();
-        	
-        	for(int i = 0; i < oworlds.length; i++)
-            {
-            	World world = new World(oworlds[i]);
-            	
-    	        //XXX HACK: Do this in a more proper way later.
-    	        if(world.getTime()%2!=0) continue;
-    	        
-    	        CraftBookWorld cbworld = new CraftBookWorld(oworldLevelName, world.getType().getId());
-    	        
-    	        WorldBlockVector[] bv = this.instantICs.toArray(new WorldBlockVector[0]);
-    	        
-    	        for(WorldBlockVector pt:bv) {
-    	        	if(!pt.getCBWorld().equals(cbworld))
-    	        		continue;
-    	        	
-    	            Sign sign = (Sign)world.getComplexBlock(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
-    	            if(sign==null) {
-    	                this.instantICs.remove(pt);
-    	                continue;
-    	            }
-    	            String line2 = sign.getText(1);
-    	            String id = line2.substring(1, 7).toUpperCase();
-    	            
-    	            RegisteredIC ic = icList.get(id);
-					if (ic == null) {
-						if (line2.startsWith("[MC")) {
-							sign.setText(1, Colors.Red + line2);
-							sign.update();
-						}
-						this.instantICs.remove(pt);
-						continue;
-					}
-    	            
-    	            if(ic.type.updateOnce)
-    	            {
-    	            	if(sign.getText(0).charAt(0) != '%')
-    	            	{
-    	            		this.instantICs.remove(pt);
-    	            		
-    	            		if(sign.getText(0).charAt(0) == '^')
-    	                		continue;
-    	            	}
-    	            }
-    	            else if(!ic.type.isSelfTriggered) {
-    	                this.instantICs.remove(pt);
-    	                continue;
-    	            }
+    	runInstantICs();
     	
-    	            SignText signText = new SignText(sign.getText(0),
-    	                    sign.getText(1), sign.getText(2), sign.getText(3));
-    	            
-    	            ic.think(cbworld, pt, signText, sign, null);
-    	            
-    	            if (signText.isChanged()) {
-    	                sign.setText(0, signText.getLine1());
-    	                sign.setText(1, signText.getLine2());
-    	                sign.setText(2, signText.getLine3());
-    	                sign.setText(3, signText.getLine4());
-    	                
-    	                if (signText.shouldUpdate()) {
-    	                    sign.update();
-    	                }
-    	            }
-    	        }
-            }
-        }
     }
 
 	public void onSignAdded(World world, int x, int y, int z) {
@@ -1152,6 +874,240 @@ public class RedstoneListener extends CraftBookDelegateListener
         return false;
     }
 
+    
+    /**
+     * Register a new IC. Defined by the interface CustomICAccepter.
+     * 
+     * @param name
+     * @param ic
+     * @param type
+     */
+    public void registerIC(String name, IC ic, String type)
+            throws CustomICException {
+        if (icList.containsKey(name)) {
+            throw new CustomICException("IC already defined");
+        }
+        ICType icType = getICType(type);
+        if(!enableSelfTriggeredICs && icType.isSelfTriggered) return;
+        
+        registerIC(name, ic, icType, false);
+    }
+    
+    /**
+     * Registers a new non-PLC IC.
+     * 
+     * @param name
+     * @param ic
+     * @param type
+     */
+    public void registerIC(String name, IC ic, ICType type) {
+        registerIC(name, ic, type, false);
+    }
+
+    /**
+     * Registers a new IC.
+     * 
+     * @param name
+     * @param ic
+     * @param isPlc
+     */
+    public void registerIC(String name, IC ic, ICType type, boolean isPlc) {
+        icList.put(name, new RegisteredIC(ic, type, isPlc));
+    }
+
+    public void registerLang(String name, PlcLang language) {
+        plcLanguageList.put(name, language);
+        craftBook.getStateManager().addStateHolder(name, language);
+    }
+    
+    // ----------------
+    // private methods
+    // ----------------
+    
+    /**
+     * Populate the IC list with the default ICs.
+     */
+    private void addDefaultICs() {
+        if (enableSelfTriggeredICs) {
+            internalRegisterIC("MC0020", new MC0020(), ICType.ZISO);
+            internalRegisterIC("MC0111", new MC1111(), ICType.ZISO);
+            internalRegisterIC("MC0230", new MC1230(), ICType.ZISO);
+            internalRegisterIC("MC0420", new MC1420(), ICType.ZISO);
+            internalRegisterIC("MC0500", new MC1500(), ICType.ZISO);
+            internalRegisterIC("MC0260", new MC1260(false), ICType.ZISO);
+            internalRegisterIC("MC0261", new MC1261(false), ICType.ZISO);
+            internalRegisterIC("MC0262", new MC1262(false), ICType.ZISO);
+            
+            internalRegisterIC("MCO116", new MCM116(), ICType.ZISO);
+            internalRegisterIC("MCZ027", new MCX027(), ICType.ZISO);
+            internalRegisterIC("MCZ116", new MCX116(), ICType.ZISO);
+            internalRegisterIC("MCZ117", new MCX117(), ICType.ZISO);
+            internalRegisterIC("MCZ118", new MCX118(), ICType.ZISO);
+            internalRegisterIC("MCZ119", new MCX119(), ICType.ZISO);
+            internalRegisterIC("MCZ120", new MCX120(), ICType.ZISO);
+            internalRegisterIC("MCZ121", new MCX121(), ICType.ZISO);
+            internalRegisterIC("MCZ130", new MCX130(), ICType.ZISO);
+            internalRegisterIC("MCZ133", new MCX133(), ICType.ZISO);
+            internalRegisterIC("MCZ203", new MCX203(), ICType.ZISO);
+            internalRegisterIC("MCZ205", new MCX205(), ICType.ZISO);
+            internalRegisterIC("MCZ216", new MCX216(), ICType.ZISO);
+            internalRegisterIC("MCZ230", new MCX230(), ICType.ZISO);
+            internalRegisterIC("MCZ231", new MCX231(), ICType.ZISO);
+            internalRegisterIC("MCZ236", new MCX236(), ICType.ZISO);
+            internalRegisterIC("MCZ238", new MCX238(), ICType.ZISO);
+            internalRegisterIC("MCZ295", new MCX295(), ICType.ZISO);
+        }
+        
+        internalRegisterIC("MC1000", new MC1000(), ICType.SISO);
+        internalRegisterIC("MC1001", new MC1001(), ICType.SISO);
+        internalRegisterIC("MC1017", new MC1017(), ICType.SISO);
+        internalRegisterIC("MC1018", new MC1018(), ICType.SISO);
+        internalRegisterIC("MC1020", new MC1020(), ICType.SISO);
+        internalRegisterIC("MC1025", new MC1025(), ICType.SISO);
+        internalRegisterIC("MC1110", new MC1110(), ICType.SISO);
+        internalRegisterIC("MC1111", new MC1111(), ICType.SISO);
+        internalRegisterIC("MC1200", new MC1200(), ICType.SISO);
+        internalRegisterIC("MC1201", new MC1201(), ICType.SISO);
+        internalRegisterIC("MC1202", new MC1202(), ICType.SISO);
+        internalRegisterIC("MC1205", new MC1205(), ICType.SISO);
+        internalRegisterIC("MC1206", new MC1206(), ICType.SISO);
+        internalRegisterIC("MC1207", new MC1207(), ICType.SISO);
+        internalRegisterIC("MC1230", new MC1230(), ICType.SISO);
+        internalRegisterIC("MC1231", new MC1231(), ICType.SISO);
+        internalRegisterIC("MC1240", new MC1240(), ICType.SISO);
+        internalRegisterIC("MC1241", new MC1241(), ICType.SISO);
+        internalRegisterIC("MC1250", new MC1250(), ICType.SISO);
+        internalRegisterIC("MC1260", new MC1260(true), ICType.SISO);
+        internalRegisterIC("MC1261", new MC1261(true), ICType.SISO);
+        internalRegisterIC("MC1262", new MC1262(true), ICType.SISO);
+        internalRegisterIC("MC1420", new MC1420(), ICType.SISO);
+        internalRegisterIC("MC1500", new MC1500(), ICType.SISO);
+        internalRegisterIC("MC1510", new MC1510(), ICType.SISO);
+        internalRegisterIC("MC1511", new MC1511(), ICType.SISO);
+        internalRegisterIC("MC1512", new MC1512(), ICType.SISO);
+
+        internalRegisterIC("MC2020", new MC2020(), ICType.SI3O);
+        internalRegisterIC("MC2999", new MC2999(), ICType.SI3O);
+        
+        internalRegisterIC("MC3020", new MC3020(), ICType._3ISO);
+        internalRegisterIC("MC3002", new MC3002(), ICType._3ISO);
+        internalRegisterIC("MC3003", new MC3003(), ICType._3ISO);
+        internalRegisterIC("MC3021", new MC3021(), ICType._3ISO);
+        internalRegisterIC("MC3030", new MC3030(), ICType._3ISO);
+        internalRegisterIC("MC3031", new MC3031(), ICType._3ISO);
+        internalRegisterIC("MC3032", new MC3032(), ICType._3ISO);
+        internalRegisterIC("MC3033", new MC3033(), ICType._3ISO);
+        internalRegisterIC("MC3034", new MC3034(), ICType._3ISO);
+        internalRegisterIC("MC3036", new MC3036(), ICType._3ISO);
+        internalRegisterIC("MC3040", new MC3040(), ICType._3ISO);
+        internalRegisterIC("MC3101", new MC3101(), ICType._3ISO);
+        internalRegisterIC("MC3231", new MC3231(), ICType._3ISO);
+        internalRegisterIC("MC3456", new MC3456(), ICType._3ISO);
+        internalRegisterIC("MC4000", new MC4000(), ICType._3I3O);
+        internalRegisterIC("MC4010", new MC4010(), ICType._3I3O);
+        internalRegisterIC("MC4100", new MC4100(), ICType._3I3O);
+        internalRegisterIC("MC4110", new MC4110(), ICType._3I3O);
+        internalRegisterIC("MC4200", new MC4200(), ICType._3I3O);
+
+        internalRegisterPLC("MC5000", "perlstone_v1.0", ICType.VIVO);
+        internalRegisterPLC("MC5001", "perlstone_v1.0", ICType._3I3O);
+        
+        internalRegisterPLC("MC5032", "perlstone32_v1", ICType.VIVO);
+        internalRegisterPLC("MC5033", "perlstone32_v1", ICType._3I3O);
+        
+        internalRegisterIC("MCX010", new MCX010(), ICType.SISO);
+        internalRegisterIC("MCX027", new MCX027(), ICType.SISO);
+        internalRegisterIC("MCX111", new MCX111(), ICType.SISO);
+        internalRegisterIC("MCM112", new MCM112(), ICType.SISO);
+        internalRegisterIC("MCX112", new MCX112(), ICType.SISO);
+        internalRegisterIC("MCX114", new MCX114(), ICType.SISO);
+        internalRegisterIC("MCX115", new MCX115(), ICType.SISO);
+        internalRegisterIC("MCX116", new MCX116(), ICType.SISO);
+        internalRegisterIC("MCX117", new MCX117(), ICType.SISO);
+        internalRegisterIC("MCX118", new MCX118(), ICType.SISO);
+        internalRegisterIC("MCX119", new MCX119(), ICType.SISO);
+        internalRegisterIC("MCX120", new MCX120(), ICType.SISO);
+        internalRegisterIC("MCX121", new MCX121(), ICType.SISO);
+        internalRegisterIC("MCX130", new MCX130(), ICType.SISO);
+        internalRegisterIC("MCX131", new MCX131(), ICType.SISO);
+        internalRegisterIC("MCX132", new MCX132(), ICType.SISO);
+        internalRegisterIC("MCX133", new MCX133(), ICType.SISO);
+        internalRegisterIC("MCX140", new MCX140(), ICType.SISO);
+        internalRegisterIC("MCX142", new MCX142(), ICType.SISO);
+        internalRegisterIC("MCX144", new MCX144(), ICType.SISO);
+        internalRegisterIC("MCX146", new MCX146(), ICType.SISO);
+        internalRegisterIC("MCX200", new MCX200(), ICType.SISO);
+        internalRegisterIC("MCX201", new MCX201(), ICType.SISO);
+        internalRegisterIC("MCX202", new MCX202(), ICType.SISO);
+        internalRegisterIC("MCX203", new MCX203(), ICType.SISO);
+        internalRegisterIC("MCX204", new MCX204(), ICType.SISO);
+        internalRegisterIC("MCX205", new MCX205(), ICType.SISO);
+        internalRegisterIC("MCX206", new MCX206(), ICType.SISO);
+        internalRegisterIC("MCX207", new MCX207(), ICType.SISO);
+        internalRegisterIC("MCX208", new MCX208(), ICType.SISO);
+        internalRegisterIC("MCX209", new MCX209(), ICType.SISO);
+        internalRegisterIC("MCX210", new MCX210(), ICType.SISO);
+        internalRegisterIC("MCX216", new MCX216(), ICType.SISO);
+        internalRegisterIC("MCX228", new MCX228(), ICType.SISO);
+        internalRegisterIC("MCX230", new MCX230(), ICType.SISO);
+        internalRegisterIC("MCX231", new MCX231(), ICType.SISO);
+        internalRegisterIC("MCX233", new MCX233(), ICType.SISO);
+        internalRegisterIC("MCX235", new MCX235(), ICType.SISO);
+        internalRegisterIC("MCX236", new MCX236(), ICType.SISO);
+        internalRegisterIC("MCX237", new MCX237(), ICType.SISO);
+        internalRegisterIC("MCX238", new MCX238(), ICType.SISO);
+        internalRegisterIC("MCX242", new MCX242(), ICType.SISO);
+        internalRegisterIC("MCX243", new MCX243(), ICType.SISO);
+        internalRegisterIC("MCX244", new MCX244(), ICType.SISO);
+        internalRegisterIC("MCX245", new MCX245(), ICType.SISO);
+        internalRegisterIC("MCX246", new MCX246(), ICType.SISO);
+        internalRegisterIC("MCX250", new MCX250(), ICType.SISO);
+        internalRegisterIC("MCX251", new MCX251(), ICType.SISO);
+        internalRegisterIC("MCX255", new MCX255(), ICType.SISO);
+        internalRegisterIC("MCX256", new MCX256(), ICType.SISO);
+        internalRegisterIC("MCX292", new MCX292(), ICType.SISO);
+        internalRegisterIC("MCX293", new MCX293(), ICType.SISO);
+        internalRegisterIC("MCX295", new MCX295(), ICType.SISO);
+        internalRegisterIC("MCX512", new MCX512(), ICType.SISO);
+        internalRegisterIC("MCX513", new MCX513(), ICType.SISO);
+        internalRegisterIC("MCX515", new MCX515(), ICType.SISO);
+        internalRegisterIC("MCX516", new MCX516(), ICType.SISO);
+        internalRegisterIC("MCX517", new MCX517(), ICType.SISO);
+        
+        internalRegisterIC("MCT233", new MCT233(), ICType._3ISO);
+        internalRegisterIC("MCT246", new MCT246(), ICType._3ISO);
+        
+        internalRegisterIC("MCU113", new MCX113(), ICType.UISO);
+        internalRegisterIC("MCU131", new MCU131(), ICType.UISO);
+        internalRegisterIC("MCU132", new MCU132(), ICType.UISO);
+        internalRegisterIC("MCU140", new MCX140(), ICType.UISO);
+        internalRegisterIC("MCU142", new MCX142(), ICType.UISO);
+        internalRegisterIC("MCU144", new MCX144(), ICType.UISO);
+        internalRegisterIC("MCU146", new MCX146(), ICType.UISO);
+        internalRegisterIC("MCU200", new MCX200(), ICType.UISO);
+        internalRegisterIC("MCU220", new MCX220(), ICType.UISO);
+        internalRegisterIC("MCU221", new MCX221(), ICType.UISO);
+        internalRegisterIC("MCU222", new MCX222(), ICType.UISO);
+        internalRegisterIC("MCU292", new MCX292(), ICType.UISO);
+        internalRegisterIC("MCU293", new MCX293(), ICType.UISO);
+        internalRegisterIC("MCU300", new MCX300(), ICType.UISO);
+        internalRegisterIC("MCU301", new MCX301(), ICType.UISO);
+        internalRegisterIC("MCU302", new MCX302(), ICType.UISO);
+        internalRegisterIC("MCU303", new MCX303(), ICType.UISO);
+        internalRegisterIC("MCU304", new MCX304(), ICType.UISO);
+        internalRegisterIC("MCU440", new MCX440(), ICType.UISO);
+        internalRegisterIC("MCU700", new MCX700(), ICType.UISO);
+        internalRegisterIC("MCU705", new MCX705(), ICType.UISO);
+        
+        internalRegisterIC("MCU211", new MCX211(), ICType.MISO);
+        internalRegisterIC("MCU212", new MCX212(), ICType.MISO);
+        internalRegisterIC("MCU213", new MCX213(), ICType.MISO);
+        internalRegisterIC("MCU214", new MCX214(), ICType.MISO);
+        internalRegisterIC("MCU217", new MCX217(), ICType.MISO);
+        internalRegisterIC("MCU701", new MCX701(), ICType.MISO);
+        internalRegisterIC("MCU702", new MCX702(), ICType.MISO);
+    }
+
     /**
      * Used for the /listics command.
      * 
@@ -1179,7 +1135,6 @@ public class RedstoneListener extends CraftBookDelegateListener
                         + ric.ic.getTitle());
             }
         }
-        
         return strings.toArray(new String[0]);
     }
 
@@ -1198,23 +1153,8 @@ public class RedstoneListener extends CraftBookDelegateListener
                 || player.canUseCommand("/" + id.toLowerCase());
     }
 
-    /**
-     * Register a new IC. Defined by the interface CustomICAccepter.
-     * 
-     * @param name
-     * @param ic
-     * @param type
-     */
-    public void registerIC(String name, IC ic, String type)
-            throws CustomICException {
-        if (icList.containsKey(name)) {
-            throw new CustomICException("IC already defined");
-        }
-        ICType icType = getICType(type);
-        if(!enableSelfTriggeredICs && icType.isSelfTriggered) return;
-        
-        registerIC(name, ic, icType, false);
-    }
+    
+    
 
     /**
      * Get an IC type from its type name.
@@ -1260,34 +1200,6 @@ public class RedstoneListener extends CraftBookDelegateListener
         }
     }
 
-    /**
-     * Registers a new non-PLC IC.
-     * 
-     * @param name
-     * @param ic
-     * @param type
-     */
-    public void registerIC(String name, IC ic, ICType type) {
-        registerIC(name, ic, type, false);
-    }
-
-    /**
-     * Registers a new IC.
-     * 
-     * @param name
-     * @param ic
-     * @param isPlc
-     */
-    public void registerIC(String name, IC ic, ICType type, boolean isPlc) {
-        icList.put(name, new RegisteredIC(ic, type, isPlc));
-    }
-
-    public void registerLang(String name, PlcLang language) {
-        plcLanguageList.put(name, language);
-        craftBook.getStateManager().addStateHolder(name, language);
-    }
-    
-    public void run() {onTick();}
     
     
     private int[][] getIOOrder(String options)
@@ -1314,6 +1226,7 @@ public class RedstoneListener extends CraftBookDelegateListener
 		
     	return output;
     }
+    
     
     private int[] getOrder(char a, char b, char c, String input)
     {
@@ -1344,6 +1257,94 @@ public class RedstoneListener extends CraftBookDelegateListener
     	
     	return output;
     }
+    
+    /**
+     * Make all ICs in Set instantICs think(); remove them from the set if they have become invalid
+     */
+    private void runInstantICs(){
+    	final List<WorldBlockVector> toRemove = new LinkedList<WorldBlockVector>();
+    	// only process loaded blocks, remove unloaded ones
+    	for (WorldBlockVector wbv:this.instantICs) {
+    		if (! Util.isBlockLoaded(wbv)) {
+    			if (this.updateSelfTriggeredICList) {
+    				toRemove.add(wbv);
+    			}
+    			continue;
+    		}
+    		World world = CraftBook.getWorld(wbv.getCBWorld());
+    		// only run every second tick
+	        if((world.getTime() % 2) != 0) continue;
+	        //get sign
+	        if (world.getBlockIdAt(wbv.getBlockX(), wbv.getBlockY(), wbv.getBlockZ()) != BlockType.WALL_SIGN) {
+	        	toRemove.add(wbv);
+	        	continue;
+	        }
+            Sign sign = (Sign)world.getComplexBlock(wbv.getBlockX(), wbv.getBlockY(), wbv.getBlockZ());
+            if(sign == null) {
+            	// should never happen, we've just checked the block ID
+                toRemove.add(wbv);
+                continue;
+            }
+            // check if it's an IC
+            String line2 = sign.getText(1);
+            String id = line2.substring(1, 7).toUpperCase();
+            RegisteredIC ic = icList.get(id);
+			if (ic == null) {
+				// mark second line red if it looks like an IC, but isn't recognized
+				if (line2.startsWith("[MC")) {
+					sign.setText(1, Colors.Red + line2);
+					sign.update();
+				}
+				this.instantICs.remove(wbv);
+				continue;
+			}
+            
+			// make the IC do it's thing
+            if(ic.type.updateOnce) {
+            	if(sign.getText(0).charAt(0) != '%') {
+            		toRemove.add(wbv);
+            		if(sign.getText(0).charAt(0) == '^') {
+                		continue;
+            		}
+            	}
+            } else if(!ic.type.isSelfTriggered) {
+                toRemove.add(wbv);
+                continue;
+            }
+
+            SignText signText = new SignText(sign.getText(0),
+                    sign.getText(1), sign.getText(2), sign.getText(3));
+            
+            ic.think(wbv.getCBWorld(), wbv, signText, sign, null);
+            
+            if (signText.isChanged()) {
+                sign.setText(0, signText.getLine1());
+                sign.setText(1, signText.getLine2());
+                sign.setText(2, signText.getLine3());
+                sign.setText(3, signText.getLine4());
+                
+                if (signText.shouldUpdate()) {
+                    sign.update();
+                }
+            }
+    	}
+    	if (! (toRemove.isEmpty() || CraftBook.cbxScheduler.isShutdown())) {
+    		try {
+	    	CraftBook.cbxScheduler.execute(new Runnable(){
+	    		public void run(){
+	    			try {
+	    				instantICs.removeAll(toRemove);
+	    			} catch (Exception e) {
+	    				e.printStackTrace();
+	    			}
+	    		}
+	    	});
+    		} catch (RejectedExecutionException e) {
+    			logger.log(Level.WARNING, "CraftBook: RedstoneListener.runInstantICs() could not remove invalid instant ICs: caught RejectedExecutionException.");
+    		}
+    	}
+    }
+
 
     // --------------------
     // private classes
@@ -1484,40 +1485,5 @@ public class RedstoneListener extends CraftBookDelegateListener
 			}
 		}
 	}
-
-	
-	/**
-	 * Removes all instant ICs in a chunk from the instantICs set; to be run in
-	 * the CBXScheduler.
-	 * 
-	 * @author Stefan Steinheimer (nosefish)
-	 * 
-	 */
-	private class InstantICRemover implements Runnable {
-		Chunk chunk;
-
-		public InstantICRemover(Chunk chunk) {
-			this.chunk = chunk;
-		}
-
-		public void run() {
-			try {
-				List<WorldBlockVector> toRemove = new ArrayList<WorldBlockVector>();
-				for (WorldBlockVector wbv : instantICs) {
-					if (wbv.getX() >= (chunk.getX() << 4)
-							&& wbv.getX() < ((chunk.getX() + 1) << 4)
-							&& wbv.getZ() >= (chunk.getZ() << 4)
-							&& wbv.getZ() < ((chunk.getZ() + 1) << 4)) {
-						toRemove.add(wbv);
-					}
-				}
-				instantICs.removeAll(toRemove);
-			// no matter what happens, do not crash the server
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-		}
-	}
-
-    
+   
 }

@@ -25,6 +25,7 @@ import com.sk89q.craftbook.BlockType;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.InsufficientArgumentsException;
 import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.WorldBlockVector;
 import com.sk89q.craftbook.WorldLocation;
 
 /**
@@ -530,9 +531,21 @@ public class Util {
      * @param chunk
      * @return a copy of the values in the chunk's loadedTileEntityMap in array form
      */
-    
 	public static Object[] getLoadedTileEntityList(Chunk chunk){
             //Notchian: Chunk.chunkTileEntityMap, Searge: field_76648_i
             return chunk.chunk.i.values().toArray();
     }
+
+	/**
+	 * 
+	 * @param wbv
+	 * @return true, if the block specified by the WorldBlockVector is currently loaded, false otherwise.
+	 */
+	public static boolean isBlockLoaded(WorldBlockVector wbv) {
+		return (
+				etc.getServer().isWorldLoaded(wbv.getCBWorld().name())
+				&& CraftBook.getWorld(wbv.getCBWorld())
+							.isChunkLoaded(wbv.getBlockX(), wbv.getBlockY(), wbv.getBlockZ())
+		);
+	}
 }
