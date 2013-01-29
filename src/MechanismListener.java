@@ -968,152 +968,43 @@ public class MechanismListener extends CraftBookDelegateListener {
      */
     public void onDirectWireInput(final World world, final Vector pt,
             final boolean isOn, final Vector changed) {
-        
+    	// get the sign
         int type = CraftBook.getBlockID(world, pt);
         final CraftBookWorld cbworld = CraftBook.getCBWorld(world);
-        
-        // Sign gates
-        if (type == BlockType.WALL_SIGN
-                || type == BlockType.SIGN_POST) {
-            ComplexBlock cblock = world.getComplexBlock(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
+        if (type != BlockType.WALL_SIGN && type != BlockType.SIGN_POST) {
+        	return;
+        }
+        ComplexBlock cblock = world.getComplexBlock(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
+        if (!(cblock instanceof Sign)) {
+        	return;
+        }
+        final Sign sign = (Sign)cblock;
+        final String line2 = sign.getText(1);
 
-            if (!(cblock instanceof Sign)) {
-                return;
-            }
-
-            final Sign sign = (Sign)cblock;
-            final String line2 = sign.getText(1);
-
-            if(useGates && redstoneGates
-            		&& (   line2.equalsIgnoreCase("[Gate]")
-            			|| line2.equalsIgnoreCase("[DGate]")
-            			|| line2.equalsIgnoreCase("[GlassGate]")
-            			|| line2.equalsIgnoreCase("[GlassDGate]")
-            			|| line2.equalsIgnoreCase("[IronGate]")
-            			|| line2.equalsIgnoreCase("[IronDGate]")
-            			|| line2.equalsIgnoreCase("[NetherGate]")
-            			|| line2.equalsIgnoreCase("[NetherDGate]")
-            			)
-            		)
-            {
-            	BlockBag bag = getBlockBag(cbworld, pt);
-            	bag.addSourcePosition(cbworld, pt);
-            	
-            	// A gate may toggle or not
-            	try
-            	{
-            		int blockType;
-            		if(line2.equalsIgnoreCase("[GlassGate]") || line2.equalsIgnoreCase("[GlassDGate]"))
-            			blockType = BlockType.GLASS_PANE;
-            		else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]"))
-            			blockType = BlockType.IRON_BARS;
-            		else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("[NetherDGate]"))
-            			blockType = BlockType.NETHER_BRICK_FENCE;
-            		else
-            			blockType = BlockType.FENCE;
-            		
-            		boolean dgate = line2.equalsIgnoreCase("[GlassDGate]")
-            						|| line2.equalsIgnoreCase("[IronDGate]")
-            						|| line2.equalsIgnoreCase("[DGate]");
-            		
-            		GateSwitch.setGateState(blockType, cbworld, pt, bag, isOn, dgate);
-            	}
-            	catch(BlockSourceException e){}
-
-            // Bridges
-            } else if (useBridges != false
-                    && redstoneBridges
-                    && type == BlockType.SIGN_POST
-                    && line2.equalsIgnoreCase("[Bridge]")) {
-                craftBook.getDelay(cbworld).delayAction(
-                    new TickDelayer.Action(world, pt.toBlockVector(), 2) {
-                        @Override
-                        public void run() {
-                            BlockBag bag = listener.getBlockBag(cbworld, pt);
-                            bag.addSourcePosition(cbworld, pt);
-                            
-                            Bridge bridge = new Bridge(cbworld, pt);
-                            if (isOn) {
-                                bridge.setActive(bag);
-                            } else {
-                                bridge.setInactive(bag);
-                            }
-                        }
-                    });
-
-            // Doors
-            } else if (useDoors != false
-                    && redstoneDoors
-                    && type == BlockType.SIGN_POST
-                    && (line2.equalsIgnoreCase("[Door Up]")
-                        || line2.equalsIgnoreCase("[Door Down]"))) {
-                craftBook.getDelay(cbworld).delayAction(
-                    new TickDelayer.Action(world, pt.toBlockVector(), 2) {
-                        @Override
-                        public void run() {
-                            BlockBag bag = getBlockBag(cbworld, pt);
-                            bag.addSourcePosition(cbworld, pt);
-                            
-                            Door door = new Door(cbworld, pt);
-                            if (isOn) {
-                                door.setActive(bag);
-                            } else {
-                                door.setInactive(bag);
-                            }
-                        }
-                    });
-
-            // Toggle areas
-            } else if (useToggleAreas && redstoneToggleAreas
-                    && (line2.equalsIgnoreCase("[Toggle]")
-                    || line2.equalsIgnoreCase("[Area]"))) {                
-                craftBook.getDelay(cbworld).delayAction(
-                    new TickDelayer.Action(world, pt.toBlockVector(), 2) {
-                        @Override
-                        public void run() {
-                            BlockBag bag = listener.getBlockBag(cbworld, pt);
-                            bag.addSourcePosition(cbworld, pt);
-
-                            ToggleArea area = new ToggleArea(cbworld, pt, listener.getCopyManager());
-                            
-                            if (isOn) { 
-                                area.setActive(bag);
-                            } else {
-                                area.setInactive(bag);
-                            }
-                        }
-                    });
-            } else if (usePageReader && usePageSwitches
-                    && line2.equalsIgnoreCase("[Book][X]")) {
-            	
-            	Vector redstonept = Util.getWallSignBack(cbworld, pt, -1);
-            	if(changed.equals(redstonept)
-            		&& CraftBook.getBlockID(world, redstonept) == BlockType.REDSTONE_WIRE)
-            	{
-            		craftBook.getDelay(cbworld).delayAction(
-            			new TickDelayer.Action(world, pt.toBlockVector(), 2) {
-            				@Override
-            				public void run() {
-            					Vector blockpt = Util.getWallSignBack(cbworld, pt, 1);
-                	            
-        		            	int x = blockpt.getBlockX();
-        		                int y = blockpt.getBlockY();
-        		                int z = blockpt.getBlockZ();
-        		                String hiddenType = "[Book][X]";
-        		                
-        		                setHiddenSwitch(hiddenType, isOn, world, x, y - 1, z);
-        		                setHiddenSwitch(hiddenType, isOn, world, x, y + 1, z);
-        		                setHiddenSwitch(hiddenType, isOn, world, x - 1, y, z);
-        		                setHiddenSwitch(hiddenType, isOn, world, x + 1, y, z);
-        		                setHiddenSwitch(hiddenType, isOn, world, x, y, z - 1);
-        		                setHiddenSwitch(hiddenType, isOn, world, x, y, z + 1);
-        		                
-        		                world.updateBlockPhysics(x, y+1, z, CraftBook.getBlockData(world, x, y+1, z));
-        		                world.updateBlockPhysics(x, y-1, z, CraftBook.getBlockData(world, x, y-1, z));
-                            }
-                        });
-            	}
-            }
+        // Gates
+        if (isGateString(line2)) {
+        	onGateInput(line2, cbworld, pt, isOn);
+        	return;
+        }
+        //Bridges
+        if (isBridgeSign(line2, type)) {
+        	onBridgeInput(line2, world, cbworld, pt, isOn);
+        	return;
+        }
+       	// Doors
+        if (isDoorSign(line2, type)) {
+        	onDoorInput(line2, world, cbworld, pt, isOn);
+        	return;
+        }
+       	// Toggle areas
+        if (isToggleAreaSign(line2)) {
+        	onToggleAreaInput(line2, world, cbworld, pt, isOn);
+        	return;
+        }
+        // PageReaderSwitch
+        if (isPageReaderSwitch(line2)){
+        	onPageReaderSwitchInput(line2, world, cbworld, pt, isOn, changed);
+        	return;
         }
     }
 
@@ -2265,24 +2156,6 @@ public class MechanismListener extends CraftBookDelegateListener {
 	    }
 	}
 
-	private void setHiddenSwitch(String type, boolean state, World world, int x, int y, int z) {
-	    ComplexBlock cblock = world.getComplexBlock(x, y, z);
-	    
-	    if (cblock instanceof Sign) {
-	        Sign sign = (Sign)cblock;
-	        
-	        if (sign.getText(1).equalsIgnoreCase(type)) {
-	        	CraftBookWorld cbworld = CraftBook.getCBWorld(world);
-	            Redstone.setOutput(cbworld, new Vector(x, y - 1, z), state);
-	            Redstone.setOutput(cbworld, new Vector(x, y + 1, z), state);
-	            Redstone.setOutput(cbworld, new Vector(x - 1, y, z), state);
-	            Redstone.setOutput(cbworld, new Vector(x + 1, y, z), state);
-	            Redstone.setOutput(cbworld, new Vector(x, y, z - 1), state);
-	            Redstone.setOutput(cbworld, new Vector(x, y, z + 1), state);
-	        }
-	    }
-	}
-
 	private ArrayList<Integer> getICBlockList(String arg)
 	{
 		if(arg.equalsIgnoreCase("all"))
@@ -2589,7 +2462,175 @@ public class MechanismListener extends CraftBookDelegateListener {
         	VehicleListener.craftBlockRecipes = null;
         }
     }
+	
 
-}
+
+	private void setHiddenSwitch(String type, boolean state, World world, int x, int y, int z) {
+	    ComplexBlock cblock = world.getComplexBlock(x, y, z);
+	    
+	    if (cblock instanceof Sign) {
+	        Sign sign = (Sign)cblock;
+	        
+	        if (sign.getText(1).equalsIgnoreCase(type)) {
+	        	CraftBookWorld cbworld = CraftBook.getCBWorld(world);
+	            Redstone.setOutput(cbworld, new Vector(x, y - 1, z), state);
+	            Redstone.setOutput(cbworld, new Vector(x, y + 1, z), state);
+	            Redstone.setOutput(cbworld, new Vector(x - 1, y, z), state);
+	            Redstone.setOutput(cbworld, new Vector(x + 1, y, z), state);
+	            Redstone.setOutput(cbworld, new Vector(x, y, z - 1), state);
+	            Redstone.setOutput(cbworld, new Vector(x, y, z + 1), state);
+	        }
+	    }
+	}
+
+	private boolean isGateString(String line2) {
+		return line2.equalsIgnoreCase("[Gate]")
+			|| line2.equalsIgnoreCase("[DGate]")
+			|| line2.equalsIgnoreCase("[GlassGate]")
+			|| line2.equalsIgnoreCase("[GlassDGate]")
+			|| line2.equalsIgnoreCase("[IronGate]")
+			|| line2.equalsIgnoreCase("[IronDGate]")
+			|| line2.equalsIgnoreCase("[NetherGate]")
+			|| line2.equalsIgnoreCase("[NetherDGate]");
+	}
+
+	private void onGateInput(String line2, final CraftBookWorld cbworld, final Vector pt, boolean isOn) {
+		if(useGates && redstoneGates) {
+			// determine gate material
+			int blockType;
+			if(line2.equalsIgnoreCase("[GlassGate]") || line2.equalsIgnoreCase("[GlassDGate]")) {
+				blockType = BlockType.GLASS_PANE;
+			} else if(line2.equalsIgnoreCase("[IronGate]") || line2.equalsIgnoreCase("[IronDGate]")) {
+				blockType = BlockType.IRON_BARS;
+			} else if(line2.equalsIgnoreCase("[NetherGate]") || line2.equalsIgnoreCase("[NetherDGate]")) {
+				blockType = BlockType.NETHER_BRICK_FENCE;
+			} else {
+				blockType = BlockType.FENCE;
+			}
+			// diagonal?
+			boolean dgate = line2.equalsIgnoreCase("[GlassDGate]")
+					|| line2.equalsIgnoreCase("[IronDGate]")
+					|| line2.equalsIgnoreCase("[DGate]");
+			// set the state of the gate
+			BlockBag bag = getBlockBag(cbworld, pt);
+			bag.addSourcePosition(cbworld, pt);
+			try {            		
+				GateSwitch.setGateState(blockType, cbworld, pt, bag, isOn, dgate);
+			} catch(BlockSourceException e){}
+		}
+	}
+
+	private boolean isBridgeSign(String line2, int type) {
+		return type == BlockType.SIGN_POST && line2.equalsIgnoreCase("[Bridge]");
+	}
+	
+	private void onBridgeInput(String line2, final World world, final CraftBookWorld cbworld, final Vector pt, final boolean isOn) {
+        if (useBridges != false && redstoneBridges) {
+        	craftBook.getDelay(cbworld).delayAction(
+        			new TickDelayer.Action(world, pt.toBlockVector(), 2) {
+        				@Override
+        				public void run() {
+        					BlockBag bag = listener.getBlockBag(cbworld, pt);
+        					bag.addSourcePosition(cbworld, pt);
+
+        					Bridge bridge = new Bridge(cbworld, pt);
+        					if (isOn) {
+        						bridge.setActive(bag);
+        					} else {
+        						bridge.setInactive(bag);
+        					}
+        				}
+        			});
+        }
+	}
+	
+	private boolean isDoorSign(String line2, int type) {
+		return type == BlockType.SIGN_POST
+			&& ( line2.equalsIgnoreCase("[Door Up]") || line2.equalsIgnoreCase("[Door Down]"));
+	}
+
+	private void onDoorInput(String line2, final World world, final CraftBookWorld cbworld, final Vector pt, final boolean isOn) {
+        if (useDoors != false && redstoneDoors) {
+        	craftBook.getDelay(cbworld).delayAction(
+        			new TickDelayer.Action(world, pt.toBlockVector(), 2) {
+        				@Override
+        				public void run() {
+        					BlockBag bag = getBlockBag(cbworld, pt);
+        					bag.addSourcePosition(cbworld, pt);
+        					Door door = new Door(cbworld, pt);
+        					if (isOn) {
+        						door.setActive(bag);
+        					} else {
+        						door.setInactive(bag);
+        					}
+        				}
+        			});
+        }
+
+	}
+	
+	private boolean isToggleAreaSign(String line2){
+		return line2.equalsIgnoreCase("[Toggle]")
+			|| line2.equalsIgnoreCase("[Area]");
+	}
+	
+	private void onToggleAreaInput(String line2, final World world, final CraftBookWorld cbworld, final Vector pt, final boolean isOn) {
+		if (useToggleAreas && redstoneToggleAreas) {                
+        	craftBook.getDelay(cbworld).delayAction(
+        			new TickDelayer.Action(world, pt.toBlockVector(), 2) {
+        				@Override
+        				public void run() {
+        					BlockBag bag = listener.getBlockBag(cbworld, pt);
+        					bag.addSourcePosition(cbworld, pt);
+
+        					ToggleArea area = new ToggleArea(cbworld, pt, listener.getCopyManager());
+
+        					if (isOn) { 
+        						area.setActive(bag);
+        					} else {
+        						area.setInactive(bag);
+        					}
+        				}
+        			});
+        } 
+	}
+	
+	private boolean isPageReaderSwitch(String line2) {
+		return line2.equalsIgnoreCase("[Book][X]");
+	}
+	
+	private void onPageReaderSwitchInput(String line2, final World world, final CraftBookWorld cbworld, final Vector pt, final boolean isOn, Vector changed) {
+		if (usePageReader && usePageSwitches) {
+        	Vector redstonept = Util.getWallSignBack(cbworld, pt, -1);
+        	if(changed.equals(redstonept)
+        			&& CraftBook.getBlockID(world, redstonept) == BlockType.REDSTONE_WIRE)
+        	{
+        		craftBook.getDelay(cbworld).delayAction(
+        				new TickDelayer.Action(world, pt.toBlockVector(), 2) {
+        					@Override
+        					public void run() {
+        						Vector blockpt = Util.getWallSignBack(cbworld, pt, 1);
+
+        						int x = blockpt.getBlockX();
+        						int y = blockpt.getBlockY();
+        						int z = blockpt.getBlockZ();
+        						String hiddenType = "[Book][X]";
+
+        						setHiddenSwitch(hiddenType, isOn, world, x, y - 1, z);
+        						setHiddenSwitch(hiddenType, isOn, world, x, y + 1, z);
+        						setHiddenSwitch(hiddenType, isOn, world, x - 1, y, z);
+        						setHiddenSwitch(hiddenType, isOn, world, x + 1, y, z);
+        						setHiddenSwitch(hiddenType, isOn, world, x, y, z - 1);
+        						setHiddenSwitch(hiddenType, isOn, world, x, y, z + 1);
+
+        						world.updateBlockPhysics(x, y+1, z, CraftBook.getBlockData(world, x, y+1, z));
+        						world.updateBlockPhysics(x, y-1, z, CraftBook.getBlockData(world, x, y-1, z));
+        					}
+        				});
+        	}
+        }
+
+	}
+} //end of class
 
 
