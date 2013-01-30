@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Level;
@@ -72,7 +71,6 @@ public class RedstoneListener extends CraftBookDelegateListener
     private boolean redstoneICs = true;
     private boolean redstonePLCs = true;
     private boolean redstonePLCsRequirePermission = true;
-    private boolean listICs = true;
     private boolean listUnusuableICs = true;
     
     private boolean enableSelfTriggeredICs = true;
@@ -637,52 +635,11 @@ public class RedstoneListener extends CraftBookDelegateListener
     	}
     }
     
-    /**
-     * Called when a command is run
-     *
-     * @param player
-     * @param split
-     * @return whether the command was processed
-     */
-    @Override
-    public boolean onCheckedCommand(Player player, String[] split)
-            throws InsufficientArgumentsException,
-            LocalWorldEditBridgeException {
-        
-        if (listICs && split[0].equalsIgnoreCase("/listics")
-                && Util.canUse(player, "/listics")) {
-            String[] lines = generateICText(player);
-            int pages = ((lines.length - 1) / 10) + 1;
-            int accessedPage;
-            
-            try {
-                accessedPage = split.length == 1 ? 0 : Integer
-                        .parseInt(split[1]) - 1;
-                if (accessedPage < 0 || accessedPage >= pages) {
-                    player.sendMessage(Colors.Rose + "Invalid page \""
-                            + split[1] + "\"");
-                    return true;
-                }
-            } catch (NumberFormatException e) {
-                player.sendMessage(Colors.Rose + "Invalid page \"" + split[1]
-                        + "\"");
-                return true;
-            }
-
-            player.sendMessage(Colors.Blue + "CraftBook ICs (Page "
-                    + (accessedPage + 1) + " of " + pages + "):");
-            
-            for (int i = accessedPage * 10; i < lines.length
-                    && i < (accessedPage + 1) * 10; i++) {
-                player.sendMessage(lines[i]);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
+ 	@Override
+	public void onDisconnect(Player player){
+		MCX236.players.remove(player);
+		MCX238.players.remove(player);
+	}
     
     /**
      * Register a new IC. Defined by the interface CustomICAccepter.
@@ -735,6 +692,36 @@ public class RedstoneListener extends CraftBookDelegateListener
     // ----------------
     
     /**
+	 * Used for the /listics command.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public String[] generateICText(Player p) {
+	    ArrayList<String> icNameList = new ArrayList<String>();
+	    icNameList.addAll(icList.keySet());
+	
+	    Collections.sort(icNameList);
+	
+	    ArrayList<String> strings = new ArrayList<String>();
+	    for (String ic : icNameList) {
+	        RegisteredIC ric = icList.get(ic);
+	        boolean canUse = canCreateIC(p, ic, ric);
+	        boolean auto = ric.type.isSelfTriggered;
+	        if (listUnusuableICs) {
+	            strings.add(Colors.Rose + ic + " (" + ric.type.name + ")"
+	                    + (auto ? " (SELF-TRIGGERED)" : "") + ": "
+	                    + ric.ic.getTitle() + (canUse ? "" : " (RESTRICTED)"));
+	        } else if (canUse) {
+	            strings.add(Colors.Rose + ic + " (" + ric.type.name + ")"
+	                    + (auto ? " (SELF-TRIGGERED)" : "") + ": "
+	                    + ric.ic.getTitle());
+	        }
+	    }
+	    return strings.toArray(new String[0]);
+	}
+
+	/**
      * populates property fields from the CraftBook.properties file
      */
     private void setPropertyFields(){
@@ -744,7 +731,6 @@ public class RedstoneListener extends CraftBookDelegateListener
         redstoneICs = properties.getBoolean("redstone-ics", true);
         redstonePLCs = properties.getBoolean("redstone-plcs", true);
         redstonePLCsRequirePermission = properties.getBoolean("redstone-plcs-require-permission", false);
-        listICs = properties.getBoolean("enable-ic-list",true);
         listUnusuableICs = properties.getBoolean("ic-list-show-unusuable",true);
         enableSelfTriggeredICs = properties.getBoolean("enable-self-triggered-ics",true);
         restrictSelfTriggeredICs = properties.getBoolean("self-triggered-ics-require-premission",false);
@@ -1068,35 +1054,6 @@ public class RedstoneListener extends CraftBookDelegateListener
         }
     }
 
-    /**
-     * Used for the /listics command.
-     * 
-     * @param p
-     * @return
-     */
-    private String[] generateICText(Player p) {
-        ArrayList<String> icNameList = new ArrayList<String>();
-        icNameList.addAll(icList.keySet());
-
-        Collections.sort(icNameList);
-
-        ArrayList<String> strings = new ArrayList<String>();
-        for (String ic : icNameList) {
-            RegisteredIC ric = icList.get(ic);
-            boolean canUse = canCreateIC(p, ic, ric);
-            boolean auto = ric.type.isSelfTriggered;
-            if (listUnusuableICs) {
-                strings.add(Colors.Rose + ic + " (" + ric.type.name + ")"
-                        + (auto ? " (SELF-TRIGGERED)" : "") + ": "
-                        + ric.ic.getTitle() + (canUse ? "" : " (RESTRICTED)"));
-            } else if (canUse) {
-                strings.add(Colors.Rose + ic + " (" + ric.type.name + ")"
-                        + (auto ? " (SELF-TRIGGERED)" : "") + ": "
-                        + ric.ic.getTitle());
-            }
-        }
-        return strings.toArray(new String[0]);
-    }
 
     /**
      * Checks if the player can create an IC.
