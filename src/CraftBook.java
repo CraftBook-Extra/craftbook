@@ -108,10 +108,23 @@ public class CraftBook extends Plugin {
     private final CraftBookDelegateListener mechanisms =
             new MechanismListener(this, listener);
     /**
-     * Delegate listener for redstone.
+     * Delegate listener for mechanism-related commands.
+     */
+    private final CraftBookDelegateListener mechanismCommands =
+            new MechanismCommandListener(this, listener);
+    
+    /**
+     * Delegate listener for redstone / ICs.
      */
     private final CraftBookDelegateListener redstone =
             new RedstoneListener(this, listener);
+    
+    /**
+     * Delegate listener for redstone / IC - rlated commands.
+     */
+    private final CraftBookDelegateListener redstoneCommands =
+            new RedstoneCommandListener(this, listener, (RedstoneListener)redstone);
+    
     /**
      * Delegate listener for vehicle.
      */
@@ -198,21 +211,25 @@ public class CraftBook extends Plugin {
         registerHook(listener, "REDSTONE_CHANGE", PluginListener.Priority.MEDIUM);
         registerHook(listener, "SIGN_CHANGE", PluginListener.Priority.MEDIUM);
 
-        registerHook(mechanisms, "DISCONNECT", PluginListener.Priority.MEDIUM);
+        registerHook(mechanisms, "SERVERCOMMAND", PluginListener.Priority.MEDIUM);
         registerHook(mechanisms, "BLOCK_RIGHTCLICKED", PluginListener.Priority.MEDIUM);
         registerHook(mechanisms, "BLOCK_DESTROYED", PluginListener.Priority.MEDIUM);
         registerHook(mechanisms, "SIGN_CHANGE", PluginListener.Priority.MEDIUM);
-        registerHook(mechanisms, "SERVERCOMMAND", PluginListener.Priority.MEDIUM);
         registerHook(mechanisms, "PLAYER_MOVE", PluginListener.Priority.MEDIUM);
         registerHook(mechanisms, "DAMAGE", PluginListener.Priority.MEDIUM);
         listener.registerDelegate(mechanisms);
+        
+        registerHook(mechanismCommands, "DISCONNECT", PluginListener.Priority.MEDIUM);
+        listener.registerDelegate(mechanismCommands);
         
         registerHook(redstone, "BLOCK_RIGHTCLICKED", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "SIGN_CHANGE", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "BLOCK_BROKEN", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "BLOCK_PLACE", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "CHUNK_LOADED", PluginListener.Priority.MEDIUM);
+        registerHook(redstone, "DISCONNECT", PluginListener.Priority.MEDIUM);
         listener.registerDelegate(redstone);
+        listener.registerDelegate(redstoneCommands);
 
         registerHook(vehicle, "DISCONNECT", PluginListener.Priority.MEDIUM);
         registerHook(vehicle, "SIGN_CHANGE", PluginListener.Priority.MEDIUM);
