@@ -19,6 +19,8 @@
 
 
 
+import java.util.Set;
+
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
@@ -98,21 +100,49 @@ public class MCX119 extends MCX118 {
     		double dist = 5;
     		if(!chip.getText().getLine4().isEmpty())
     			dist = Double.parseDouble(chip.getText().getLine4());
-    		dist *= dist;
+
     		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
-    		World world = CraftBook.getWorld(chip.getCBWorld());
+    		
+        	CBXEntityFinder.ResultHandler resultHandler = new ResultHandler(chip.getCBWorld(), lever);
+        	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, resultHandler);
     		
     		String id = chip.getText().getLine3();
-    		int type;
-    		if(id.equalsIgnoreCase("mob") || id.equalsIgnoreCase("mobs"))
-    			type = 1;
-    		else if(id.equalsIgnoreCase("animal") || id.equalsIgnoreCase("animals"))
-    			type = 2;
-    		else
-    			type = 3;
-    		
-        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, id, type, false);
-        	etc.getServer().addToServerQueue(nearbyFinder);
+    		if(id.equalsIgnoreCase("mob") || id.equalsIgnoreCase("mobs")) {
+    			entityFinder.addMobFilter();
+    		} else if(id.equalsIgnoreCase("animal") || id.equalsIgnoreCase("animals")) {
+    			entityFinder.addAnimalFilter();
+    		} else if(Mob.isValid(id)) {
+				entityFinder.addMobFilter(id);
+				entityFinder.addAnimalFilter(id);
+    		} else {
+    			entityFinder.addMobFilter();
+    			entityFinder.addAnimalFilter();
+    		}
+    		CraftBook.cbxScheduler.execute(entityFinder);
     	}
     }
+	
+	private class ResultHandler implements CBXEntityFinder.ResultHandler {
+		private final CraftBookWorld cbworld;
+		private final Vector lever;
+		
+		public ResultHandler(CraftBookWorld cbworld, Vector lever) {
+			this.cbworld = cbworld;
+			this.lever = lever;
+		}
+		
+		public void handleResult(Set<BaseEntity> foundEntities) {
+			final boolean found;
+			if (foundEntities.isEmpty()) {
+				found = false;
+			} else {
+				found = true;
+			}
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					Redstone.setOutput(cbworld, lever, found);
+				}
+			});
+		}
+	}
 }

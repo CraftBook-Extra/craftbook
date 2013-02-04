@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.util.List;
+import java.util.Set;
 
 import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.CraftBookWorld;
@@ -27,9 +27,10 @@ import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Dispenser.
+ * Chest Collector
  *
- * @author sk89q
+ * @author MK4411K4
+ * @author Stefan Steinheimer (nosefish)
  */
 public class MCX203 extends BaseIC {
     /**
@@ -163,7 +164,7 @@ public class MCX203 extends BaseIC {
 	        
 	        item = getItem(id);
         }
-        
+        // set distance
         double dist = 16.0D;
         if(chip.getText().getLine4().length() > 0)
         {
@@ -172,93 +173,132 @@ public class MCX203 extends BaseIC {
         if(dist > RedstoneListener.chestCollectorMaxRange)
         	dist = RedstoneListener.chestCollectorMaxRange;
         
-        dist = dist * dist;
+        CBXEntityFinder.ResultHandler chestCollector = new ItemChestCollector(chip, source);
+        CBXEntityFinder itemFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, chestCollector);
+       	itemFinder.addItemFilter(item, color);
         
-        double x = chip.getPosition().getX();
-        double y = chip.getPosition().getY();
-        double z = chip.getPosition().getZ();
-        
-        World world = CraftBook.getWorld(chip.getCBWorld());
-        Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
-    	ItemChestCollector chestCollector = new ItemChestCollector(world, source, dist, item, color, x, y, z, lever);
-    	etc.getServer().addToServerQueue(chestCollector);
+        CraftBook.cbxScheduler.execute(itemFinder);
     }
     
-    public class ItemChestCollector implements Runnable
-    {
-    	private final World world;
-    	private final NearbyChestBlockBag source;
-    	private final double distance;
-    	private final int item;
-    	private final int color;
-    	private final double x;
-    	private final double y;
-    	private final double z;
-    	private final Vector lever;
+	/**
+	 * 
+	 * @author Stefan Steinheimer (nosefish)
+	 *
+	 */
+    private class ItemChestCollector implements CBXEntityFinder.ResultHandler{
+    	final ChipState chip;
+    	final NearbyChestBlockBag chest;
     	
-    	public ItemChestCollector(World world, NearbyChestBlockBag source, double distance, int item, int color, double x, double y, double z, Vector lever)
-    	{
-    		this.world = world;
-    		this.source = source;
-    		this.distance = distance;
-    		this.item = item;
-    		this.color = color;
-    		this.x = x;
-    		this.y = y;
-    		this.z = z;
-    		this.lever = lever;
+    	public ItemChestCollector(ChipState chip,  NearbyChestBlockBag chest) {
+    		this.chip = chip;
+    		this.chest = chest;
     	}
     	
 		@Override
-		public void run()
-		{
-			try
-			{
-				List<ItemEntity> items = this.world.getItemList();
-				
-				if(items == null)
-		        	return;
-		        
-				//boolean found = false;
-		        for(ItemEntity itemEnt : items)
-		        {
-		        	Item citem = itemEnt.getItem();
-		        	
-		        	if(!itemEnt.isDead() && citem.getAmount() > 0 && (item == -1 || (citem.getItemId() == item && (color < 0 || citem.getDamage() == color) )))
-					{
-						double diffX = x - itemEnt.getX();
-						double diffY = y - itemEnt.getY();
-						double diffZ = z - itemEnt.getZ();
-						
-						if(((diffX * diffX + diffY * diffY + diffZ * diffZ) < distance)
-							&& source.hasAvailableSlotSpace(citem.getItemId(), (byte)citem.getDamage(), citem.getAmount()))
-						{
-							//found = true;
-
-							Redstone.setOutput(CraftBook.getCBWorld(world), lever, true);
-							
-							Enchantment[] enchants = itemEnt.getItem().getEnchantments();
-							
-							//kill
-							itemEnt.destroy();
-							
-							//store
+		public void handleResult(final Set<BaseEntity> foundEntities) {
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					boolean itemCollected = false;
+					for (BaseEntity bEntity : foundEntities) {
+						if (bEntity == null || bEntity.isDead() || !(bEntity.getEntity() instanceof OEntityItem)) {
+							continue;
+						}
+						ItemEntity itemEntity = new ItemEntity((OEntityItem) bEntity.getEntity());
+						Item item = itemEntity.getItem();			
+						if( item.getAmount() > 0 
+							&& chest.hasAvailableSlotSpace(item.getItemId(), (byte)item.getDamage(), item.getAmount())) {
 							try {
-		                        source.storeBlock(citem.getItemId(), (byte)citem.getDamage(), citem.getAmount(), enchants);
+		                        chest.storeBlock(item.getItemId(), (byte)item.getDamage(), item.getAmount(), item.getEnchantments());
 		                    } catch (BlockSourceException e) {
 		                        break;
 		                    }
+							itemEntity.destroy();
+							itemCollected = true;
 						}
 					}
-		        }
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
+			   		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
+			   		Redstone.setOutput(chip.getCBWorld(), lever, itemCollected);
+				}
+			});
 			
-			// Toggle output off
-			Redstone.setOutput(CraftBook.getCBWorld(world), lever, false);
 		}
     }
+    
+//    public class ItemChestCollector implements Runnable
+//    {
+//    	private final World world;
+//    	private final NearbyChestBlockBag source;
+//    	private final double distance;
+//    	private final int item;
+//    	private final int color;
+//    	private final double x;
+//    	private final double y;
+//    	private final double z;
+//    	private final Vector lever;
+//    	
+//    	public ItemChestCollector(World world, NearbyChestBlockBag source, double distance, int item, int color, double x, double y, double z, Vector lever)
+//    	{
+//    		this.world = world;
+//    		this.source = source;
+//    		this.distance = distance;
+//    		this.item = item;
+//    		this.color = color;
+//    		this.x = x;
+//    		this.y = y;
+//    		this.z = z;
+//    		this.lever = lever;
+//    	}
+//    	
+//		@Override
+//		public void run()
+//		{
+//			try
+//			{
+//				List<ItemEntity> items = this.world.getItemList();
+//				
+//				if(items == null)
+//		        	return;
+//		        
+//				//boolean found = false;
+//		        for(ItemEntity itemEnt : items)
+//		        {
+//		        	Item citem = itemEnt.getItem();
+//		        	
+//		        	if(!itemEnt.isDead() && citem.getAmount() > 0 && (item == -1 || (citem.getItemId() == item && (color < 0 || citem.getDamage() == color) )))
+//					{
+//						double diffX = x - itemEnt.getX();
+//						double diffY = y - itemEnt.getY();
+//						double diffZ = z - itemEnt.getZ();
+//						
+//						if(((diffX * diffX + diffY * diffY + diffZ * diffZ) < distance)
+//							&& source.hasAvailableSlotSpace(citem.getItemId(), (byte)citem.getDamage(), citem.getAmount()))
+//						{
+//							//found = true;
+//
+//							Redstone.setOutput(CraftBook.getCBWorld(world), lever, true);
+//							
+//							Enchantment[] enchants = itemEnt.getItem().getEnchantments();
+//							
+//							//kill
+//							itemEnt.destroy();
+//							
+//							//store
+//							try {
+//		                        source.storeBlock(citem.getItemId(), (byte)citem.getDamage(), citem.getAmount(), enchants);
+//		                    } catch (BlockSourceException e) {
+//		                        break;
+//		                    }
+//						}
+//					}
+//		        }
+//			}
+//			catch(Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//			
+//			// Toggle output off
+//			Redstone.setOutput(CraftBook.getCBWorld(world), lever, false);
+//		}
+//    }
 }

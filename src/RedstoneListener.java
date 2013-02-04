@@ -1180,6 +1180,7 @@ public class RedstoneListener extends CraftBookDelegateListener
      */
     private void runInstantICs(){
     	final List<WorldBlockVector> toRemove = new LinkedList<WorldBlockVector>();
+    	try {
     	// only process loaded blocks, remove unloaded ones
     	for (WorldBlockVector wbv:this.instantICs) {
     		if (! Util.isBlockLoaded(wbv)) {
@@ -1216,7 +1217,7 @@ public class RedstoneListener extends CraftBookDelegateListener
 				continue;
 			}
             
-			// make the IC do it's thing
+			// make the IC do its thing
             if(ic.type.updateOnce) {
             	if(sign.getText(0).charAt(0) != '%') {
             		toRemove.add(wbv);
@@ -1231,8 +1232,18 @@ public class RedstoneListener extends CraftBookDelegateListener
 
             SignText signText = new SignText(sign.getText(0),
                     sign.getText(1), sign.getText(2), sign.getText(3));
-            
-            ic.think(wbv.getCBWorld(), wbv, signText, sign, null);
+            try {
+            	ic.think(wbv.getCBWorld(), wbv, signText, sign, null);
+            } catch(Throwable t) {
+            	logger.log(Level.SEVERE, "ic.think failed with an exception:"
+            			+ " World: " + CraftBook.getWorld(wbv.getCBWorld()).getName()
+            			+ " Position: " + wbv.getBlockX() +" " + wbv.getBlockY() +" "+ wbv.getBlockZ() +" "
+            			+ " Line 1:" + sign.getText(0)
+            			+ " Line 2:" + sign.getText(1)
+            			+ " Line 3:" + sign.getText(2)
+            			+ " Line 4:" + sign.getText(3));
+            	t.printStackTrace();
+            }
             
             if (signText.isChanged()) {
                 sign.setText(0, signText.getLine1());
@@ -1245,7 +1256,13 @@ public class RedstoneListener extends CraftBookDelegateListener
                 }
             }
     	}
-    	if (! (toRemove.isEmpty() || CraftBook.cbxScheduler.isShutdown())) {
+    	}catch (Throwable t) {
+    		// I've had something happen in here, once, on player logout.
+    		// Can't pinpoint where exactly it went wrong:
+    		// Vec3 Pool Size: ~~ERROR~~ NoSuchFieldError: c
+    		t.printStackTrace();
+    	}
+    	if (!(toRemove.isEmpty() || CraftBook.cbxScheduler.isShutdown())) {
     		try {
 	    	CraftBook.cbxScheduler.execute(new Runnable(){
 	    		public void run(){

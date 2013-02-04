@@ -18,6 +18,7 @@
 */
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -547,5 +548,17 @@ public class Util {
 				&& CraftBook.getWorld(wbv.getCBWorld())
 							.isChunkLoaded(wbv.getBlockX(), wbv.getBlockY(), wbv.getBlockZ())
 		);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public static List<OEntity>[] getEntityLists(Chunk chunk) {
+		//Notchian: List[] Chunk.entityLists, Searge: field_76645_j
+		return chunk.getChunk().j;
+	}
+	
+	public static boolean chunkHasEntities(Chunk chunk) {
+		//Notchian: Chunk.hasEntities, Searge: field_76644_m
+		return chunk.getChunk().m;
 	}
 }
