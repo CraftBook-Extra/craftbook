@@ -22,10 +22,8 @@ public class Sitting
 		player.setX(x);
 		player.setY(y);
 		player.setZ(z);
-		
-		OEntityPlayerMP eplayer = (OEntityPlayerMP) player.getEntity();
-		eplayer.z = rotation;
-		
+		player.setRotation(rotation);
+
 		OWorldServer oworld = world.getWorld();
 		EntitySitting esitting = new EntitySitting(types, oworld, player.getX(), player.getY(), player.getZ(), offsety, mountedOffsetY);
 		
@@ -36,12 +34,14 @@ public class Sitting
 	
 	protected static void stand(Player player, double offsetx, double offsety, double offsetz)
 	{
+
 	    BaseEntity entity = player.getRidingEntity();
 	    if(entity == null || !(entity.getEntity() instanceof EntitySitting))
 	        return;
 		
-	    player.setRiddenByEntity((BaseEntity)null);
+	    player.setRidingEntity((BaseEntity)null);
 		UtilEntity.dismount(player.getEntity());
+		entity.destroy();
 		UtilEntity.setPlayerLocation(player.getEntity(), player.getX()+offsetx, player.getY()+offsety, player.getZ()+offsetz, player.getRotation(), player.getPitch());
 	}
 	
