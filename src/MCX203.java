@@ -18,6 +18,7 @@
  */
 
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.CraftBookWorld;
@@ -176,8 +177,13 @@ public class MCX203 extends BaseIC {
         CBXEntityFinder.ResultHandler chestCollector = new ItemChestCollector(chip, source);
         CBXEntityFinder itemFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, chestCollector);
        	itemFinder.addItemFilter(item, color);
-        
-        CraftBook.cbxScheduler.execute(itemFinder);
+        if (!CraftBook.cbxScheduler.isShutdown()) {
+        	try {
+        		CraftBook.cbxScheduler.execute(itemFinder);
+        	} catch (RejectedExecutionException e) {
+        		// CraftBook is being disabled or reloaded
+        	}
+        }
     }
     
 	/**

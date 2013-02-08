@@ -20,6 +20,7 @@
 
 
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
@@ -118,7 +119,13 @@ public class MCX119 extends MCX118 {
     			entityFinder.addMobFilter();
     			entityFinder.addAnimalFilter();
     		}
-    		CraftBook.cbxScheduler.execute(entityFinder);
+            if (!CraftBook.cbxScheduler.isShutdown()) {
+            	try {
+            		CraftBook.cbxScheduler.execute(entityFinder);
+            	} catch (RejectedExecutionException e) {
+            		// CraftBook is being disabled or reloaded
+            	}
+            }
     	}
     }
 	
