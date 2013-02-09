@@ -88,7 +88,7 @@ public class MCX116 extends BaseIC {
 		if (chip.inputAmount() == 0
 				|| (chip.getIn(1).is() && chip.getIn(1).isTriggered())) {
 			// find where above the sign to look for the player
-			int safeY = getSafeYAbove(chip.getCBWorld(), chip.getBlockPosition());
+			double safeY = getSafeYAbove(chip.getCBWorld(), chip.getBlockPosition());
 			Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, safeY, chip.getBlockPosition().getZ() + 0.5);
 			// prepare and run CBXEntityFinder
 			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, new ResultHandler(chip));
