@@ -19,17 +19,20 @@
 
 
 
+import java.util.concurrent.RejectedExecutionException;
+
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * Humans Only
  *
  * @author sk89q
  */
-public class MCX133 extends MCX119 {
+public class MCX133 extends BaseIC {
     
 
     /**
@@ -91,21 +94,58 @@ public class MCX133 extends MCX119 {
     		double dist = 5;
     		if(!chip.getText().getLine4().isEmpty())
     			dist = Double.parseDouble(chip.getText().getLine4());
-    		dist *= dist;
-    		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
-    		World world = CraftBook.getWorld(chip.getCBWorld());
-    		
+
     		//since self-updates don't get mode, we need to get it
     		char mode = ' ';
     		if(chip.getText().getLine2().length() > 8)
     			mode = chip.getText().getLine2().charAt(8);
-    		
-    		int type = 4;
-    		if(mode == '-')
-    			type = 5;
-    		
-        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, "", type, true);
-        	etc.getServer().addToServerQueue(nearbyFinder);
+ 
+    		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);    		
+       		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
+       		CBXEntityFinder.ResultHandler entityKiller = new MCX130.ResultHandler(chip.getCBWorld(), lever);
+    		CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(),searchCenter, dist, entityKiller);
+    		if (mode == '-') {
+    			entityFinder.addCustomFilter(new FilterNoItems());
+    		} else {
+    			entityFinder.addCustomFilter(new FilterAny());
+    		}
+            if (!CraftBook.cbxScheduler.isShutdown()) {
+            	try {
+            		CraftBook.cbxScheduler.execute(entityFinder);
+            	} catch (RejectedExecutionException e) {
+            		// CraftBook is being disabled or reloaded
+            	}
+            }
     	}
     }
+	
+
+	public static class FilterAny implements CBXEntityFinder.BaseEntityFilter{
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			if (!bEntity.isPlayer()) {
+				return true;
+			}
+			return false;
+		}
+	}
+	
+	public static class FilterNoItems implements CBXEntityFinder.BaseEntityFilter{
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			Object obj = bEntity.getEntity();
+			if(        !(obj instanceof OEntityPlayerMP)
+    				&& !(obj instanceof OEntityItem)
+    				&& !(obj instanceof OEntityMinecart)
+    				&& !(obj instanceof OEntityBoat)
+    				&& !(obj instanceof OEntityEnderEye)
+    				&& !(obj instanceof OEntityFishHook)
+    				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).o().isEmpty())
+    				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).o().isEmpty()) ) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 }

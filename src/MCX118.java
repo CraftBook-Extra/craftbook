@@ -64,15 +64,14 @@ public class MCX118 extends BaseIC {
      */
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
-        String id = sign.getLine3().toLowerCase();
+		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
 
-        if (id.length() != 0)
-        {
-            if(id.length() < 3 || id.charAt(1) != ':' || (id.charAt(0) != 'g' && id.charAt(0) != 'p') )
-            {
-            	return "Invalid player or group name on 3rd line.";
-            }
-        }
+		if (!sign.getLine3().isEmpty()) {
+			String[] values = sign.getLine3().split(":", 2);
+			if (!UtilEntity.isValidPlayerTypeID(values[0])) {
+				return "Invalid player or group name on Third line.";
+			}
+		}
         
         if (sign.getLine4().length() != 0) {
             try
@@ -103,13 +102,12 @@ public class MCX118 extends BaseIC {
     		double dist = 5;
     		if(!chip.getText().getLine4().isEmpty())
     			dist = Double.parseDouble(chip.getText().getLine4());
-    		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getX(), chip.getBlockPosition().getZ() + 0.5);
+    		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
     		// set output when player was found, same as MCX116 (Player Above?)
     		// TODO: proper inheritance
     		CBXEntityFinder.ResultHandler resultHandler = new MCX116.ResultHandler(chip);
     		CBXEntityFinder playerNearFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, resultHandler);
     		playerNearFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
-    		playerNearFinder.setModeOnlyPlayers();
 			if (!CraftBook.cbxScheduler.isShutdown()) {
 				try {
 					CraftBook.cbxScheduler.execute(playerNearFinder);

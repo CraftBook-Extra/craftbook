@@ -93,7 +93,6 @@ public class MCX116 extends BaseIC {
 			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, resultHandlerFactory(chip));
 			playerAboveFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
 			playerAboveFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
-			playerAboveFinder.setModeOnlyPlayers();
 			if (!CraftBook.cbxScheduler.isShutdown()) {
 				try {
 					CraftBook.cbxScheduler.execute(playerAboveFinder);

@@ -25,14 +25,15 @@ import java.util.concurrent.RejectedExecutionException;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * Mob Nearby
  *
  * @author sk89q
  */
-public class MCX119 extends MCX118 {
+public class MCX119 extends BaseIC {
     
 
     /**
@@ -104,9 +105,9 @@ public class MCX119 extends MCX118 {
 
     		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
     		
-        	CBXEntityFinder.ResultHandler resultHandler = new ResultHandler(chip.getCBWorld(), lever);
-        	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, resultHandler);
-    		entityFinder.setModeNoPlayers();
+       		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
+        	CBXEntityFinder.ResultHandler resultHandler = resultHandlerFactory(chip.getCBWorld(), lever);
+        	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, resultHandler);
         	
     		String id = chip.getText().getLine3();
     		if(id.equalsIgnoreCase("mob") || id.equalsIgnoreCase("mobs")) {
@@ -130,15 +131,20 @@ public class MCX119 extends MCX118 {
     	}
     }
 	
-	private class ResultHandler implements CBXEntityFinder.ResultHandler {
-		private final CraftBookWorld cbworld;
-		private final Vector lever;
+	
+	protected CBXEntityFinder.ResultHandler resultHandlerFactory(CraftBookWorld cbworld, Vector lever) {
+		return new MCX119.ResultHandler(cbworld, lever);
+	}
+	
+	public static class ResultHandler implements CBXEntityFinder.ResultHandler {
+		protected final CraftBookWorld cbworld;
+		protected final Vector lever;
 		
 		public ResultHandler(CraftBookWorld cbworld, Vector lever) {
 			this.cbworld = cbworld;
 			this.lever = lever;
 		}
-		
+		@Override
 		public void handleResult(Set<BaseEntity> foundEntities) {
 			final boolean found;
 			if (foundEntities.isEmpty()) {

@@ -19,8 +19,13 @@
 
 
 
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.ChipState;
+
 
 /**
  * Wireless transmitter.
@@ -45,34 +50,39 @@ public class MCX130 extends MCX119 {
         return true;
     }
     
-    /**
-     * Think.
-     *
-     * @param chip
-     */
 	@Override
-    public void think(ChipState chip) {
-    	
-    	if(chip.inputAmount() == 0 || (chip.getIn(1).is() && chip.getIn(1).isTriggered()) )
-    	{
-    		double dist = 5;
-    		if(!chip.getText().getLine4().isEmpty())
-    			dist = Double.parseDouble(chip.getText().getLine4());
-    		dist *= dist;
-    		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
-    		World world = CraftBook.getWorld(chip.getCBWorld());
-    		
-    		String id = chip.getText().getLine3();
-    		int type;
-    		if(id.equalsIgnoreCase("mob") || id.equalsIgnoreCase("mobs"))
-    			type = 1;
-    		else if(id.equalsIgnoreCase("animal") || id.equalsIgnoreCase("animals"))
-    			type = 2;
-    		else
-    			type = 3;
-    		
-        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, id, type, true);
-        	etc.getServer().addToServerQueue(nearbyFinder);
-    	}
-    }
+	protected CBXEntityFinder.ResultHandler resultHandlerFactory(CraftBookWorld cbworld, Vector lever) {
+		return new MCX130.ResultHandler(cbworld, lever);
+	}
+	
+	public static class ResultHandler extends MCX119.ResultHandler {
+		public ResultHandler(CraftBookWorld cbworld, Vector lever) {
+			super(cbworld, lever);
+		}
+		
+		public void handleResult(final Set<BaseEntity> foundEntities) {
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					boolean found = false;
+					try {
+					if (!foundEntities.isEmpty()) {
+						for (BaseEntity bEntity:foundEntities) {
+							if (bEntity != null && !bEntity.isDead() && !bEntity.isPlayer()) {
+								bEntity.destroy();
+								found = true;
+							} else {
+								if (bEntity.isPlayer()) {
+									Logger.getLogger("Minecraft.CraftBook").log(Level.WARNING, "MCX130.ResultHandler tried to kill a player!");
+								}
+							}
+						}
+					}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Redstone.setOutput(cbworld, lever, found);
+				}
+			});
+		}
+	}
 }

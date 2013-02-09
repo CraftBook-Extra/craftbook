@@ -47,12 +47,6 @@ public final class CBXEntityFinder implements Runnable{
 	private static final int CME_RETRIES = 5; // maximum number of retries after ConcurrentModificationException
 	public static final int DISTANCE_LIMIT = 128;
 
-	private enum Mode{
-		ONLY_PLAYERS,
-		NO_PLAYERS,
-		ALL;
-	}
-
 	// -----------------------------------------------------------------------
 	
 	private final World world;
@@ -61,7 +55,6 @@ public final class CBXEntityFinder implements Runnable{
 	private final ResultHandler resultHandler;
 	private List<BaseEntityFilter> baseEntityFilters = new LinkedList<BaseEntityFilter>();
 	private ICBXinRangeTester distanceCheck;
-	private Mode mode = Mode.ALL;
 
 	// -----------------------------------------------------------------------------------------
 	
@@ -200,20 +193,7 @@ public final class CBXEntityFinder implements Runnable{
 		this.distanceCheck = rangeTester;
 	}
 	
-	/**
-	 * Call this to ignore anything but players in the search to improve performance.
-	 */
-	public void setModeOnlyPlayers() {
-		this.mode = Mode.ONLY_PLAYERS;
-	}
-	
-	/**
-	 * Call this to ignore players in the search to improve performance.
-	 */
-	public void setModeNoPlayers() {
-		this.mode = Mode.NO_PLAYERS;
-	}
-	
+		
 	// ------------------------------------------------------------------------------------
 	/**
 	 * Run the EntiyFinder.
@@ -222,13 +202,8 @@ public final class CBXEntityFinder implements Runnable{
 	public void run() {
 		List<Object> candidateEntities = new LinkedList<Object>();
 		// TODO: use world's global entity lists for large maxDistance
-		if (this.mode != Mode.ONLY_PLAYERS) {
-			getCandidateEntities(getCandidateChunks(), candidateEntities);
-		}
-		// players are not saved in entity lists of chunks, we have to get them elsewhere
-		if (this.mode != Mode.NO_PLAYERS) {
-			getCandidatePlayers(candidateEntities);
-		}
+		getCandidateEntities(getCandidateChunks(), candidateEntities);
+
 		Set<BaseEntity> foundEntities = filterCandidateEntities(candidateEntities);
 		// run the user's ResultHandler
 		try {
@@ -295,23 +270,6 @@ public final class CBXEntityFinder implements Runnable{
 		}
 	}
 
-	private void getCandidatePlayers(List<Object> output) {
-		// retry on ConcurrentModificationException
-		for (int retry=0; retry < CME_RETRIES; retry++) {
-			try {
-				output.addAll(etc.getServer().getPlayerList());
-				break; //it worked, no need to do it again
-			} catch (ConcurrentModificationException e) {
-				sleep1ms();
-			} catch (NullPointerException e) {
-				break;
-			} catch (Exception e) {
-				e.printStackTrace();
-				break;
-			}
-		}
-	}
-	
 	private HashSet<BaseEntity> filterCandidateEntities(List<Object> candidateEntities) {
 		HashSet<BaseEntity> foundEntities = new HashSet<BaseEntity>(); //BaseEntities are not comparable
 		for (Object oEntity : candidateEntities) {
@@ -495,7 +453,8 @@ public final class CBXEntityFinder implements Runnable{
 		@Override
 		public boolean match(BaseEntity bEntity) {
 			if (bEntity.isPlayer()) {
-				if (this.name == null || this.name.equalsIgnoreCase(bEntity.getName())) {
+				Player player = new Player((OEntityPlayerMP)bEntity.getEntity());
+				if (this.name == null || this.name.equalsIgnoreCase(player.getName())) {
 					return true;
 				}
 			}
@@ -515,7 +474,8 @@ public final class CBXEntityFinder implements Runnable{
 				if (this.regEx == null) {
 					return false;
 				} else {
-					if (regEx.matcher(bEntity.getName()).matches()) {
+					Player player = new Player((OEntityPlayerMP)bEntity.getEntity());
+					if (regEx.matcher(player.getName()).matches()) {
 						return true;
 					}
 				}

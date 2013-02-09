@@ -176,7 +176,6 @@ public class MCX203 extends BaseIC {
         
         CBXEntityFinder.ResultHandler chestCollector = new ItemChestCollector(chip);
         CBXEntityFinder itemFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, chestCollector);
-       	itemFinder.setModeNoPlayers();
         itemFinder.addItemFilter(item, color);
         if (!CraftBook.cbxScheduler.isShutdown()) {
         	try {
