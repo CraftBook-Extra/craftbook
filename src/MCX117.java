@@ -19,6 +19,9 @@
 
 
 
+import java.util.Set;
+
+import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -44,17 +47,38 @@ public class MCX117 extends MCX116 {
         return true;
     }
 
-    /**
-     * Think.
-     *
-     * @param chip
-     */
 	@Override
-    public void think(ChipState chip) {
-    	
-    	if(chip.inputAmount() == 0 || (chip.getIn(1).is() && chip.getIn(1).isTriggered()) )
-    	{
-    		findPlayerAbove(chip, true);
-    	}
-    }
+	protected ResultHandler resultHandlerFactory(ChipState chip) {
+		return new MCX117.ResultHandler(chip);
+	}
+	
+	protected static class ResultHandler extends MCX116.ResultHandler {
+		public ResultHandler(ChipState chip) {
+			super(chip);
+		}
+		
+		@Override
+		public void handleResult(final Set<BaseEntity> foundEntities) {
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					boolean found = false;
+					BaseEntity abovePlayer = null;
+					for (BaseEntity bEntity : foundEntities) {
+						if (bEntity.isPlayer()) {
+							abovePlayer = bEntity; 
+							found = true;
+							break;
+						}
+					}
+					World world = CraftBook.getWorld(chip.getCBWorld());
+					Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
+					Redstone.setOutput(chip.getCBWorld(), lever, found);
+					if (abovePlayer != null) {
+						MC1250.explodeTNT(world, abovePlayer.getX(),
+							abovePlayer.getY(), abovePlayer.getZ());
+					}
+				}
+			});
+		}
+	}
 }

@@ -195,52 +195,52 @@ public class UtilEntity
     	return isValidPlayerEntity(entity, values[0], values[1]);
     }
 	
-	protected static synchronized boolean isValidPlayerEntity(BaseEntity entity, String entityName, String value)
-    {
-		if(entity == null || !(entity.getEntity() instanceof OEntityPlayerMP))
-    		return false;
-    	
-		Player player = new Player((OEntityPlayerMP)entity.getEntity());
-		player = etc.getServer().getPlayer(player.getName()); // This is such a kludge, but we need the player's groups.
-		
-		//player
-    	if(entityName.equalsIgnoreCase("P") || entityName.equalsIgnoreCase("PLAYER") || entityName.equalsIgnoreCase("PLY"))
-    	{
-    		if(value != null)
-    		{
-    			return player.getName().equalsIgnoreCase(value);
-    		}
-    		
-    		return true;
-    	}
-    	//group
-    	else if(entityName.equalsIgnoreCase("G") || entityName.equalsIgnoreCase("GROUP") || entityName.equalsIgnoreCase("GRP"))
-    	{
-    		if(value != null)
-    		{
-    			return player.isInGroup(value);
-    		}
-    		
-    		return false;
-    	}
-    	//match with player name or part of player name
-    	else if(entityName.equalsIgnoreCase("M") || entityName.equalsIgnoreCase("MATCH"))
-    	{
-    		if(value != null)
-    		{
-    			if(player.getName().equalsIgnoreCase(value)
-    				|| player.getName().toLowerCase().indexOf(value.toLowerCase()) != -1
-    				)
-    			{
-    				return true;
-    			}
-    		}
-    		
-    		return false;
-    	}
-    	
-    	return false;
-    }
+	protected static boolean isValidPlayerEntity(final BaseEntity entity, String entityName, String value) {
+		synchronized (entity) {
+			if (entity == null
+					|| !(entity.getEntity() instanceof OEntityPlayerMP))
+				return false;
+
+			Player player = new Player((OEntityPlayerMP) entity.getEntity());
+			 // This is such a kludge, but we need the player's groups.
+			player = etc.getServer().getPlayer(player.getName());
+
+			// player
+			if (entityName.equalsIgnoreCase("P")
+					|| entityName.equalsIgnoreCase("PLAYER")
+					|| entityName.equalsIgnoreCase("PLY")) {
+				if (value != null) {
+					return player.getName().equalsIgnoreCase(value);
+				}
+				return true;
+			}
+			// group
+			else if (entityName.equalsIgnoreCase("G")
+					|| entityName.equalsIgnoreCase("GROUP")
+					|| entityName.equalsIgnoreCase("GRP")) {
+				if (value != null) {
+					return player.isInGroup(value);
+				}
+
+				return false;
+			}
+			// match with player name or part of player name
+			else if (entityName.equalsIgnoreCase("M")
+					|| entityName.equalsIgnoreCase("MATCH")) {
+				if (value != null) {
+					if (player.getName().equalsIgnoreCase(value)
+							|| player.getName().toLowerCase()
+									.indexOf(value.toLowerCase()) != -1) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			return false;
+		}
+	}
 	
 	protected static boolean isValidLivingEntity(BaseEntity entity, String args)
     {

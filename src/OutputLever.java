@@ -24,9 +24,9 @@ public class OutputLever implements Runnable {
     		try {
     		CraftBook.getWorld(output.getCBWorld())
     				 .getBlockAt(output.getBlockX(), output.getBlockY(), output.getBlockZ())
-    				 .rightClick(fakePlayer);
+    				 .rightClick(null);
     		} catch (NullPointerException e) {
-    			e.printStackTrace();
+    			//lever was destroyed
     		}
     	}
     }

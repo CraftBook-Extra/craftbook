@@ -88,10 +88,10 @@ public class MCX116 extends BaseIC {
 		if (chip.inputAmount() == 0
 				|| (chip.getIn(1).is() && chip.getIn(1).isTriggered())) {
 			// find where above the sign to look for the player
-			double safeY = getSafeYAbove(chip.getCBWorld(), chip.getBlockPosition());
+			double safeY = Util.getSafeYAbove(chip.getCBWorld(), chip.getBlockPosition());
 			Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, safeY, chip.getBlockPosition().getZ() + 0.5);
 			// prepare and run CBXEntityFinder
-			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, new ResultHandler(chip));
+			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, resultHandlerFactory(chip));
 			playerAboveFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
 			playerAboveFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
 			playerAboveFinder.setModeOnlyPlayers();
@@ -105,9 +105,12 @@ public class MCX116 extends BaseIC {
 		}
 	}
 	
+	protected ResultHandler resultHandlerFactory(ChipState chip) {
+		return new ResultHandler(chip);
+	}
 	
-	private static class ResultHandler implements CBXEntityFinder.ResultHandler {
-		private final ChipState chip;
+	protected static class ResultHandler implements CBXEntityFinder.ResultHandler {
+		protected final ChipState chip;
 
 		public ResultHandler(ChipState chip) {
 			this.chip = chip;
@@ -132,106 +135,4 @@ public class MCX116 extends BaseIC {
 		}
 	}
 	
-	// move to Util
-	private int getSafeYAbove(CraftBookWorld cbworld, Vector pos) {
-		return getSafeYAbove(CraftBook.getWorld(cbworld), pos);
-	}
-	// move to Util
-	private int getSafeYAbove(World world, Vector pos) {
-		int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
-		int x = pos.getBlockX();
-		int z = pos.getBlockZ();
-
-		for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
-			if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))
-					&& y < CraftBook.MAP_BLOCK_HEIGHT
-					&& BlockType.canPassThrough(CraftBook.getBlockID(world, x,
-							y + 1, z))) {
-				return y;
-			}
-		}
-		return maxY;
-	}
-	
-	
-	// old stuff below -----------------------------------------------------------------------
-	@Deprecated
-	protected void findPlayerAbove(ChipState chip, boolean tnt) {
-		World world = CraftBook.getWorld(chip.getCBWorld());
-		SignText text = UtilIC.getSignTextWithExtension(chip);
-		String id = text.getLine3().toLowerCase();
-
-		int x = chip.getBlockPosition().getBlockX();
-		int z = chip.getBlockPosition().getBlockZ();
-
-		int y = getSafeYAbove(world, chip.getBlockPosition());
-
-		Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
-		FindPlayerAbove findAbove = new FindPlayerAbove(world, x, y, z, lever,
-				id, tnt);
-		etc.getServer().addToServerQueue(findAbove);
-	}
-
-
-
-	@Deprecated
-	public class FindPlayerAbove implements Runnable {
-		private final World WORLD;
-		private final int X;
-		private final int Y;
-		private final int Z;
-		private final Vector LEVER;
-		private final String ID;
-		private final boolean TNT;
-
-		public FindPlayerAbove(World world, int x, int y, int z, Vector lever,
-				String id, boolean tnt) {
-			WORLD = world;
-			X = x;
-			Y = y;
-			Z = z;
-			LEVER = lever;
-			ID = id;
-			TNT = tnt;
-		}
-
-		@Override
-		public void run() {
-			List<Player> entities = etc.getServer().getPlayerList();
-			Player abovePlayer = null;
-			for (Player player : entities) {
-				Location pLoc = player.getLocation();
-				Vector pVec = new Vector(pLoc.x, pLoc.y, pLoc.z);
-
-				if (player.getWorld() == WORLD
-						&& (pVec.getBlockX() == X || pVec.getBlockX() == X + 1 || pVec
-								.getBlockX() == X - 1)
-						&& pVec.getBlockY() == Y
-						&& (pVec.getBlockZ() == Z || pVec.getBlockZ() == Z + 1 || pVec
-								.getBlockZ() == Z - 1)) {
-					if (!ID.isEmpty()) {
-						if (UtilEntity.isValidPlayerEntity(player, ID)) {
-							abovePlayer = player;
-							break;
-						} else {
-							// continue to check if another player happens to be
-							// in the same area instead of stopping
-							continue;
-						}
-					} else {
-						abovePlayer = player;
-						break;
-					}
-				}
-			}
-
-			boolean output = abovePlayer != null && !abovePlayer.isDead();
-			if (TNT && output) {
-				MC1250.explodeTNT(WORLD, abovePlayer.getX(),
-						abovePlayer.getY(), abovePlayer.getZ());
-			}
-
-			Redstone.setOutput(CraftBook.getCBWorld(WORLD), LEVER, output);
-		}
-	}
 }

@@ -561,4 +561,37 @@ public class Util {
 		//Notchian: Chunk.hasEntities, Searge: field_76644_m
 		return chunk.getChunk().m;
 	}
+	
+	
+	/** get a spot that player can stand in up to 10 blocks above a given point
+	 * 
+	 * @param cbworld
+	 * @param pos
+	 * @return Y-value of the safe location
+	 */
+	public static int getSafeYAbove(CraftBookWorld cbworld, Vector pos) {
+		return getSafeYAbove(CraftBook.getWorld(cbworld), pos);
+	}
+	
+	/** get a spot that player can stand in up to 10 blocks above a given point
+	 * 
+	 * @param world
+	 * @param pos
+	 * @return Y-value of the safe location
+	 */
+	public static int getSafeYAbove(World world, Vector pos) {
+		int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
+		int x = pos.getBlockX();
+		int z = pos.getBlockZ();
+
+		for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
+			if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))
+					&& y < CraftBook.MAP_BLOCK_HEIGHT
+					&& BlockType.canPassThrough(CraftBook.getBlockID(world, x,
+							y + 1, z))) {
+				return y;
+			}
+		}
+		return maxY;
+	}
 }
