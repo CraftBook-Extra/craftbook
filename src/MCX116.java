@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -109,7 +108,7 @@ public class MCX116 extends BaseIC {
 		return new ResultHandler(chip);
 	}
 	
-	protected static class ResultHandler implements CBXEntityFinder.ResultHandler {
+	public static class ResultHandler implements CBXEntityFinder.ResultHandler {
 		protected final ChipState chip;
 
 		public ResultHandler(ChipState chip) {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
@@ -102,15 +103,24 @@ public class MCX118 extends BaseIC {
     		double dist = 5;
     		if(!chip.getText().getLine4().isEmpty())
     			dist = Double.parseDouble(chip.getText().getLine4());
-    		dist *= dist;
-    		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
-    		World world = CraftBook.getWorld(chip.getCBWorld());
-    		
-        	NearbyEntityFinder nearbyFinder = new NearbyEntityFinder(world, chip.getBlockPosition(), lever, dist, chip.getText().getLine3(), 0, false);
-        	etc.getServer().addToServerQueue(nearbyFinder);
+    		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getX(), chip.getBlockPosition().getZ() + 0.5);
+    		// set output when player was found, same as MCX116 (Player Above?)
+    		// TODO: proper inheritance
+    		CBXEntityFinder.ResultHandler resultHandler = new MCX116.ResultHandler(chip);
+    		CBXEntityFinder playerNearFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, resultHandler);
+    		playerNearFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
+    		playerNearFinder.setModeOnlyPlayers();
+			if (!CraftBook.cbxScheduler.isShutdown()) {
+				try {
+					CraftBook.cbxScheduler.execute(playerNearFinder);
+				} catch(RejectedExecutionException e) {
+					// CraftBook is being disabled or restarted
+				}
+			}
     	}
     }
-    
+// old stuff below ------------------------------------------------    
+	@Deprecated
     public class NearbyEntityFinder implements Runnable
     {
     	private final World WORLD;
@@ -121,6 +131,7 @@ public class MCX118 extends BaseIC {
     	private final int TYPE;
     	private final boolean DESTROY;
     	
+    	@Deprecated
     	public NearbyEntityFinder(World world, Vector block, Vector lever, double distance, String settings, int type, boolean destroy)
     	{
     		WORLD = world;
@@ -210,6 +221,7 @@ public class MCX118 extends BaseIC {
 			Redstone.setOutput(CraftBook.getCBWorld(WORLD), LEVER, found);
 		}
 		
+		@Deprecated
 		private boolean entityInRange(BaseEntity entity)
 	    {
 			switch(TYPE)
@@ -238,6 +250,7 @@ public class MCX118 extends BaseIC {
 	    	return false;
 	    }
 		
+		@Deprecated
 		private List<BaseEntity> entitiesExceptPlayers(OWorld oworld)
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
@@ -255,6 +268,7 @@ public class MCX118 extends BaseIC {
 			return entities;
 		}
 		
+		@Deprecated
 		private List<BaseEntity> entitiesExceptPlayersItems(OWorld oworld)
 		{
 			List<BaseEntity> entities = new ArrayList<BaseEntity>();
