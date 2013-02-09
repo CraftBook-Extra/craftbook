@@ -106,7 +106,8 @@ public class MCX119 extends MCX118 {
     		
         	CBXEntityFinder.ResultHandler resultHandler = new ResultHandler(chip.getCBWorld(), lever);
         	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, resultHandler);
-    		
+    		entityFinder.setModeNoPlayers();
+        	
     		String id = chip.getText().getLine3();
     		if(id.equalsIgnoreCase("mob") || id.equalsIgnoreCase("mobs")) {
     			entityFinder.addMobFilter();

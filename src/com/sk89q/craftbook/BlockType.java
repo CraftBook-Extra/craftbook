@@ -571,6 +571,7 @@ public final class BlockType {
         		|| id == REDSTONE_LAMP_ON
                 || id == REDSTONE_LAMP_OFF
                 || id == STONE_BUTTON
+                || id == WOODEN_BUTTON
                 || id == REDSTONE_WIRE
                 || id == STICKY_PISTON
                 || id == PISTON

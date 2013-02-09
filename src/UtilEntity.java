@@ -195,7 +195,7 @@ public class UtilEntity
     	return isValidPlayerEntity(entity, values[0], values[1]);
     }
 	
-	protected static boolean isValidPlayerEntity(BaseEntity entity, String entityName, String value)
+	protected static synchronized boolean isValidPlayerEntity(BaseEntity entity, String entityName, String value)
     {
 		if(entity == null || !(entity.getEntity() instanceof OEntityPlayerMP))
     		return false;

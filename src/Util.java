@@ -552,7 +552,7 @@ public class Util {
 	
 
 	@SuppressWarnings("unchecked")
-	public static List<OEntity>[] getEntityLists(Chunk chunk) {
+	public static List<Object>[] getEntityLists(Chunk chunk) {
 		//Notchian: List[] Chunk.entityLists, Searge: field_76645_j
 		return chunk.getChunk().j;
 	}
