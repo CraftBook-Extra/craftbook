@@ -16,11 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+import java.util.Set;
+
+
 import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.ic.*;
 
-
-public class MCX144 extends MCX140 {
+/**
+ * 
+ * AREA CBWARP
+ *
+ */
+public class MCX144 extends MCX142 {
 	
 	//private final String TITLE = "AREA CBWARP";
     /**
@@ -102,7 +110,76 @@ public class MCX144 extends MCX140 {
         return null;
     }
     
+	
     @Override
+    public ResultHandlerWithOutput rhFactory(ChipState chip) {
+    	CBWarpObject warp = null;
+    	if(! chip.getText().getLine3().isEmpty()) {
+	    	SignText text = UtilIC.getSignTextWithExtension(chip);
+	    	String destinationID = text.getLine3();
+	    	warp = CBWarp.getWarp(destinationID, false);
+    	}
+    	return new RHTeleportCBWarp(chip, warp);
+    	
+	}
+    
+    
+    
+	public class RHTeleportCBWarp extends RHSetOutIfFound {
+		protected String[] messages = null;
+		protected WorldLocation tpDestination = null;
+		
+		public RHTeleportCBWarp(ChipState chip, CBWarpObject cbWarp) {
+			super(chip);
+			if (cbWarp != null) {
+				this.tpDestination = cbWarp.LOCATION;
+				this.messages = cbWarp.getMessage();
+			}
+		}
+		
+		@Override
+		public void handleResult(final Set<BaseEntity> foundEntities) {
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					try {
+						boolean found = false;
+				    	if (tpDestination != null) {
+				        	tpDestination = tpDestination.add(0.5D, 0.0D, 0.5D);
+				        	tpDestination = tpDestination.setY(Util.getSafeYAbove(CraftBook.getWorld(tpDestination.getCBWorld()), tpDestination.getCoordinate()) + 1.0D);
+							for (BaseEntity bEntity : foundEntities) {
+								if (bEntity == null || bEntity.isDead()) {
+									continue;
+								}
+								found = true;
+								if(bEntity.isPlayer()) {
+									Player player = new Player((OEntityPlayerMP)bEntity.getEntity());
+									if (messages != null) {
+										for(String message : messages) {
+											if(message == null)
+												break;
+											player.sendMessage(Colors.Gold+message);
+										}
+									}
+									CraftBook.teleportPlayer(player, tpDestination);
+								}
+								else {
+									CraftBook.teleportEntity(bEntity, tpDestination);
+								}
+							}
+				    	}
+						setOutput(found);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
+	}
+	
+	// old stuff ------------------------------------------------------------------------------
+    @Override
+    @Deprecated
     protected void detectEntity(World world, Vector lever, BlockArea area, ChipState chip)
     {
     	String id = chip.getText().getLine3();

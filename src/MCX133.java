@@ -21,10 +21,10 @@
 
 import java.util.concurrent.RejectedExecutionException;
 
+
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -32,7 +32,7 @@ import com.sk89q.craftbook.ic.ChipState;
  *
  * @author sk89q
  */
-public class MCX133 extends BaseIC {
+public class MCX133 extends CBXEntityFindingIC {
     
 
     /**
@@ -99,10 +99,9 @@ public class MCX133 extends BaseIC {
     		char mode = ' ';
     		if(chip.getText().getLine2().length() > 8)
     			mode = chip.getText().getLine2().charAt(8);
- 
-    		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);    		
+  		
        		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
-       		CBXEntityFinder.ResultHandler entityKiller = new MCX130.ResultHandler(chip.getCBWorld(), lever);
+       		CBXEntityFinder.ResultHandler entityKiller = new RHDestroyFoundEntities(chip);
     		CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(),searchCenter, dist, entityKiller);
     		if (mode == '-') {
     			entityFinder.addCustomFilter(new FilterNoItems());

@@ -19,16 +19,11 @@
 
 
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -36,7 +31,7 @@ import com.sk89q.craftbook.ic.ChipState;
  *
  * @author sk89q
  */
-public class MCX118 extends BaseIC {
+public class MCX118 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory {
     
 
     /**
@@ -103,10 +98,7 @@ public class MCX118 extends BaseIC {
     		if(!chip.getText().getLine4().isEmpty())
     			dist = Double.parseDouble(chip.getText().getLine4());
     		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
-    		// set output when player was found, same as MCX116 (Player Above?)
-    		// TODO: proper inheritance
-    		CBXEntityFinder.ResultHandler resultHandler = new MCX116.ResultHandler(chip);
-    		CBXEntityFinder playerNearFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, resultHandler);
+    		CBXEntityFinder playerNearFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, rhFactory(chip));
     		playerNearFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
 			if (!CraftBook.cbxScheduler.isShutdown()) {
 				try {
@@ -117,179 +109,9 @@ public class MCX118 extends BaseIC {
 			}
     	}
     }
-// old stuff below ------------------------------------------------    
-	@Deprecated
-    public class NearbyEntityFinder implements Runnable
-    {
-    	private final World WORLD;
-    	private final Vector BLOCK;
-    	private final Vector LEVER;
-    	private final double DISTANCE;
-    	private final String SETTINGS;
-    	private final int TYPE;
-    	private final boolean DESTROY;
-    	
-    	@Deprecated
-    	public NearbyEntityFinder(World world, Vector block, Vector lever, double distance, String settings, int type, boolean destroy)
-    	{
-    		WORLD = world;
-    		BLOCK = block;
-    		LEVER = lever;
-    		DISTANCE = distance;
-    		SETTINGS = settings;
-    		TYPE = type;
-    		DESTROY = destroy;
-    	}
-    	
-		@Override
-		public void run()
-		{
-			@SuppressWarnings("rawtypes")
-			List entities = null;
-			
-			try
-			{
-				switch(TYPE)
-				{
-					case 0:
-						entities = etc.getServer().getPlayerList();
-						break;
-					case 1:
-						entities = this.WORLD.getMobList();
-						break;
-					case 2:
-						entities = this.WORLD.getAnimalList();
-						break;
-					case 3:
-						entities = this.WORLD.getLivingEntityList();
-						break;
-					case 4:
-						entities = entitiesExceptPlayers(this.WORLD.getWorld());
-						break;
-					case 5:
-						entities = entitiesExceptPlayersItems(this.WORLD.getWorld());
-						break;
-				}
-			}
-			catch(ConcurrentModificationException e)
-			{
-				e.printStackTrace();
-				return;
-			}
-			
-			if(entities == null)
-				return;
-			
-			boolean found = false;
-			
-			for(Object obj: entities)
-			{
-				BaseEntity entity = (BaseEntity)obj;
-				if(entity.getWorld().getType().getId() != WORLD.getType().getId())
-					continue;
-				
-				double diffX = BLOCK.getBlockX() - entity.getX();
-				double diffY = BLOCK.getBlockY() - entity.getY();
-				double diffZ = BLOCK.getBlockZ() - entity.getZ();
-				
-				if(diffX * diffX + diffY * diffY + diffZ * diffZ < DISTANCE)
-				{
-					boolean result = entityInRange(entity);
-					if(result)
-					{
-						found = true;
-						if(DESTROY)
-						{
-							try 
-							{
-								entity.destroy();
-							}
-							catch(ConcurrentModificationException e){
-								e.printStackTrace();
-							}
-						}
-						else
-						{
-							break;
-						}
-					}
-				}
-			}
-			
-			Redstone.setOutput(CraftBook.getCBWorld(WORLD), LEVER, found);
-		}
-		
-		@Deprecated
-		private boolean entityInRange(BaseEntity entity)
-	    {
-			switch(TYPE)
-			{
-				case 0:
-					Player player = (Player) entity;
-			    	
-			    	return SETTINGS.isEmpty()
-			    			|| (SETTINGS.charAt(0) == 'g' && player.isInGroup(SETTINGS.substring(2)))
-			    			|| (SETTINGS.charAt(0) == 'p' && player.getName().equalsIgnoreCase(SETTINGS.substring(2)));
-				case 1:
-				case 2:
-					return true;
-				case 3:
-					if((entity.isMob() || entity.isAnimal()))
-					{
-						if(SETTINGS.isEmpty() || ((entity.getName() != null) && entity.getName().equalsIgnoreCase(SETTINGS)))
-							return true;
-					}
-					break;
-				case 4:
-				case 5:
-					return true;
-			}
-			
-	    	return false;
-	    }
-		
-		@Deprecated
-		private List<BaseEntity> entitiesExceptPlayers(OWorld oworld)
-		{
-			List<BaseEntity> entities = new ArrayList<BaseEntity>();
-			
-			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.e.iterator(); it.hasNext();)
-    		{
-    			Object obj = it.next();
-    			if(!(obj instanceof OEntityPlayerMP))
-    			{
-    				entities.add(new BaseEntity((OEntity)obj));
-    			}
-    		}
-			
-			return entities;
-		}
-		
-		@Deprecated
-		private List<BaseEntity> entitiesExceptPlayersItems(OWorld oworld)
-		{
-			List<BaseEntity> entities = new ArrayList<BaseEntity>();
-			
-			for(@SuppressWarnings("rawtypes")
-    		Iterator it = oworld.e.iterator(); it.hasNext();)
-    		{
-    			Object obj = it.next();
-    			if(!(obj instanceof OEntityPlayerMP)
-    				&& !(obj instanceof OEntityItem)
-    				&& !(obj instanceof OEntityMinecart)
-    				&& !(obj instanceof OEntityBoat)
-    				&& !(obj instanceof OEntityEnderEye)
-    				&& !(obj instanceof OEntityFishHook)
-    				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).o().isEmpty() )
-    				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).o().isEmpty() )
-    				)
-    			{
-    				entities.add(new BaseEntity((OEntity)obj));
-    			}
-    		}
-			
-			return entities;
-		}
-    }
+	
+	public ResultHandlerWithOutput rhFactory(ChipState chip) {
+		return new RHSetOutIfFound(chip);
+	}
+
 }

@@ -19,18 +19,13 @@
 
 
 
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.sk89q.craftbook.CraftBookWorld;
-import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.ic.ChipState;
 
 
 /**
- * Wireless transmitter.
+ * Mob Zapper.
  *
- * @author sk89q
+ * 
  */
 public class MCX130 extends MCX119 {
     
@@ -51,38 +46,9 @@ public class MCX130 extends MCX119 {
     }
     
 	@Override
-	protected CBXEntityFinder.ResultHandler resultHandlerFactory(CraftBookWorld cbworld, Vector lever) {
-		return new MCX130.ResultHandler(cbworld, lever);
+	public ResultHandlerWithOutput rhFactory(ChipState chip) {
+		return new RHDestroyFoundEntities(chip);
 	}
 	
-	public static class ResultHandler extends MCX119.ResultHandler {
-		public ResultHandler(CraftBookWorld cbworld, Vector lever) {
-			super(cbworld, lever);
-		}
-		
-		public void handleResult(final Set<BaseEntity> foundEntities) {
-			CraftBook.cbxScheduler.executeInServer(new Runnable() {
-				public void run() {
-					boolean found = false;
-					try {
-					if (!foundEntities.isEmpty()) {
-						for (BaseEntity bEntity:foundEntities) {
-							if (bEntity != null && !bEntity.isDead() && !bEntity.isPlayer()) {
-								bEntity.destroy();
-								found = true;
-							} else {
-								if (bEntity.isPlayer()) {
-									Logger.getLogger("Minecraft.CraftBook").log(Level.WARNING, "MCX130.ResultHandler tried to kill a player!");
-								}
-							}
-						}
-					}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					Redstone.setOutput(cbworld, lever, found);
-				}
-			});
-		}
-	}
+
 }

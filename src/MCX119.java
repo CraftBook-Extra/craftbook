@@ -19,13 +19,13 @@
 
 
 
-import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
+
+
 
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -33,7 +33,7 @@ import com.sk89q.craftbook.ic.ChipState;
  *
  * @author sk89q
  */
-public class MCX119 extends BaseIC {
+public class MCX119 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory {
     
 
     /**
@@ -100,23 +100,21 @@ public class MCX119 extends BaseIC {
     	if(chip.inputAmount() == 0 || (chip.getIn(1).is() && chip.getIn(1).isTriggered()) )
     	{
     		double dist = 5;
-    		if(!chip.getText().getLine4().isEmpty())
+    		if(!chip.getText().getLine4().isEmpty()) {
     			dist = Double.parseDouble(chip.getText().getLine4());
+    		}
 
-    		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
-    		
        		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
-        	CBXEntityFinder.ResultHandler resultHandler = resultHandlerFactory(chip.getCBWorld(), lever);
-        	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, resultHandler);
+        	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, rhFactory(chip));
         	
-    		String id = chip.getText().getLine3();
-    		if(id.equalsIgnoreCase("mob") || id.equalsIgnoreCase("mobs")) {
+    		String mobType = chip.getText().getLine3();
+    		if(mobType.equalsIgnoreCase("mob") || mobType.equalsIgnoreCase("mobs")) {
     			entityFinder.addMobFilter();
-    		} else if(id.equalsIgnoreCase("animal") || id.equalsIgnoreCase("animals")) {
+    		} else if(mobType.equalsIgnoreCase("animal") || mobType.equalsIgnoreCase("animals")) {
     			entityFinder.addAnimalFilter();
-    		} else if(Mob.isValid(id)) {
-				entityFinder.addMobFilter(id);
-				entityFinder.addAnimalFilter(id);
+    		} else if(Mob.isValid(mobType)) {
+				entityFinder.addMobFilter(mobType);
+				entityFinder.addAnimalFilter(mobType);
     		} else {
     			entityFinder.addMobFilter();
     			entityFinder.addAnimalFilter();
@@ -132,31 +130,9 @@ public class MCX119 extends BaseIC {
     }
 	
 	
-	protected CBXEntityFinder.ResultHandler resultHandlerFactory(CraftBookWorld cbworld, Vector lever) {
-		return new MCX119.ResultHandler(cbworld, lever);
+	@Override
+	public ResultHandlerWithOutput rhFactory(ChipState chip) {
+		return new RHSetOutIfFound(chip);
 	}
 	
-	public static class ResultHandler implements CBXEntityFinder.ResultHandler {
-		protected final CraftBookWorld cbworld;
-		protected final Vector lever;
-		
-		public ResultHandler(CraftBookWorld cbworld, Vector lever) {
-			this.cbworld = cbworld;
-			this.lever = lever;
-		}
-		@Override
-		public void handleResult(Set<BaseEntity> foundEntities) {
-			final boolean found;
-			if (foundEntities.isEmpty()) {
-				found = false;
-			} else {
-				found = true;
-			}
-			CraftBook.cbxScheduler.executeInServer(new Runnable() {
-				public void run() {
-					Redstone.setOutput(cbworld, lever, found);
-				}
-			});
-		}
-	}
 }

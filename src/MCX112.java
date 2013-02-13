@@ -178,22 +178,24 @@ public class MCX112 extends BaseIC {
         return false;
     }
     
+    @Deprecated
     protected static int getSafeY(World world, Vector pos)
     {
-    	int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
-        int x = pos.getBlockX();
-        int z = pos.getBlockZ();
-    	
-    	for (int y = pos.getBlockY() + 1; y <= maxY; y++)
-		{
-            if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z)) &&
-            	y < CraftBook.MAP_BLOCK_HEIGHT && BlockType.canPassThrough(CraftBook.getBlockID(world, x, y+1, z))	
-            	)
-            {
-            	return y;
-            }
-		}
-    	
-    	return maxY;
+//    	int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
+//        int x = pos.getBlockX();
+//        int z = pos.getBlockZ();
+//    	
+//    	for (int y = pos.getBlockY() + 1; y <= maxY; y++)
+//		{
+//            if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z)) &&
+//            	y < CraftBook.MAP_BLOCK_HEIGHT && BlockType.canPassThrough(CraftBook.getBlockID(world, x, y+1, z))	
+//            	)
+//            {
+//            	return y;
+//            }
+//		}
+//    	
+//    	return maxY;
+    	return Util.getSafeYAbove(world, pos);
     }
 }

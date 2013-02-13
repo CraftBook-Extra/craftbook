@@ -17,19 +17,29 @@
  */
 
 import java.util.Iterator;
+import java.util.concurrent.RejectedExecutionException;
+
+import cbx.CBXinRangeBlockArea;
 
 import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.ic.*;
+import com.sk89q.craftbook.ic.ChipState;
 
 
-public class MCX140 extends BaseIC {
+
+/**
+ * IN AREA
+ *
+ */
+
+public class MCX140 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory{
+	public static final int defaultHeight = 1;
 	
     /**
      * Get the title of the IC.
      *
      * @return
      */
-	private final String TITLE = "IN AREA";
+	private static final String TITLE = "IN AREA";
 	
 	@Override
     public String getTitle() {
@@ -95,17 +105,20 @@ public class MCX140 extends BaseIC {
     @Override
     public void think(ChipState chip)
     {
+    	// check input
     	if(chip.inputAmount() == 0
     		|| (chip.getText().getLine2().charAt(3) == 'X' && chip.getIn(1).isTriggered() && chip.getIn(1).is())
     		)
     	{
+    		//set defaults
 	    	int width = 3;
-	    	int height = defaultHeight();
+	    	int height = defaultHeight;
 	    	int length = 3;
 	    	int offx = 0;
 	    	int offy = 1;
 	    	int offz = 0;
 	    	
+	    	// get area dimensions from sign
 	    	if(!chip.getText().getLine4().isEmpty())
 	    	{
 	    		SignText text = UtilIC.getSignTextWithExtension(chip);
@@ -128,42 +141,91 @@ public class MCX140 extends BaseIC {
 	    			offz = Integer.parseInt(offsets[2]);
 	    		}
 	    	}
-	    	
+	    	// clamp width and length to configured maximums 
 	    	if(width > RedstoneListener.icInAreaMaxLength)
 	    		width = RedstoneListener.icInAreaMaxLength;
 	    	if(length > RedstoneListener.icInAreaMaxLength)
 	    		length = RedstoneListener.icInAreaMaxLength;
-	    	
+	    	// get lever and BlockArea
 	    	World world = CraftBook.getWorld(chip.getCBWorld());
-	    	Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
+	    	//Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
 	        int data = CraftBook.getBlockData(world, chip.getPosition());
 	        BlockArea area = UtilIC.getBlockArea(chip, data, width, height, length, offx, offy, offz);
-	        
-	        detectEntity(world, lever, area, chip);
+	        //find entity in area
+	        Vector searchCenter = CBXinRangeBlockArea.getSearchCenter(area);
+	        double maxDistance = CBXinRangeBlockArea.getSearchDistance(area);
+	        CBXEntityFinder entityFinder=new CBXEntityFinder(chip.getCBWorld(), searchCenter, maxDistance, rhFactory(chip));
+	        entityFinder.setDistanceCalculationMethod(new CBXinRangeBlockArea(area));
+	        entityFinder.addCustomFilter(beFilterFactory(chip));
+	        try {
+	        	CraftBook.cbxScheduler.execute(entityFinder);
+	        } catch (RejectedExecutionException e) {
+	        	// cbx is being disabled or reloaded
+	        }
+	        //detectEntity(world, lever, area, chip);
     	}
+    	// MCU variant:
     	else if(chip.getIn(1).isTriggered())
     	{
+    		// switch on - think() on next tick
     		if(chip.getIn(1).is() && chip.getText().getLine1().charAt(0) != '%')
     		{
+    			// set "execute" prefix
     			chip.getText().setLine1("%"+chip.getText().getLine1().substring(1));
     			chip.getText().supressUpdate();
-    			
+    			// add to instantICs
     			RedstoneListener redListener = (RedstoneListener) chip.getExtra();
     			redListener.onSignAdded(CraftBook.getWorld(chip.getCBWorld()), chip.getPosition().getBlockX(), chip.getPosition().getBlockY(), chip.getPosition().getBlockZ());
     		}
+    		// switch off
     		else if(!chip.getIn(1).is() && chip.getText().getLine1().charAt(0) != '^')
     		{
+    			//set "don't execute" prefix
     			chip.getText().setLine1("^"+chip.getText().getLine1().substring(1));
     			chip.getText().supressUpdate();
     		}
     	}
     }
-    
-    protected int defaultHeight()
-    {
-    	return 1;
+   
+    @Override
+    public ResultHandlerWithOutput rhFactory(ChipState chip) {
+    	return new RHSetOutIfFound(chip);
     }
     
+    public CBXEntityFinder.BaseEntityFilter beFilterFactory(ChipState chip) {
+		//MCX142 has entity+rider on the third line
+    	SignText text = UtilIC.getSignTextWithExtension(chip);
+    	String[] args = text.getLine3().split("\\+", 2);
+    	String entityName = args[0];
+    	String riderName = args.length > 1 ? args[1] : null;
+    	return new MCX140Filter(entityName, riderName);
+    }
+    
+    protected class MCX140Filter implements CBXEntityFinder.BaseEntityFilter{
+    	private final String entityName;
+    	private final String riderName;
+    	
+    	public MCX140Filter(String entityName, String riderName) {
+        	this.entityName = entityName;
+        	this.riderName = riderName;
+    	}
+
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			if (UtilEntity.isValidEntity(bEntity, entityName) 
+					&& (riderName == null
+						|| riderName.isEmpty()
+						|| (bEntity.getRiddenByEntity() != null 
+							&& UtilEntity.isValidEntity(bEntity.getRiddenByEntity(), riderName))) ) {
+				return true;
+			}
+			return false;
+		}
+    	
+    }
+    
+    // old stuff ------------------------------------------------------------------------------------
+    @Deprecated
     protected void detectEntity(World world, Vector lever, BlockArea area, ChipState chip)
     {
     	SignText text = UtilIC.getSignTextWithExtension(chip);
@@ -173,6 +235,7 @@ public class MCX140 extends BaseIC {
         etc.getServer().addToServerQueue(detectEntity);
     }
     
+    @Deprecated
     public class DetectEntityInArea implements Runnable
     {
     	private final BlockArea AREA;

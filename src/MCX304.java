@@ -132,7 +132,6 @@ public class MCX304 extends MCX140 {
         return null;
     }
 	
-	@Override
 	protected int defaultHeight()
     {
     	return 4;

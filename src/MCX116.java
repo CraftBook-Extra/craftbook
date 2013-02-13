@@ -17,21 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 import cbx.CBXinRangeCuboid;
 
 import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * Player Above?
  * 
- * @author sk89q
+ * 
  */
-public class MCX116 extends BaseIC {
+public class MCX116 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory{
 
 	/**
 	 * Get the title of the IC.
@@ -90,7 +88,7 @@ public class MCX116 extends BaseIC {
 			double safeY = Util.getSafeYAbove(chip.getCBWorld(), chip.getBlockPosition());
 			Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, safeY, chip.getBlockPosition().getZ() + 0.5);
 			// prepare and run CBXEntityFinder
-			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, resultHandlerFactory(chip));
+			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, rhFactory(chip));
 			playerAboveFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
 			playerAboveFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
 			if (!CraftBook.cbxScheduler.isShutdown()) {
@@ -103,34 +101,9 @@ public class MCX116 extends BaseIC {
 		}
 	}
 	
-	protected ResultHandler resultHandlerFactory(ChipState chip) {
-		return new ResultHandler(chip);
-	}
-	
-	public static class ResultHandler implements CBXEntityFinder.ResultHandler {
-		protected final ChipState chip;
-
-		public ResultHandler(ChipState chip) {
-			this.chip = chip;
-		}
-		
-		@Override
-		public void handleResult(final Set<BaseEntity> foundEntities) {
-			CraftBook.cbxScheduler.executeInServer(new Runnable() {
-				public void run() {
-					boolean found = false;
-					for (BaseEntity bEntity : foundEntities) {
-						if (bEntity.isPlayer()) {
-							found = true;
-							break;
-						}
-					}
-					World world = CraftBook.getWorld(chip.getCBWorld());
-					Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
-					Redstone.setOutput(chip.getCBWorld(), lever, found);
-				}
-			});
-		}
+	@Override
+	public ResultHandlerWithOutput rhFactory(ChipState chip) {
+		return new RHSetOutIfFound(chip);
 	}
 	
 }

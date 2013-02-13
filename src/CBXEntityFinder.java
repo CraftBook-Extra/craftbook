@@ -86,7 +86,7 @@ public final class CBXEntityFinder implements Runnable{
 	// ------------------------------------------------------------------------------------
 	
 	/**
-	 * If any of the filters match, the entity will be added to the results passed to the ResultHandler.
+	 * If any of the filters match, the entity will be added to the results passed to the RHBlowUpWithTNT.
 	 * @param baseEntityFilter
 	 */
 	public void addCustomFilter(BaseEntityFilter baseEntityFilter) {
@@ -205,11 +205,11 @@ public final class CBXEntityFinder implements Runnable{
 		getCandidateEntities(getCandidateChunks(), candidateEntities);
 
 		Set<BaseEntity> foundEntities = filterCandidateEntities(candidateEntities);
-		// run the user's ResultHandler
+		// run the user's RHBlowUpWithTNT
 		try {
 			this.resultHandler.handleResult(foundEntities);
 		} catch(Throwable t) {
-			System.out.println("CraftBook: a ResultHandler caused an exception in CBXEntityFinder:");
+			System.out.println("CraftBook: a RHBlowUpWithTNT caused an exception in CBXEntityFinder:");
 			t.printStackTrace();
 		}
 	}
@@ -360,7 +360,7 @@ public final class CBXEntityFinder implements Runnable{
 		/**
 		 * 
 		 * @param bEntity
-		 * @return true, if the BaseEntity should be in the results passed to the ResultHandler
+		 * @return true, if the BaseEntity should be in the results passed to the RHBlowUpWithTNT
 		 */
 		public boolean match(BaseEntity bEntity);
 	}

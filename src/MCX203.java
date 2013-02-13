@@ -20,11 +20,11 @@
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
+
 import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -33,7 +33,7 @@ import com.sk89q.craftbook.ic.ChipState;
  * @author MK4411K4
  * @author Stefan Steinheimer (nosefish)
  */
-public class MCX203 extends BaseIC {
+public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory{
     /**
      * Get the title of the IC.
      *
@@ -145,10 +145,7 @@ public class MCX203 extends BaseIC {
         if (chip.inputAmount() != 0 && !chip.getIn(1).is()) {
             return;
         }
-        
-//        NearbyChestBlockBag source = new NearbyChestBlockBag(chip.getCBWorld(), chip.getPosition());
-//        source.addSourcePosition(chip.getCBWorld(), chip.getPosition());
-        
+
         String id = chip.getText().getLine3();
         
         int item = -1;
@@ -174,8 +171,7 @@ public class MCX203 extends BaseIC {
         if(dist > RedstoneListener.chestCollectorMaxRange)
         	dist = RedstoneListener.chestCollectorMaxRange;
         
-        CBXEntityFinder.ResultHandler chestCollector = new ItemChestCollector(chip);
-        CBXEntityFinder itemFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, chestCollector);
+        CBXEntityFinder itemFinder = new CBXEntityFinder(chip.getCBWorld(), chip.getPosition(), dist, rhFactory(chip));
         itemFinder.addItemFilter(item, color);
         if (!CraftBook.cbxScheduler.isShutdown()) {
         	try {
@@ -186,16 +182,20 @@ public class MCX203 extends BaseIC {
         }
     }
     
+	@Override
+	public ResultHandlerWithOutput rhFactory(ChipState chip) {
+		return new ItemChestCollector(chip);
+	}
+
 	/**
 	 * 
 	 * @author Stefan Steinheimer (nosefish)
 	 *
 	 */
-    private class ItemChestCollector implements CBXEntityFinder.ResultHandler{
-    	final ChipState chip;
+    private class ItemChestCollector extends RHSetOutIfFound{
     	
     	public ItemChestCollector(ChipState chip) {
-    		this.chip = chip;
+    		super(chip);
     	}
     	
 		@Override
@@ -230,8 +230,7 @@ public class MCX203 extends BaseIC {
 							itemCollected = true;
 						}
 					}
-			   		Vector lever = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
-			   		Redstone.setOutput(chip.getCBWorld(), lever, itemCollected);
+			   		setOutput(itemCollected);
 				}
 			});
 			

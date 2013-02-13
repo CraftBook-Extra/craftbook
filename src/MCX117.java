@@ -21,13 +21,12 @@
 
 import java.util.Set;
 
-import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * Player Mine
  *
- * @author sk89q
+ *
  */
 public class MCX117 extends MCX116 {
     
@@ -48,12 +47,12 @@ public class MCX117 extends MCX116 {
     }
 
 	@Override
-	protected ResultHandler resultHandlerFactory(ChipState chip) {
-		return new MCX117.ResultHandler(chip);
+	public ResultHandlerWithOutput rhFactory(ChipState chip) {
+		return new RHBlowUpWithTNT(chip);
 	}
 	
-	protected static class ResultHandler extends MCX116.ResultHandler {
-		public ResultHandler(ChipState chip) {
+	public static class RHBlowUpWithTNT extends RHSetOutIfFound {
+		public RHBlowUpWithTNT(ChipState chip) {
 			super(chip);
 		}
 		
@@ -61,21 +60,24 @@ public class MCX117 extends MCX116 {
 		public void handleResult(final Set<BaseEntity> foundEntities) {
 			CraftBook.cbxScheduler.executeInServer(new Runnable() {
 				public void run() {
-					boolean found = false;
-					BaseEntity abovePlayer = null;
-					for (BaseEntity bEntity : foundEntities) {
-						if (bEntity.isPlayer()) {
-							abovePlayer = bEntity; 
-							found = true;
-							break;
+					try {
+						boolean found = false;
+						BaseEntity abovePlayer = null;
+						for (BaseEntity bEntity : foundEntities) {
+							if (bEntity != null && bEntity.isPlayer()) {
+								abovePlayer = bEntity; 
+								found = true;
+								break;
+							}
 						}
-					}
-					World world = CraftBook.getWorld(chip.getCBWorld());
-					Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
-					Redstone.setOutput(chip.getCBWorld(), lever, found);
-					if (abovePlayer != null) {
-						MC1250.explodeTNT(world, abovePlayer.getX(),
-							abovePlayer.getY(), abovePlayer.getZ());
+						setOutput(found);
+						if (abovePlayer != null) {
+							World world = CraftBook.getWorld(chip.getCBWorld());
+							MC1250.explodeTNT(world, abovePlayer.getX(),
+									abovePlayer.getY(), abovePlayer.getZ());
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			});
