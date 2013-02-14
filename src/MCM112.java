@@ -19,11 +19,14 @@
 
 
 
+import java.util.Set;
+
+import cbx.CBXinRangeCuboid;
+
 import com.sk89q.craftbook.BlockType;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.WorldLocation;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -35,7 +38,7 @@ import com.sk89q.craftbook.ic.ChipState;
  *
  * @author drathus
  */
-public class MCM112 extends BaseIC {
+public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory {
     
 
     /**
@@ -75,30 +78,150 @@ public class MCM112 extends BaseIC {
      * @param chip
      */
     public void think(ChipState chip) {
-        String id = chip.getText().getLine3();
-
-        if (!id.isEmpty() && chip.getIn(1).is()) {
-            WorldLocation dest = MCX113.airwaves.get(id);
-            
-            if (dest == null) {
-                chip.getOut(1).set(false);
-            } else
-            {
-            	dest = dest.add(0.5D, 0.0D, 0.5D);
-            	
-            	String[] msg;
-        		if(chip.getText().getLine4().length() == 0)
-        			msg = new String[]{"Woosh!"};
-        		else
-        			msg = new String[]{chip.getText().getLine4()};
-        		
-        		chip.getOut(1).set(transport(chip, dest, true, msg));
-            }
-        } else {
-            chip.getOut(1).set(false);
+    	if (! chip.getIn(1).is()) {
+    		return;
+    	}
+        CBXEntityFinder.ResultHandler pigTransporter = rhFactory(chip);
+        if (pigTransporter == null) {
+        	chip.getOut(1).set(false);
+        	return;
         }
+        double maxDistance = 2.0;
+        CBXEntityFinder pigFinder = new CBXEntityFinder(chip.getCBWorld(), getSearchCenter(chip), maxDistance, pigTransporter);
+        pigFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
+        pigFinder.addAnimalFilter("Pig");
     }
     
+    @Override
+    public ResultHandlerWithOutput rhFactory(ChipState chip) {
+    	String[] msg;
+    	String id = chip.getText().getLine3();
+    	WorldLocation dest = null;
+    	// find teleport destination
+        if (!id.isEmpty()) {
+            dest = MCX113.airwaves.get(id);
+            if (dest == null) {
+                return null;
+            } else {
+            	dest = dest.add(0.5D, 0.0D, 0.5D);
+            }
+        }
+        // prepare message to send to the player when teleporting
+		if(chip.getText().getLine4().length() == 0) {
+			msg = new String[]{"Woosh!"};
+		} else {
+			msg = new String[]{chip.getText().getLine4()};
+		}
+    	return new RHPigTransporter(chip, dest, msg);
+    }
+    
+    
+    protected Vector getSearchCenter(ChipState chip) {
+    	Vector pos;
+    	World world = CraftBook.getWorld(chip.getCBWorld());
+    	
+    	if(chip.getMode() == 'p' || chip.getMode() == 'P') {
+    		pos = Util.getWallSignBack(world, chip.getPosition(), -2);
+    		
+    		double newY = pos.getY() + 2;
+    		
+    		if(newY > CraftBook.MAP_BLOCK_HEIGHT)
+    			newY = CraftBook.MAP_BLOCK_HEIGHT;
+    		
+    		pos.setY(newY);
+    	} else {
+    		pos = chip.getBlockPosition();
+    	}
+		double safeY = Util.getSafeYAbove(chip.getCBWorld(), pos);
+        return new Vector(pos.getX() + 0.5, safeY, pos.getZ() + 0.5);
+    }
+    
+    
+    public static class RHPigTransporter extends RHSetOutIfFound {
+    	WorldLocation tpDestination;
+    	String messages[] = null;
+    		
+		public RHPigTransporter(ChipState chip, WorldLocation tpDestination, String[] messages) {
+			super(chip);
+			this.tpDestination = tpDestination;
+			this.messages = messages;
+		}
+		
+		@Override
+		public void handleResult(final Set<BaseEntity> foundEntities) {
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					try {
+						if (tpDestination == null) {
+							setOutput(false);
+							return;
+						}
+						boolean found = false;
+				    	World world = CraftBook.getWorld(chip.getCBWorld());
+
+						for (BaseEntity bEntity : foundEntities) {
+							if (bEntity == null || bEntity.isDead()) {
+								 continue;
+							}
+				        	if (!(bEntity.getEntity() instanceof OEntityPig)) {
+				        		continue;
+				        	}
+				    		OEntityPig oEntityPig = (OEntityPig) (bEntity.getEntity());
+							// Check for saddle and rider
+				    		// Notchian: EntityPig.getSaddled() Searge: func_70901_n
+							if (oEntityPig.m() == false || bEntity.getRiddenByEntity() == null) {
+								continue;
+							}
+								BaseEntity riderEntity = bEntity.getRiddenByEntity();
+		    					if(messages != null && riderEntity.isPlayer())
+		    					{
+		    						Player player = new Player((OEntityPlayerMP)riderEntity.getEntity());
+		    						for(String message : messages){
+		    	                		if(message == null)
+		    	                			break;
+		    	                		player.sendMessage(Colors.Gold+message);
+		    	                	}
+		    					}
+				        		tpDestination = tpDestination.setY(Util.getSafeYAbove(CraftBook.getWorld(tpDestination.getCBWorld()), tpDestination.getCoordinate()) + 1.0D);
+				        		CraftBook.teleportEntity(bEntity, tpDestination);
+				        		// Reset the pig to Wander so it loses any previous target
+				        		OEntity oent = bEntity.getEntity();
+				        		OEntityAIWander mobAI = new OEntityAIWander((OEntityCreature)oent, 1);
+				        		//Notchian: EntityAIBase.startExecuting(), Searge: func_75249_e
+				        		mobAI.c();
+				        	// Optional mode to reset pressure plates
+				    		if(chip.getMode() == 'P') {
+				    			//force plate off
+					        	Location mLoc = bEntity.getLocation();
+					        	Vector mVec = new Vector(mLoc.x, mLoc.y, mLoc.z);
+				        		int bdata = CraftBook.getBlockID(world, mVec);
+				        		if(bdata == BlockType.STONE_PRESSURE_PLATE || bdata == BlockType.WOODEN_PRESSURE_PLATE){
+				        			OWorld oworld = world.getWorld();
+				        			
+				        			int bx = mVec.getBlockX();
+				        			int by = mVec.getBlockY();
+				        			int bz = mVec.getBlockZ();
+				        			
+				        			oworld.c(bx, by, bz, 0);
+				        			oworld.h(bx, by, bz, bdata);
+				        			oworld.h(bx, by - 1, bz, bdata);
+				        			oworld.e(bx, by, bz, bx, by, bz);
+				        		}
+				    		}
+				    		found = true;
+						}
+						setOutput(found);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				}
+			});
+		}
+    	
+    }
+    
+    
+    @Deprecated
     protected boolean transport(ChipState chip, WorldLocation dest, boolean useSafeY, String[] messages)
     {
     	if(dest == null)
@@ -152,6 +275,7 @@ public class MCM112 extends BaseIC {
         		// Reset the pig to Wander so it loses any previous target
         		OEntity oent = mob.getEntity();
         		OEntityAIWander mobAI = new OEntityAIWander((OEntityCreature)oent, 1);
+        		//Notchian: EntityAIBase.startExecuting(), Searge: func_75249_e
         		mobAI.c();
         	} else {
         		continue;
@@ -182,6 +306,7 @@ public class MCM112 extends BaseIC {
         return false;
     }
     
+    @Deprecated
     protected static int getSafeY(World world, Vector pos)
     {
     	int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);

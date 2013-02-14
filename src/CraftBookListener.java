@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.WeakHashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import com.sk89q.craftbook.*;
@@ -88,7 +89,7 @@ public class CraftBookListener extends PluginListener {
     private Set<String> beenToldVersion =
             new HashSet<String>();
     
-    private static final Map<Player, PlayerSettings> playerSettings = new HashMap<Player, PlayerSettings>();
+    private static final Map<Player, PlayerSettings> playerSettings = new WeakHashMap<Player, PlayerSettings>();
     
     /**
      * Properties file for CraftBook. This instance is shared among this

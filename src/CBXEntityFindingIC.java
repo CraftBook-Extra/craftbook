@@ -48,8 +48,6 @@ public abstract class CBXEntityFindingIC extends BaseIC {
 				}
 			});
 		}
-		
-
 	}
 	
 	public static class RHDestroyFoundEntities extends RHSetOutIfFound {

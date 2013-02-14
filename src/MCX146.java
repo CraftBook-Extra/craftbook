@@ -17,9 +17,9 @@
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.ic.*;
@@ -27,7 +27,7 @@ import com.sk89q.craftbook.ic.*;
 
 public class MCX146 extends BaseIC {
 	
-	protected static final Map<Player, ArrayList<PotionEffectObject>> playerList = new HashMap<Player, ArrayList<PotionEffectObject>>();
+	protected static final Map<Player, ArrayList<PotionEffectObject>> playerList = new WeakHashMap<Player, ArrayList<PotionEffectObject>>();
 	
     /**
      * Get the title of the IC.

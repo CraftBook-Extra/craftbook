@@ -125,6 +125,7 @@ public class MCM116 extends BaseIC {
 		etc.getServer().addToServerQueue(findAbove);
 	}
 
+	@Deprecated
 	private int getSafeY(World world, Vector pos) {
 		int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
 		int x = pos.getBlockX();
@@ -139,6 +140,7 @@ public class MCM116 extends BaseIC {
 		return maxY;
 	}
 
+	@Deprecated
 	public class FindMobAbove implements Runnable {
 		private final World WORLD;
 		private final int X;
