@@ -20,10 +20,12 @@
 
 
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 import cbx.CBXinRangeCuboid;
 
 import com.sk89q.craftbook.BlockType;
+import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.WorldLocation;
@@ -62,7 +64,8 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
      * @param sign
      * @return
      */
-    public String validateEnvironment(int worldType, Vector pos, SignText sign) {
+    @Override
+    public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
         String id = sign.getLine3();
 
         if (id.length() == 0) {
@@ -90,7 +93,15 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
         CBXEntityFinder pigFinder = new CBXEntityFinder(chip.getCBWorld(), getSearchCenter(chip), maxDistance, pigTransporter);
         pigFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
         pigFinder.addAnimalFilter("Pig");
+        if (!CraftBook.cbxScheduler.isShutdown()) {
+        	try {
+        		CraftBook.cbxScheduler.execute(pigFinder);
+        	} catch (RejectedExecutionException e) {
+        		// CraftBook is being disabled or reloaded
+        	}
+        }
     }
+    
     
     @Override
     public ResultHandlerWithOutput rhFactory(ChipState chip) {
@@ -184,9 +195,9 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 		    					}
 				        		tpDestination = tpDestination.setY(Util.getSafeYAbove(CraftBook.getWorld(tpDestination.getCBWorld()), tpDestination.getCoordinate()) + 1.0D);
 				        		CraftBook.teleportEntity(bEntity, tpDestination);
+				        		found = true;
 				        		// Reset the pig to Wander so it loses any previous target
-				        		OEntity oent = bEntity.getEntity();
-				        		OEntityAIWander mobAI = new OEntityAIWander((OEntityCreature)oent, 1);
+				        		OEntityAIWander mobAI = new OEntityAIWander(oEntityPig, 1);
 				        		//Notchian: EntityAIBase.startExecuting(), Searge: func_75249_e
 				        		mobAI.c();
 				        	// Optional mode to reset pressure plates
@@ -208,7 +219,6 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 				        			oworld.e(bx, by, bz, bx, by, bz);
 				        		}
 				    		}
-				    		found = true;
 						}
 						setOutput(found);
 					} catch (Throwable t) {

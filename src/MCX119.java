@@ -106,19 +106,8 @@ public class MCX119 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 
        		Vector searchCenter = new Vector(chip.getBlockPosition().getX() + 0.5, chip.getBlockPosition().getY(), chip.getBlockPosition().getZ() + 0.5);
         	CBXEntityFinder entityFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, dist, rhFactory(chip));
-        	
-    		String mobType = chip.getText().getLine3();
-    		if(mobType.equalsIgnoreCase("mob") || mobType.equalsIgnoreCase("mobs")) {
-    			entityFinder.addMobFilter();
-    		} else if(mobType.equalsIgnoreCase("animal") || mobType.equalsIgnoreCase("animals")) {
-    			entityFinder.addAnimalFilter();
-    		} else if(Mob.isValid(mobType)) {
-				entityFinder.addMobFilter(mobType);
-				entityFinder.addAnimalFilter(mobType);
-    		} else {
-    			entityFinder.addMobFilter();
-    			entityFinder.addAnimalFilter();
-    		}
+        	addFilters(chip, entityFinder);
+
             if (!CraftBook.cbxScheduler.isShutdown()) {
             	try {
             		CraftBook.cbxScheduler.execute(entityFinder);
@@ -129,6 +118,20 @@ public class MCX119 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
     	}
     }
 	
+	protected void addFilters(ChipState chip, CBXEntityFinder entityFinder) {
+		String mobType = chip.getText().getLine3();
+		if(mobType.equalsIgnoreCase("mob") || mobType.equalsIgnoreCase("mobs")) {
+			entityFinder.addMobFilter();
+		} else if(mobType.equalsIgnoreCase("animal") || mobType.equalsIgnoreCase("animals")) {
+			entityFinder.addAnimalFilter();
+		} else if(Mob.isValid(mobType)) {
+			entityFinder.addMobFilter(mobType);
+			entityFinder.addAnimalFilter(mobType);
+		} else {
+			entityFinder.addMobFilter();
+			entityFinder.addAnimalFilter();
+		}
+	}
 	
 	@Override
 	public ResultHandlerWithOutput rhFactory(ChipState chip) {

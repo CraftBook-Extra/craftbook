@@ -205,11 +205,10 @@ public final class CBXEntityFinder implements Runnable{
 		getCandidateEntities(getCandidateChunks(), candidateEntities);
 
 		Set<BaseEntity> foundEntities = filterCandidateEntities(candidateEntities);
-		// run the user's RHBlowUpWithTNT
 		try {
 			this.resultHandler.handleResult(foundEntities);
 		} catch(Throwable t) {
-			System.out.println("CraftBook: a RHBlowUpWithTNT caused an exception in CBXEntityFinder:");
+			System.out.println("CraftBook-CBXEntityFinder: Exception while running resultHandler");
 			t.printStackTrace();
 		}
 	}

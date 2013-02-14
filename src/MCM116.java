@@ -20,13 +20,13 @@
 import java.util.List;
 
 import com.sk89q.craftbook.BlockType;
+import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Animal Above - Variant of MCX116 Player Above?
+ * Mob Above?
  * 
  * Lots of specific name checking due to inclusion of custom group "golems" as well as
  * two alternate pig detectors:
@@ -36,7 +36,7 @@ import com.sk89q.craftbook.ic.ChipState;
  * 
  * @author drathus
  */
-public class MCM116 extends BaseIC {
+public class MCM116 extends MCX116 {
 	/**
 	 * Get the title of the IC.
 	 * 
@@ -58,12 +58,20 @@ public class MCM116 extends BaseIC {
 	 * @param sign
 	 * @return
 	 */
-	public String validateEnvironment(int worldType, Vector pos, SignText sign) {
-		String id = sign.getLine3().toLowerCase();
-
+	@Override
+	public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
+		String id = sign.getLine3();
+		
 		if (!id.equalsIgnoreCase("animal") &&
+				!id.equalsIgnoreCase("animals") &&
 				!id.equalsIgnoreCase("mob") &&
+				!id.equalsIgnoreCase("mobs") &&
 				!id.equalsIgnoreCase("golem") &&
+				!id.equalsIgnoreCase("golems") &&
+				!id.equalsIgnoreCase("riddenpig") &&
+				!id.equalsIgnoreCase("saddledpig") &&
+				!Mob.isValid(id) &&
+				// types below should be covered by Mob.isValid() if capitalized correctly
 				!id.equalsIgnoreCase("chicken") &&
 				!id.equalsIgnoreCase("cow") &&
 				!id.equalsIgnoreCase("mooshroom") &&
@@ -81,14 +89,12 @@ public class MCM116 extends BaseIC {
 				!id.equalsIgnoreCase("silverfish") &&
 				!id.equalsIgnoreCase("skeleton") &&
 				!id.equalsIgnoreCase("slime") &&
-				!id.equalsIgnoreCase("slime") &&
 				!id.equalsIgnoreCase("spider") &&
 				!id.equalsIgnoreCase("zombie") &&
 				!id.equalsIgnoreCase("irongolem") &&
 				!id.equalsIgnoreCase("snowgolem") &&
 				!id.equalsIgnoreCase("villager") &&
-				!id.equalsIgnoreCase("riddenpig") &&
-				!id.equalsIgnoreCase("saddledpig")) {
+				!id.equalsIgnoreCase("bat")){
 			return "Invalid mob type.";
 		}
 
@@ -99,18 +105,101 @@ public class MCM116 extends BaseIC {
 		return null;
 	}
 
-	/**
-	 * Think.
-	 * 
-	 * @param chip
-	 */
-	public void think(ChipState chip) {
+	@Override
+	protected void addFilters(ChipState chip, CBXEntityFinder entityFinder){
+		String toFind = chip.getText().getLine3();
+		if (toFind.equalsIgnoreCase("animal") || toFind.equalsIgnoreCase("animals")) {
+			entityFinder.addAnimalFilter();
+			return;
+		}
+		if (toFind.equalsIgnoreCase("mob") || toFind.equalsIgnoreCase("mobs")) {
+			entityFinder.addMobFilter();
+			return;
+		}
+		if (toFind.equalsIgnoreCase("golem") || toFind.equalsIgnoreCase("golems")) {
+			entityFinder.addCustomFilter(new FilterIronGolem());
+			entityFinder.addCustomFilter(new FilterSnowGolem());
+			return;
+		}
+		if (toFind.equalsIgnoreCase("irongolem")) {
+			entityFinder.addCustomFilter(new FilterIronGolem());
+			return;
+		}
+		if (toFind.equalsIgnoreCase("snowgolem")) {
+			entityFinder.addCustomFilter(new FilterSnowGolem());
+			return;
+		}
+		if (toFind.equalsIgnoreCase("saddledpig")) {
+			entityFinder.addCustomFilter(new FilterSaddledPig());
+			return;
+		}
+		if (toFind.equalsIgnoreCase("riddenpig")) {
+			entityFinder.addCustomFilter(new FilterRiddenPig());
+			return;
+		}
+		entityFinder.addMobFilter(toFind);
+		entityFinder.addAnimalFilter(toFind);
+	}
+	
 
-		if (chip.inputAmount() == 0 || (chip.getIn(1).is() && chip.getIn(1).isTriggered())) {
-			findMobAbove(chip);
+	public class FilterSaddledPig implements CBXEntityFinder.BaseEntityFilter {
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			OEntity oEntity = bEntity.getEntity();
+			if (oEntity instanceof OEntityPig) {
+				OEntityPig oEntityPig = (OEntityPig) oEntity;
+				// Check for saddle
+				return oEntityPig.m();
+			}
+			return false;
 		}
 	}
+	
+	public class FilterRiddenPig implements CBXEntityFinder.BaseEntityFilter {
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			OEntity oEntity = bEntity.getEntity();
+			if (oEntity instanceof OEntityPig) {
+				OEntityPig oEntityPig = (OEntityPig) oEntity;
+				// Check for saddle and rider
+				if (oEntityPig.m() == true && bEntity.getRiddenByEntity() != null) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	public class FilterIronGolem implements CBXEntityFinder.BaseEntityFilter {
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			return bEntity.getEntity() instanceof OEntityIronGolem;
+		}
+	}
+	
+	public class FilterSnowGolem implements CBXEntityFinder.BaseEntityFilter {
+		@Override
+		public boolean match(BaseEntity bEntity) {
+			return bEntity.getEntity() instanceof OEntitySnowman;
+		}
+	}
+	
+	
+	// old stuff --------------------------------------------------------------------------------------
+	
+//	/**
+//	 * Think.
+//	 * 
+//	 * @param chip
+//	 */
+//	public void think(ChipState chip) {
+//
+//		if (chip.inputAmount() == 0 || (chip.getIn(1).is() && chip.getIn(1).isTriggered())) {
+//			findMobAbove(chip);
+//		}
+//	}
 
+	@Deprecated
 	protected void findMobAbove(ChipState chip) {
 		World world = CraftBook.getWorld(chip.getCBWorld());
 		String id = chip.getText().getLine3().toLowerCase();
@@ -125,6 +214,7 @@ public class MCM116 extends BaseIC {
 		etc.getServer().addToServerQueue(findAbove);
 	}
 
+	
 	@Deprecated
 	private int getSafeY(World world, Vector pos) {
 		int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);

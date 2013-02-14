@@ -90,7 +90,7 @@ public class MCX116 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 			// prepare and run CBXEntityFinder
 			CBXEntityFinder playerAboveFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, 2, rhFactory(chip));
 			playerAboveFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
-			playerAboveFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
+			addFilters(chip, playerAboveFinder);
 			if (!CraftBook.cbxScheduler.isShutdown()) {
 				try {
 					CraftBook.cbxScheduler.execute(playerAboveFinder);
@@ -99,6 +99,10 @@ public class MCX116 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 				}
 			}
 		}
+	}
+	
+	protected void addFilters(ChipState chip, CBXEntityFinder entityFinder) {
+		entityFinder.addPlayerFilterExtended(UtilIC.getSignTextWithExtension(chip).getLine3());
 	}
 	
 	@Override
