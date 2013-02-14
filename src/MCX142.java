@@ -107,7 +107,7 @@ public class MCX142 extends MCX140 {
     	String[] args = text.getLine1().substring(1).split("\\+", 2);
     	String entityName = args[0];
     	String riderName = args.length > 1 ? args[1] : null;
-    	return new MCX140Filter(entityName, riderName);
+    	return new FilterEntityAndRider(entityName, riderName);
 	}
 	
     @Override
@@ -123,12 +123,12 @@ public class MCX142 extends MCX140 {
 	}
     
     
-	public class RHTeleport extends RHSetOutIfFound {
+	public static class RHTeleport extends RHSetOutIfFound {
 		String destinationID;
 
 		public RHTeleport(ChipState chip, String destinationID) {
 			super(chip);
-
+			this.destinationID = destinationID;
 		}
 		
 		@Override

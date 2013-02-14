@@ -198,14 +198,14 @@ public class MCX140 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
     	String[] args = text.getLine3().split("\\+", 2);
     	String entityName = args[0];
     	String riderName = args.length > 1 ? args[1] : null;
-    	return new MCX140Filter(entityName, riderName);
+    	return new FilterEntityAndRider(entityName, riderName);
     }
     
-    protected class MCX140Filter implements CBXEntityFinder.BaseEntityFilter{
+    protected class FilterEntityAndRider implements CBXEntityFinder.BaseEntityFilter{
     	private final String entityName;
     	private final String riderName;
     	
-    	public MCX140Filter(String entityName, String riderName) {
+    	public FilterEntityAndRider(String entityName, String riderName) {
         	this.entityName = entityName;
         	this.riderName = riderName;
     	}

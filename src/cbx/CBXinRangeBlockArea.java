@@ -16,9 +16,9 @@ public class CBXinRangeBlockArea extends CBXinRangeCuboid {
 		int minY = Math.min(bArea.getY(), bArea.getY2());
 		int minZ = Math.min(bArea.getZ(), bArea.getZ2());
 		int Xsize = Math.abs(bArea.getX() - bArea.getX2()) + 1; 
-		int Ysize = Math.abs(bArea.getY() - bArea.getY2()) + 1; 
+		int Ysize = Math.abs(bArea.getY() - bArea.getY2()) + 1;
 		int Zsize = Math.abs(bArea.getZ() - bArea.getZ2()) + 1; 
-		return new Vector(minX + (Xsize / 2.0), minY + (Ysize / 2.0), minZ + (Zsize / 2.0));
+		return new Vector(minX + (Xsize / 2.0), Math.floor(minY + (Ysize / 2.0)), minZ + (Zsize / 2.0));
 	}
 	
 	public static double getSearchDistance(BlockArea bArea) {

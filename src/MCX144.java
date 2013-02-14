@@ -125,7 +125,7 @@ public class MCX144 extends MCX142 {
     
     
     
-	public class RHTeleportCBWarp extends RHSetOutIfFound {
+	public static class RHTeleportCBWarp extends RHSetOutIfFound {
 		protected String[] messages = null;
 		protected WorldLocation tpDestination = null;
 		
