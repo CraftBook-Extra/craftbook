@@ -249,22 +249,22 @@ public class MCX200 extends BaseIC {
     }
     
     //[TODO]: remove when Canary fixes Mob spawn's world
-    private void spawn(BaseEntity entity, CraftBookWorld cbworld, BaseEntity rider)
-    {
-    	OWorldServer oworld = CraftBook.getOWorldServer(cbworld);
-    	OEntity oentity = entity.getEntity();
-    	
-    	oentity.b(entity.getX() + 0.5D, entity.getY(), entity.getZ() + 0.5D, entity.getRotation(), 0.0F);
-    	oworld.d(oentity);
-    	
-    	if (rider != null)
-    	{
-    		OEntity orider = rider.getEntity();
-    		orider.b(entity.getX(), entity.getY(), entity.getZ(), entity.getRotation(), 0.0F);
-    		oworld.d(orider);
-    		orider.a(oentity);
-    	}
-    }
+//    private void spawn(BaseEntity entity, CraftBookWorld cbworld, BaseEntity rider)
+//    {
+//    	OWorldServer oworld = CraftBook.getOWorldServer(cbworld);
+//    	OEntity oentity = entity.getEntity();
+//    	
+//    	oentity.b(entity.getX() + 0.5D, entity.getY(), entity.getZ() + 0.5D, entity.getRotation(), 0.0F);
+//    	oworld.d(oentity);
+//    	
+//    	if (rider != null)
+//    	{
+//    		OEntity orider = rider.getEntity();
+//    		orider.b(entity.getX(), entity.getY(), entity.getZ(), entity.getRotation(), 0.0F);
+//    		oworld.d(orider);
+//    		orider.a(oentity);
+//    	}
+//    }
     
     private int getColor(String[] args)
     {

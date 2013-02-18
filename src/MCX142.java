@@ -138,9 +138,7 @@ public class MCX142 extends MCX140 {
 					try {
 						boolean found = false;
 				    	WorldLocation tpDestination = MCX113.airwaves.get(destinationID);
-				    	if (tpDestination != null 
-				    			&& !foundEntities.isEmpty()
-				    			&& Util.isBlockLoaded(new WorldBlockVector(tpDestination.getCBWorld(),tpDestination.toBlockVector()))) {
+				    	if (tpDestination != null && !foundEntities.isEmpty()) {
 				        	tpDestination = tpDestination.add(0.5D, 0.0D, 0.5D);
 				        	tpDestination = tpDestination.setY(Util.getSafeYAbove(CraftBook.getWorld(tpDestination.getCBWorld()), tpDestination.getCoordinate()) + 1.0D);
 							for (BaseEntity bEntity : foundEntities) {

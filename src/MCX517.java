@@ -20,7 +20,7 @@
 import com.sk89q.craftbook.ic.*;
 
 /**
- * Dispenser.
+ * server log nearby
  *
  * @author sk89q
  */

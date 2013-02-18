@@ -24,7 +24,7 @@ import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Shoots arrows.
+ * Shoots fireballs.
  *
  * @author sk89q
  */
@@ -165,6 +165,7 @@ public class MCX246 extends BaseIC {
     protected void shootFireball(ChipState chip, float power, double speed, float rotation, float pitch, int offsetx, int offsety, int offsetz)
     {
     	Vector start = Util.getWallSignBack(chip.getCBWorld(), chip.getPosition(), 2);
+    	if (start == null) return;
     	double x = start.getBlockX() + offsetx + 0.5D;
     	double y = start.getBlockY() + offsety;
     	double z = start.getBlockZ() + offsetz + 0.5D;

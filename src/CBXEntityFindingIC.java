@@ -22,6 +22,7 @@ public abstract class CBXEntityFindingIC extends BaseIC {
 			Vector chipPos = chip.getBlockPosition();
 	        if (! world.isChunkLoaded(chipPos.getBlockX(), chipPos.getBlockY(), chipPos.getBlockZ())) return;
 			Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
+			if (lever == null) return;
 			Redstone.setOutput(chip.getCBWorld(), lever, state);
 		}
 	}
@@ -39,6 +40,7 @@ public abstract class CBXEntityFindingIC extends BaseIC {
 						boolean found = false;
 						for (BaseEntity bEntity : foundEntities) {
 							if (bEntity != null 
+									&& bEntity.getWorld().isChunkLoaded((int)bEntity.getX(), (int)bEntity.getY(), (int)bEntity.getZ())
 									&& !bEntity.isDead()) {
 								found = true;
 								break;
@@ -64,12 +66,15 @@ public abstract class CBXEntityFindingIC extends BaseIC {
 					boolean found = false;
 					try {
 						for (BaseEntity bEntity : foundEntities) {
-							if (bEntity != null && !bEntity.isDead() && !bEntity.isPlayer()) {
+							if (bEntity != null
+									&& bEntity.getWorld().isChunkLoaded((int)bEntity.getX(), (int)bEntity.getY(), (int)bEntity.getZ())
+									&& !bEntity.isDead() 
+									&& !bEntity.isPlayer()) {
 								bEntity.destroy();
 								found = true;
 							} else {
 								if (bEntity.isPlayer()) {
-									Logger.getLogger("Minecraft.CraftBook").log(Level.WARNING, "CBXEntityFindingIC.RHDestroyFoundEntities tried to kill a player!");
+									Logger.getLogger("Minecraft.CraftBook").log(Level.WARNING, "CBXEntityFindingIC.RHDestroyFoundEntities tried to destroy a Player object!");
 								}
 							}
 						}

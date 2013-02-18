@@ -135,7 +135,6 @@ public class MCX205 extends BaseIC {
         int item = getItem(id);
         
         World world = CraftBook.getWorld(chip.getCBWorld());
-        
         char mode;
         if(chip.inputAmount() == 0)
         {

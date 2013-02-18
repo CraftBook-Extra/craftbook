@@ -21,7 +21,7 @@ public final class CBXInstantICManager {
 	
     // thread-safe set containing positions of self-updating ICs
 	private static final Set<WorldBlockVector> instantICs = Collections
-			.newSetFromMap(new ConcurrentHashMap<WorldBlockVector, Boolean>(32));
+			.newSetFromMap(new ConcurrentHashMap<WorldBlockVector, Boolean>(32, 0.9f, 1));
 	
 
 	private final RedstoneListener rsListener;

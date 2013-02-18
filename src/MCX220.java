@@ -79,7 +79,8 @@ public class MCX220 extends BaseIC {
     protected static boolean blockBroke(WorldBlockVector chipBlock, SignText text)
     {
     	Vector lever = Util.getWallSignBack(chipBlock.getCBWorld(), chipBlock, 2);
-    	Redstone.setOutput(chipBlock.getCBWorld(), lever, true);
+    	if (lever != null)
+    		Redstone.setOutput(chipBlock.getCBWorld(), lever, true);
     	
     	char mode = ' ';
 		if(text.getLine2().length() > 8)

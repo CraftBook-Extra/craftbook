@@ -66,7 +66,8 @@ public class MCX010 extends BaseIC {
         	}
 			
 			chip.getOut(1).set(true);
-			etc.getServer().addToServerQueue(new toggleOff(world, lever), pulse);
+			if (lever != null)
+				etc.getServer().addToServerQueue(new toggleOff(world, lever), pulse);
 		}
 	}
 	

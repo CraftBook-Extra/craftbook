@@ -77,6 +77,7 @@ public class Util {
         int x = pt.getBlockX();
         int y = pt.getBlockY();
         int z = pt.getBlockZ();
+        if (!world.isChunkLoaded(x, 0, z)) return null;
         int data = CraftBook.getBlockData(world, x, y, z);
         if (data == 0x2) { // East
             return new Vector(x, y, z + multiplier);
@@ -95,6 +96,7 @@ public class Util {
         int x = pt.getBlockX();
         int y = pt.getBlockY();
         int z = pt.getBlockZ();
+        if (!world.isChunkLoaded(x, 0, z)) return null;
         int data = CraftBook.getBlockData(world, x, y, z);
         if (data == 0x2) { // East
             return new Vector(x, y, z + multiplier);
@@ -153,6 +155,7 @@ public class Util {
         int x = pt.getBlockX();
         int y = pt.getBlockY();
         int z = pt.getBlockZ();
+        if (!world.isChunkLoaded(x, y, z)) return null;
         int data = CraftBook.getBlockData(world, x, y, z);
         if (data == 0x2) { // East
             return new Vector(x + multiplier, y, z );

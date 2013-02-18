@@ -23,7 +23,7 @@ import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * cbwarp
  *
  * @author sk89q
  */

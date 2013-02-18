@@ -227,7 +227,7 @@ public class CraftBook extends Plugin {
         registerHook(redstone, "BLOCK_BROKEN", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "BLOCK_PLACE", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "CHUNK_LOADED", PluginListener.Priority.MEDIUM);
-        registerHook(redstone, "CHUNK_UNLOAD", PluginListener.Priority.MEDIUM);
+        //registerHook(redstone, "CHUNK_UNLOAD", PluginListener.Priority.MEDIUM);
         registerHook(redstone, "DISCONNECT", PluginListener.Priority.MEDIUM);
         listener.registerDelegate(redstone);
         listener.registerDelegate(redstoneCommands);

@@ -372,8 +372,8 @@ public class MCX146 extends BaseIC {
 					}
 				}
 			}
-			
-			Redstone.setOutput(AREA.getCBWorld(), LEVER, output);
+			if (LEVER != null)
+				Redstone.setOutput(AREA.getCBWorld(), LEVER, output);
 		}
     }
     

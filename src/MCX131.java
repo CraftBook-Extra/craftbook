@@ -155,7 +155,9 @@ public class MCX131 extends BaseIC {
     	for(Object obj: list)
         {
     		BaseEntity entity = (BaseEntity)obj;
-    		if(entity != null && (entity.isMob() || entity.isAnimal()) && entity instanceof Mob)
+    		if(entity != null 
+    				&& entity.getWorld().isChunkLoaded((int)entity.getX(), (int)entity.getY(), (int)entity.getZ())
+    				&& (entity.isMob() || entity.isAnimal()))
     		{
 	        	Vector pVec = new Vector(entity.getX(), entity.getY(), entity.getZ());
 	        	
@@ -167,10 +169,10 @@ public class MCX131 extends BaseIC {
 	        	{
 	        		if(isNamed)
 	        		{
-	        			Mob mob = (Mob)entity;
-	        			if(mob.getName().equalsIgnoreCase(id))
+	        			//Mob mob = (Mob)entity;
+	        			if(entity.getName().equalsIgnoreCase(id))
 	        			{
-	        				mob.getEntity().a(ODamageSource.j, damage);
+	        				entity.getEntity().a(ODamageSource.j, damage);
 	        				damaged = true;
 	        			}
 	        		}

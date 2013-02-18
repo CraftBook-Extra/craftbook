@@ -618,6 +618,7 @@ public class PageWriter
 	{
 		World world = CraftBook.getWorld(player.getCBWorld());
 		Vector bPt = Util.getWallSignBack(world, pt, 1);
+		if (bPt == null) return false;
 		if(CraftBook.getBlockID(world, pt) != BlockType.WALL_SIGN || CraftBook.getBlockID(world, bPt) != BlockType.BOOKCASE)
 		{
 			player.printError("[Book] sign must be on Bookshelf.");

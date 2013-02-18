@@ -29,7 +29,7 @@ import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Sets the server time to day or night, repeats the signal.
+ * Dist hide rain.
  *
  * @author Shaun (sturmeh)
  */

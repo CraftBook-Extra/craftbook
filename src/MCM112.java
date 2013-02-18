@@ -91,7 +91,9 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
         	return;
         }
         double maxDistance = 2.0;
-        CBXEntityFinder pigFinder = new CBXEntityFinder(chip.getCBWorld(), getSearchCenter(chip), maxDistance, pigTransporter);
+        Vector searchCenter = getSearchCenter(chip);
+        if (searchCenter == null) return;
+        CBXEntityFinder pigFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, maxDistance, pigTransporter);
         pigFinder.setDistanceCalculationMethod(new CBXinRangeCuboid(1.5, 0.2, 1.5));
         pigFinder.addAnimalFilter("Pig");
         if (!CraftBook.cbxScheduler.isShutdown()) {
@@ -134,7 +136,7 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
     	
     	if(chip.getMode() == 'p' || chip.getMode() == 'P') {
     		pos = Util.getWallSignBack(world, chip.getPosition(), -2);
-    		
+    		if (pos == null) return null;
     		double newY = pos.getY() + 2;
     		
     		if(newY > CraftBook.MAP_BLOCK_HEIGHT)

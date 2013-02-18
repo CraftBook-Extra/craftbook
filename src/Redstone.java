@@ -339,7 +339,10 @@ public class Redstone {
      */
     static void setOutput(CraftBookWorld cbworld, Vector pos, boolean state) {
     	World world = CraftBook.getWorld(cbworld);
-    	if (! world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) return;
+    	if (       pos == null 
+    			|| ! world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())){
+    		return;
+    	}
         if (CraftBook.getBlockID(world, pos) == BlockType.LEVER) {
             int data = CraftBook.getBlockData(world, pos);
             int newData = data & 0x7;

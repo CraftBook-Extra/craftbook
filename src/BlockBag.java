@@ -84,6 +84,7 @@ public abstract class BlockBag {
     
     
     public boolean setBlockID(World world, Vector pos, int id, int data) throws BlockSourceException {
+    	if (!world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) return false;
         if (id == 0) { // Clearing
             int existingID = CraftBook.getBlockID(world, pos);
 

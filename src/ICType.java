@@ -90,15 +90,22 @@ public enum ICType {
         	World world = CraftBook.getWorld(cbworld);
         	
             Vector backVec = Util.getWallSignBack(world, pt, 1);
+            if (backVec == null) return;
             Vector backShift = backVec.subtract(pt);
 
             Vector out0 = Util.getWallSignBack(world, pt, 2);
+            if (out0 == null) return;
             Vector out1 = Util.getWallSignSide(world, pt, 1).add(backShift);
+            if (out1 == null) return;
             Vector out2 = Util.getWallSignSide(world, pt, -1).add(backShift);
+            if (out2 == null) return;
 
             Vector in0 = Util.getWallSignBack(world, pt, -1);
+            if (in0 == null) return;
             Vector in1 = Util.getWallSignSide(world, pt, 1);
+            if (in1 == null) return;
             Vector in2 = Util.getWallSignSide(world, pt, -1);
+            if (in2 == null) return;
             
             boolean hasOut1 = CraftBook.getBlockID(world, out1) == BlockType.LEVER;
             boolean hasOut2 = CraftBook.getBlockID(world, out2) == BlockType.LEVER;
@@ -228,6 +235,7 @@ public enum ICType {
     	World world = CraftBook.getWorld(cbworld);
     	
     	Vector backVec = Util.getWallSignBack(world, pt, 1);
+    	if (backVec == null) return;
     	
     	Vector[] inVec = null;
     	Vector[] outVec = new Vector[outputs];
@@ -236,8 +244,11 @@ public enum ICType {
     	{
     		inVec = new Vector[3];
     		inVec[orderIn[0]] = Util.getWallSignBack(world, pt, -1);
+    		if (inVec[orderIn[0]] == null) return;
     		inVec[orderIn[1]] = Util.getWallSignSide(world, pt, 1);
+    		if (inVec[orderIn[1]] == null) return;
     		inVec[orderIn[2]] = Util.getWallSignSide(world, pt, -1);
+    		if (inVec[orderIn[2]] == null) return;
     	}
     	
     	if(outputs == 3)
@@ -246,15 +257,20 @@ public enum ICType {
     		if(inputs == 3)
     		{
     			backShift = Util.getWallSignBack(world, pt, 2).subtract(pt);
+    			if (backShift == null) return;
     			outVec[orderOut[0]] = Util.getWallSignBack(world, pt, 3);
+    			if (outVec[orderOut[0]] == null) return;
     		}
     		else
     		{
     			backShift = backVec.subtract(pt);
         		outVec[orderOut[0]] = Util.getWallSignBack(world, pt, 2);
+        		if (outVec[orderOut[0]] == null) return;
     		}
     		outVec[orderOut[1]] = Util.getWallSignSide(world, pt, 1).add(backShift);
+    		if (outVec[orderOut[1]] == null) return;
     		outVec[orderOut[2]] = Util.getWallSignSide(world, pt, -1).add(backShift);
+    		if (outVec[orderOut[3]] == null) return;
     	}
     	else
     	{

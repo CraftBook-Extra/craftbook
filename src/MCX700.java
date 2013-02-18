@@ -227,7 +227,7 @@ public class MCX700 extends BaseIC {
     	World world = CraftBook.getWorld(chip.getCBWorld());
     	
     	Vector noteblock = Util.getWallSignBack(world, chip.getPosition(), 2);
-    	
+    	if (noteblock == null) return chip.getPosition();
     	if(CraftBook.getBlockID(world, noteblock) == BlockType.NOTE_BLOCK)
     		return noteblock;
     	

@@ -3,7 +3,7 @@ import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
-/*
+/**
  * Reads the state of a lever or button at a 
  * specified relative position, and mimics the
  * output state.
@@ -95,6 +95,7 @@ public class MCX295 extends BaseIC {
 		int tX = chip.getPosition().getBlockX() + x;
 		int tY = chip.getPosition().getBlockY() + y;
 		int tZ = chip.getPosition().getBlockZ() + z;
+		if (! world.isChunkLoaded(tX, tY, tZ)) return;
 		Block block = world.getBlockAt(tX, tY, tZ);
 		boolean chipRS = false;
 		

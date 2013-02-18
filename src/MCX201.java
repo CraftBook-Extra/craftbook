@@ -139,9 +139,10 @@ public class MCX201 extends BaseIC {
         World world = CraftBook.getWorld(chip.getCBWorld());
         if (item > 0 && !(item >= 21 && item <= 34) && item != 36) {
             Vector pos = chip.getBlockPosition();
-            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             int x = pos.getBlockX();
             int z = pos.getBlockZ();
+            if (!CraftBook.getWorld(chip.getCBWorld()).isChunkLoaded(x, 0, z)) return;
+            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
 
             for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
                 if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))) {

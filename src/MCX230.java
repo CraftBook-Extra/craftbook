@@ -7,7 +7,7 @@ import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Takes in a clock input, and outputs whether the time is day or night.
+ * Takes in a clock input, and outputs whether it is raining or not.
  *
  * @author Shaun (sturmeh)
  */

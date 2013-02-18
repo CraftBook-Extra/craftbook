@@ -21,7 +21,7 @@ import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Shoots arrows.
+ * Shoots snowballs.
  *
  * @author sk89q
  */

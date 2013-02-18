@@ -274,6 +274,7 @@ public class MechanismListener extends CraftBookDelegateListener {
 	private void onPageReaderSwitchInput(String line2, final World world, final CraftBookWorld cbworld, final Vector pt, final boolean isOn, Vector changed) {
 		if (usePageReader && usePageSwitches) {
 	    	Vector redstonept = Util.getWallSignBack(cbworld, pt, -1);
+	    	if (redstonept == null) return;
 	    	if(changed.equals(redstonept)
 	    			&& CraftBook.getBlockID(world, redstonept) == BlockType.REDSTONE_WIRE)
 	    	{
@@ -282,7 +283,7 @@ public class MechanismListener extends CraftBookDelegateListener {
 	    					@Override
 	    					public void run() {
 	    						Vector blockpt = Util.getWallSignBack(cbworld, pt, 1);
-	
+	    						if (blockpt == null) return;
 	    						int x = blockpt.getBlockX();
 	    						int y = blockpt.getBlockY();
 	    						int z = blockpt.getBlockZ();

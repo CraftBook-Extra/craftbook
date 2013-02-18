@@ -107,7 +107,7 @@ public class MCX112 extends BaseIC {
     	if(chip.getMode() == 'p' || chip.getMode() == 'P')
     	{
     		pos = Util.getWallSignBack(world, chip.getPosition(), -2);
-    		
+    		if (pos == null) return false;
     		double newY = pos.getY() + 2;
     		
     		if(newY > CraftBook.MAP_BLOCK_HEIGHT)

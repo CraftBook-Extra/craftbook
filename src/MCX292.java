@@ -21,7 +21,7 @@ import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.ic.*;
 
 /**
- * Dispenser.
+ * chest has item
  *
  * @author sk89q
  */

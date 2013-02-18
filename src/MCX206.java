@@ -190,7 +190,7 @@ public class MCX206 extends BaseIC {
             y += dist;
         else
             z += dist;
-        
+        if (!CraftBook.getWorld(chip.getCBWorld()).isChunkLoaded(x, y, z)) return;
         BlockBag bag = (BlockBag) chip.getExtra();
         bag.addSourcePosition(chip.getCBWorld(), chip.getPosition());
 

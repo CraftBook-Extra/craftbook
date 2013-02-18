@@ -62,6 +62,7 @@ public class MCX216 extends BaseIC {
 	public void think(ChipState chip) {
 		World world = CraftBook.getWorld(chip.getCBWorld());
 		Vector onBlock = Util.getWallSignBack(world, chip.getPosition(), 1);
+		if (onBlock == null) return;
 		Vector target = null;
 		int[] info = null;
 		int yOffset = 0;
