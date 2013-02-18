@@ -96,6 +96,8 @@ public class MC1250 extends BaseIC {
             if(world == null)
             	return;
             
+            if (! world.isChunkLoaded(x, y, z)) return;
+            
             Arrow arrow = shoot(world, x + 0.5, y + 1.5, z + 0.5);
 
             Firework instance = new Firework(arrow);
@@ -140,10 +142,11 @@ public class MC1250 extends BaseIC {
                     final double arrowX = arrow.getX();
                     final double arrowY = arrow.getY();
                     final double arrowZ = arrow.getZ();
-                    
+                    if (! arrow.getWorld().isChunkLoaded((int)arrowX, (int)arrowY, (int)arrowZ)) return;
                     if (arrowY < lastY) {
                         etc.getServer().addToServerQueue(new Runnable() {
                             public void run() {
+                            	if (! arrow.getWorld().isChunkLoaded((int)arrowX, (int)arrowY, (int)arrowZ)) return;
                             	arrow.destroy();
                             	//arrow.bi.f(arrow);
                                 

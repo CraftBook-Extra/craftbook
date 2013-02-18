@@ -23,7 +23,7 @@ import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.*;
 
 /**
- * Time control.
+ * Weather control.
  *
  * @author sk89q
  */

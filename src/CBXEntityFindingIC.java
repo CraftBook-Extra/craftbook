@@ -19,6 +19,8 @@ public abstract class CBXEntityFindingIC extends BaseIC {
 		
 		public void setOutput(boolean state) {
 			World world = CraftBook.getWorld(chip.getCBWorld());
+			Vector chipPos = chip.getBlockPosition();
+	        if (! world.isChunkLoaded(chipPos.getBlockX(), chipPos.getBlockY(), chipPos.getBlockZ())) return;
 			Vector lever = Util.getWallSignBack(world, chip.getPosition(), 2);
 			Redstone.setOutput(chip.getCBWorld(), lever, state);
 		}
@@ -36,7 +38,8 @@ public abstract class CBXEntityFindingIC extends BaseIC {
 					try {
 						boolean found = false;
 						for (BaseEntity bEntity : foundEntities) {
-							if (bEntity != null && !bEntity.isDead()) {
+							if (bEntity != null 
+									&& !bEntity.isDead()) {
 								found = true;
 								break;
 							}

@@ -27,7 +27,7 @@ import com.sk89q.craftbook.ic.ChipState;
 
 
 /**
- *
+ * Between Time
  * @author Shaun (sturmeh)
  */
 public class MCX027 extends BaseIC {
@@ -92,7 +92,7 @@ public class MCX027 extends BaseIC {
     public void think(ChipState chip) {
         if(chip.inputAmount() == 0 || chip.getIn(1).is())
         {
-        	long worldTime = CraftBook.getWorld(chip.getCBWorld()).getRelativeTime();
+        	long worldTime = CraftBook.getWorld(chip.getCBWorld()).getRelativeTime() % 24001;
         	if(chip.getText().getLine3().indexOf("*") == -1 && chip.getText().getLine4().indexOf("*") == -1)
         	{
 	        	int time = Integer.parseInt(chip.getText().getLine3());

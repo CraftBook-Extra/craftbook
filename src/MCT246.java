@@ -26,7 +26,7 @@ import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Shoots arrows.
+ * Cannon - shoots fire balls.
  *
  * @author sk89q
  */

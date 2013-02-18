@@ -27,7 +27,7 @@ import com.sk89q.craftbook.Vector;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * Player Near?
  *
  * @author sk89q
  */
@@ -110,6 +110,7 @@ public class MCX118 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
     	}
     }
 	
+	@Override
 	public ResultHandlerWithOutput rhFactory(ChipState chip) {
 		return new RHSetOutIfFound(chip);
 	}

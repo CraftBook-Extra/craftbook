@@ -104,6 +104,8 @@ public class MC1261 extends BaseIC {
         } catch (NumberFormatException e) {
             y -= 1;
         }
+        World world = CraftBook.getWorld(chip.getCBWorld());
+        if (! world.isChunkLoaded(x, y, z)) return;
         
         y = Math.min(Math.max(0, y), CraftBook.MAP_BLOCK_HEIGHT - 1);
         

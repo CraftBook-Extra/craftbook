@@ -41,6 +41,8 @@ public class Redstone {
      * @return
      */
     static boolean isHighBinary(CraftBookWorld cbworld, Vector pt, boolean considerWires) {
+    	World world = CraftBook.getWorld(cbworld);
+    	if (! world.isChunkLoaded(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ())) return false;
         Boolean result = Redstone.isHigh(cbworld, pt, CraftBook.getBlockID(cbworld, pt), considerWires);
         if (result != null && result) {
             return true;
@@ -268,6 +270,7 @@ public class Redstone {
     	return isHigh(CraftBook.getWorld(cbworld), pt, type, considerWires);
     }
     static Boolean isHigh(World world, Vector pt, int type, boolean considerWires) {
+    	if (! world.isChunkLoaded(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ())) return false;
         if (type == BlockType.LEVER) {
             return (CraftBook.getBlockData(world, pt) & 0x8) == 0x8;
         } else if (type == BlockType.STONE_PRESSURE_PLATE) {
@@ -336,6 +339,7 @@ public class Redstone {
      */
     static void setOutput(CraftBookWorld cbworld, Vector pos, boolean state) {
     	World world = CraftBook.getWorld(cbworld);
+    	if (! world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) return;
         if (CraftBook.getBlockID(world, pos) == BlockType.LEVER) {
             int data = CraftBook.getBlockData(world, pos);
             int newData = data & 0x7;
@@ -362,6 +366,7 @@ public class Redstone {
     	return getOutput(CraftBook.getWorld(cbworld), pos);
     }
     static boolean getOutput(World world, Vector pos) {
+    	if (! world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) return false;
         if (CraftBook.getBlockID(world, pos) == BlockType.LEVER) {
             return (CraftBook.getBlockData(world, pos) & 0x8) == 0x8;
         } else {
@@ -377,6 +382,7 @@ public class Redstone {
      */
     static void toggleOutput(CraftBookWorld cbworld, Vector pos) {
     	World world = CraftBook.getWorld(cbworld);
+    	if (! world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) return;
         if (CraftBook.getBlockID(world, pos) == BlockType.LEVER) {
             setOutput(cbworld, pos, (CraftBook.getBlockData(world, pos) & 0x8) != 0x8);
         }
@@ -392,6 +398,7 @@ public class Redstone {
     	setTrackTrigger(CraftBook.getWorld(cbworld), pos);
     }
     static void setTrackTrigger(World world, Vector pos) {
+    	if (! world.isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) return;
         if (CraftBook.getBlockID(world, pos) == BlockType.LEVER) {
             int data = CraftBook.getBlockData(world, pos);
             int newData = 0;

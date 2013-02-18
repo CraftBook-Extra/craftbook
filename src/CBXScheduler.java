@@ -81,8 +81,7 @@ public class CBXScheduler implements ScheduledExecutorService {
 	 * @return
 	 */
 	public int scheduleInServer(Runnable task, long delay, long period) {
-		etc.getServer().addToServerQueue(wrapPeriodicServerTask(task, period),
-				delay);
+		etc.getServer().addToServerQueue(wrapPeriodicServerTask(task, period), delay);
 		return 0;
 	}
 
@@ -98,13 +97,15 @@ public class CBXScheduler implements ScheduledExecutorService {
 		return new Runnable() {
 			@Override
 			public void run() {
-				if (period > 0)
+				if (period > 0) {
 					etc.getServer().addToServerQueue(
 							wrapPeriodicServerTask(task, period), period);
+				}
 				task.run();
-				if (period < 0)
+				if (period < 0) {
 					etc.getServer().addToServerQueue(
 							wrapPeriodicServerTask(task, period), -period);
+				}
 			}
 		};
 	}

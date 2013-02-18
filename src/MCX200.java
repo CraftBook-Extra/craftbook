@@ -207,10 +207,10 @@ public class MCX200 extends BaseIC {
         
         if (Mob.isValid(id)) {
             Vector pos = chip.getBlockPosition();
-            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             int x = pos.getBlockX();
             int z = pos.getBlockZ();
-
+            if (!CraftBook.getWorld(chip.getCBWorld()).isChunkLoaded(x, 0, z)) return;
+            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             for (int y = pos.getBlockY() + 1; y <= maxY; y++)
             {
             	int blockId = CraftBook.getBlockID(chip.getCBWorld(), x, y, z);
@@ -227,15 +227,15 @@ public class MCX200 extends BaseIC {
                         
                         if (rider.length() != 0 && Mob.isValid(rider)) {
                         	Mob mobRider = new Mob(rider, world);
-                            //mob.spawn(mobRider);
-                            spawn(mob, chip.getCBWorld(), mobRider); //[TODO]: remove when Canary fixes Mob spawn's world
+                            mob.spawn(mobRider);
+                            //spawn(mob, chip.getCBWorld(), mobRider); //[TODO]: remove when Canary fixes Mob spawn's world
                             
                             if(colorRider >= 0)
                             	setMobColor(mobRider.getEntity(), colorRider);
                             
                         } else {
-                            //mob.spawn();
-                            spawn(mob, chip.getCBWorld(), null); //[TODO]: remove when Canary fixes Mob spawn's world
+                            mob.spawn();
+                            //spawn(mob, chip.getCBWorld(), null); //[TODO]: remove when Canary fixes Mob spawn's world
                         }
                         
                         if(color >= 0)

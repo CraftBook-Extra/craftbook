@@ -113,6 +113,7 @@ public class MC1205 extends BaseIC {
             int z = pos.getBlockZ();
 
             World world = CraftBook.getWorld(chip.getCBWorld());
+            if (! world.isChunkLoaded(x, 0, z)) return;
             if (y <= CraftBook.MAP_BLOCK_HEIGHT - 1 && (isForced || CraftBook.getBlockID(world, x, y, z) == 0)) {
                 CraftBook.setBlockID(world, x, y, z, item);
                 chip.getOut(1).set(true);

@@ -21,7 +21,7 @@ import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.ic.*;
 
 /**
- * Dispenser.
+ * ChestDispenser.
  *
  * @author sk89q
  */
@@ -116,11 +116,12 @@ public class MC1202 extends BaseIC {
 
         if (item > 0 && !(item >= 21 && item <= 34) && item != 36) {
             Vector pos = chip.getBlockPosition();
-            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             int x = pos.getBlockX();
             int z = pos.getBlockZ();
-
+            int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
             World world = CraftBook.getWorld(chip.getCBWorld());
+            if (! world.isChunkLoaded(x, 0, z)) return;
+
             for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
                 if (BlockType.canPassThrough(CraftBook.getBlockID(world, x, y, z))) {
                     int n = 0;

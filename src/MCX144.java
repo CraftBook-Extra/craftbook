@@ -143,7 +143,7 @@ public class MCX144 extends MCX142 {
 				public void run() {
 					try {
 						boolean found = false;
-				    	if (tpDestination != null) {
+				    	if (tpDestination != null && !foundEntities.isEmpty()) {
 				        	tpDestination = tpDestination.add(0.5D, 0.0D, 0.5D);
 				        	tpDestination = tpDestination.setY(Util.getSafeYAbove(CraftBook.getWorld(tpDestination.getCBWorld()), tpDestination.getCoordinate()) + 1.0D);
 							for (BaseEntity bEntity : foundEntities) {

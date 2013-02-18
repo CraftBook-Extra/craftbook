@@ -22,9 +22,11 @@ public class OutputLever implements Runnable {
 		//toggles all levers in the outputQueue with a simulated right-click
     	for(WorldBlockVector output = outputQueue.poll(); output != null; output = outputQueue.poll()) {
     		try {
-    		CraftBook.getWorld(output.getCBWorld())
-    				 .getBlockAt(output.getBlockX(), output.getBlockY(), output.getBlockZ())
-    				 .rightClick(null);
+    			if (CraftBook.getWorld(output.getCBWorld()).isChunkLoaded(output.getBlockX(), output.getBlockY(), output.getBlockZ())){
+    				CraftBook.getWorld(output.getCBWorld())
+    					.getBlockAt(output.getBlockX(), output.getBlockY(), output.getBlockZ())
+    					.rightClick(null);
+    			}
     		} catch (NullPointerException e) {
     			//lever was destroyed
     		}

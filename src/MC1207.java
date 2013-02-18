@@ -161,7 +161,8 @@ public class MC1207 extends BaseIC {
             y += dist;
         else
             z += dist;
-
+        World world = CraftBook.getWorld(chip.getCBWorld());
+        if (! world.isChunkLoaded(x, y, z)) return;
         if (inp)
         	CraftBook.setBlockID(chip.getCBWorld(), x, y, z, block);
         else if (hold)

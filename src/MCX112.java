@@ -24,7 +24,7 @@ import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Wireless transmitter.
+ * Transporter
  *
  * @author sk89q
  */

@@ -25,6 +25,7 @@ import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.WorldBlockVector;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -202,10 +203,15 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 		public void handleResult(final Set<BaseEntity> foundEntities) {
 			CraftBook.cbxScheduler.executeInServer(new Runnable() {
 				public void run() {
+					if (! Util.isBlockLoaded(new WorldBlockVector(chip.getCBWorld(), chip.getPosition()))) return;
 					NearbyChestBlockBag chest = null;
 					boolean itemCollected = false;
 					for (BaseEntity bEntity : foundEntities) {
-						if (bEntity == null || bEntity.isDead() || !(bEntity.getEntity() instanceof OEntityItem)) {
+						if (bEntity == null 
+								|| ! bEntity.getWorld().isChunkLoaded((int)bEntity.getX(), (int)bEntity.getY(), (int)bEntity.getZ())
+								|| bEntity.isDead()
+								|| !(bEntity.getEntity() instanceof OEntityItem)
+								) {
 							continue;
 						}
 						// only search for chest if there is something to store

@@ -92,6 +92,7 @@ public class MC1260 extends BaseIC {
         int x = blockPos.getBlockX();
         int y = blockPos.getBlockY();
         int z = blockPos.getBlockZ();
+        World world = CraftBook.getWorld(chip.getCBWorld());
         
         try{
             String yOffsetLine = chip.getText().getLine3();
@@ -104,7 +105,7 @@ public class MC1260 extends BaseIC {
         } catch (NumberFormatException e) {
             y -= 1;
         }
-        
+        if (! world.isChunkLoaded(x, y, z)) return;
         y = Math.min(Math.max(0, y), CraftBook.MAP_BLOCK_HEIGHT - 1);
         
         int type = CraftBook.getBlockID(chip.getCBWorld(), x, y, z);

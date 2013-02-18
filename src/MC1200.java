@@ -83,10 +83,11 @@ public class MC1200 extends BaseIC {
             
             if (Mob.isValid(id)) {
                 Vector pos = chip.getBlockPosition();
-                int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
                 int x = pos.getBlockX();
                 int z = pos.getBlockZ();
-
+                if (!CraftBook.getWorld(chip.getCBWorld()).isChunkLoaded(x, 0, z)) return;
+                
+                int maxY = Math.min(CraftBook.MAP_BLOCK_HEIGHT, pos.getBlockY() + 10);
                 for (int y = pos.getBlockY() + 1; y <= maxY; y++) {
                     if (BlockType.canPassThrough(CraftBook.getBlockID(chip.getCBWorld(), x, y, z))) {
                         Mob mob = new Mob(id, CraftBook.getWorld(chip.getCBWorld()));

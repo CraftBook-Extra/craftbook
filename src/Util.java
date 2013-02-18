@@ -553,11 +553,13 @@ public class Util {
 
 	@SuppressWarnings("unchecked")
 	public static List<Object>[] getEntityLists(Chunk chunk) {
+		if (!chunk.isLoaded()) return null;
 		//Notchian: List[] Chunk.entityLists, Searge: field_76645_j
 		return chunk.getChunk().j;
 	}
 	
 	public static boolean chunkHasEntities(Chunk chunk) {
+		if (!chunk.isLoaded()) return false;
 		//Notchian: Chunk.hasEntities, Searge: field_76644_m
 		return chunk.getChunk().m;
 	}

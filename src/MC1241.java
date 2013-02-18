@@ -51,6 +51,7 @@ public class MC1241 extends MC1240 {
                     chip.getPosition());
             Vector firePos = chip.getBlockPosition().add(backDir);
             World world = CraftBook.getWorld(chip.getCBWorld());
+            if (! world.isChunkLoaded(firePos.getBlockX(), firePos.getBlockY(), firePos.getBlockZ())) return;
             Arrow arrow = new Arrow(world);
             arrow.teleportTo(firePos.getBlockX(), //+ 0.5,
                             firePos.getBlockY() + 0.5,

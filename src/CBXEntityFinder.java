@@ -283,6 +283,9 @@ public final class CBXEntityFinder implements Runnable{
 					} else {
 						break; //some joker is feeding us invalid objects
 					}
+					if (! world.isChunkLoaded((int)entity.getX(), (int)entity.getY(), (int)entity.getZ())){
+						continue;
+					}
 					if (inRange(entity) && filter(entity)){
 						foundEntities.add(entity);
 					}

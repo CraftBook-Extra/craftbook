@@ -26,7 +26,7 @@ import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
- * Positive edge-triggered wireless receiver.
+ * Destination
  *
  * @author sk89q
  */

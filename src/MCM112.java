@@ -28,6 +28,7 @@ import com.sk89q.craftbook.BlockType;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.WorldBlockVector;
 import com.sk89q.craftbook.WorldLocation;
 import com.sk89q.craftbook.ic.ChipState;
 
@@ -163,15 +164,23 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 			CraftBook.cbxScheduler.executeInServer(new Runnable() {
 				public void run() {
 					try {
-						if (tpDestination == null) {
+						if (! Util.isBlockLoaded(new WorldBlockVector(chip.getCBWorld(), chip.getPosition()))) return;
+				    	World world = CraftBook.getWorld(chip.getCBWorld());
+						if (tpDestination == null
+								|| ! world.isChunkLoaded(
+										tpDestination.getBlockX(), 
+										tpDestination.getBlockX(),
+										tpDestination.getBlockX())) {
 							setOutput(false);
 							return;
 						}
 						boolean found = false;
-				    	World world = CraftBook.getWorld(chip.getCBWorld());
+
 
 						for (BaseEntity bEntity : foundEntities) {
-							if (bEntity == null || bEntity.isDead()) {
+							if (bEntity == null
+									|| ! bEntity.getWorld().isChunkLoaded((int)bEntity.getX(), (int)bEntity.getY(), (int)bEntity.getZ())
+									|| bEntity.isDead()) {
 								 continue;
 							}
 				        	if (!(bEntity.getEntity() instanceof OEntityPig)) {

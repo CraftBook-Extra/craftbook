@@ -355,15 +355,17 @@ public class NearbyChestBlockBag extends BlockBag {
         //int ox = pos.getBlockX();
         //int oy = pos.getBlockY();
         //int oz = pos.getBlockZ();
-
-        for (int x = -3; x <= 3; x++) {
-            for (int y = -3; y <= 3; y++) {
-                for (int z = -3; z <= 3; z++) {
-                    Vector cur = pos.add(x, y, z);
-                    addSingleSourcePosition(cbworld, cur);
-                }
-            }
-        }
+  
+    	for (int x = -3; x <= 3; x++) {
+    		for (int y = -3; y <= 3; y++) {
+    			for (int z = -3; z <= 3; z++) {
+    				Vector cur = pos.add(x, y, z);
+    				if (CraftBook.getWorld(cbworld).isChunkLoaded(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ())) {
+    					addSingleSourcePosition(cbworld, cur);
+    				}
+    			}
+    		}
+    	}
     }
 
     /**
@@ -377,7 +379,7 @@ public class NearbyChestBlockBag extends BlockBag {
         int y = pos.getBlockY();
         int z = pos.getBlockZ();
         World world = CraftBook.getWorld(cbworld);
-        
+        if (! world.isChunkLoaded(x, y, z)) return;
         if (CraftBook.getBlockID(world, pos) == BlockType.CHEST) {
             ComplexBlock complexBlock =
             	world.getComplexBlock(x, y, z);
@@ -433,7 +435,7 @@ public class NearbyChestBlockBag extends BlockBag {
 		int y = pos.getBlockY();
 		int z = pos.getBlockZ();
 		World world = CraftBook.getWorld(cbworld);
-
+        if (! world.isChunkLoaded(x, y, z)) return;
 		if (CraftBook.getBlockID(world, pos) == BlockType.CHEST) {
 			ComplexBlock complexBlock = world.getComplexBlock(x, y, z);
 
