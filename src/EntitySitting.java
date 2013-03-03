@@ -29,14 +29,17 @@ public class EntitySitting extends OEntityEnderEye
 	private final double MOUNTED_OFFSET_Y;
 	private final int BLOCK_ID;
 	private final SitType[] TYPES;
+	private final double xPos;
+	private final double yPos;
+	private final double zPos;
+	private final int blockX;
+	private final int blockY;
+	private final int blockZ;
 	
-	public EntitySitting(SitType[] types, OWorldServer oworld, double x, double y, double z, double offsety, double mountedOffsetY)
+	public EntitySitting(SitType[] types, World world, double x, double y, double z, double offsety, double mountedOffsetY)
 	{
-		super(oworld);
+		super(world.getWorld());
 		y += offsety;
-		b(x, y, z);
-		
-		BASE_ENTITY = new BaseEntity(this);
 		
 		int nullcount = 0;
 		for(SitType type : types)
@@ -65,26 +68,33 @@ public class EntitySitting extends OEntityEnderEye
 		OFFSET_Y = offsety;
 		MOUNTED_OFFSET_Y = mountedOffsetY;
 		
-		int blockX = OMathHelper.c(BASE_ENTITY.getX());
-		int blockY = OMathHelper.c(BASE_ENTITY.getY());
-		int blockZ = OMathHelper.c(BASE_ENTITY.getZ());
+		xPos=x;
+		yPos=y;
+		zPos=z;
 		
-		World world = new World(oworld);
+		blockX = OMathHelper.c(x);
+		blockY = OMathHelper.c(y);
+		blockZ = OMathHelper.c(z);
 		
+		// wrap in BaseEntity to avoid Notchian code
+		BASE_ENTITY = new BaseEntity(this);
+		BASE_ENTITY.setX(x);
+		BASE_ENTITY.setY(y);
+		BASE_ENTITY.setZ(z);
+
+		//World world = new World(oworld);
 		BLOCK_ID = world.getBlockIdAt(blockX, blockY, blockZ);
-		
-		if(!canSitOnBlock(world, blockX, blockY, blockZ))
+		if(!canSitOnBlock(world, blockX, blockY, blockZ)) {
 			BASE_ENTITY.destroy();
+		}
+	}
+
+	public void spawn() {
+		BASE_ENTITY.spawn();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void spawn(World world)
-	{
-		OWorld oworld = world.getWorld();
-		int i1 = OMathHelper.c(this.t / 16.0D);
-		int i2 = OMathHelper.c(this.v / 16.0D);
-		oworld.e(i1, i2).a(this);
-		oworld.e.add(this);
+	public void setRiddenByEntity(BaseEntity rider) {
+		BASE_ENTITY.setRiddenByEntity(rider);
 	}
 	
 	public static boolean isChairBlock(int id)
@@ -126,8 +136,9 @@ public class EntitySitting extends OEntityEnderEye
 			|| id == 107 //fence gate
 			|| id == 113 //nether brick fence
 			|| id == 139 //cobblestone wall
-			|| OBlock.p[id].e(world.getWorld(), x, y, z) == null)
+			|| OBlock.p[id].e(world.getWorld(), x, y, z) == null) {
 			return false;
+		}
 		return true;
 	}
 	
@@ -147,40 +158,42 @@ public class EntitySitting extends OEntityEnderEye
 	//onUpdate
 	public void j_()
 	{
-		if(this.n != null && this.n.L)
+		BaseEntity rider = this.BASE_ENTITY.getRiddenByEntity();
+		if(rider != null && rider.isDead())
 		{
 			//sitting player is dead
-			if(this.n.o == this)
+			if(rider.getRidingEntity() == this.BASE_ENTITY)
 			{
-				this.n.o = null;
+				// is this necessary?
+				rider.setRidingEntity(null);
 			}
-			this.n = null;
+			this.setRiddenByEntity(null);
 		}
-		
-		int x = OMathHelper.c(BASE_ENTITY.getX());
-		int y = OMathHelper.c(BASE_ENTITY.getY());
-		int z = OMathHelper.c(BASE_ENTITY.getZ());
-		
+
 		World world = BASE_ENTITY.getWorld();
 		
-		if(this.n == null || world.getBlockIdAt(x, y, z) != BLOCK_ID || !canSitOnBlock(world, x, y, z))
+		if(rider == null 
+				|| world.getBlockIdAt(blockX, blockY, blockZ) != BLOCK_ID 
+				|| !canSitOnBlock(world, blockX, blockY, blockZ))
 		{
-			//dismounted
+			//dismounted or block we're sitting on changed
 			BASE_ENTITY.destroy();
 			return;
 		}
 		
-		if(this.n instanceof OEntityPlayerMP)
+		if(rider.getEntity() instanceof OEntityPlayerMP)
 		{
-			OEntityPlayerMP eplayer = (OEntityPlayerMP)this.n;
+			OEntityPlayerMP eplayer = (OEntityPlayerMP)rider.getEntity();
 			for(SitType type : TYPES)
 			{
 				type.update(world.getWorld(), this, eplayer);
 			}
 		}
-		
+		// do not move, no matter what others tell us
 		BASE_ENTITY.setMotion(0.0D, 0.0D, 0.0D);
-		d(0.0D, 0.0D, 0.0D);
+		BASE_ENTITY.setX(xPos);
+		BASE_ENTITY.setY(yPos);
+		BASE_ENTITY.setZ(zPos);
 	}
 	
 	@Override

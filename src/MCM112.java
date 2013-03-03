@@ -168,11 +168,7 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 					try {
 						if (! Util.isBlockLoaded(new WorldBlockVector(chip.getCBWorld(), chip.getPosition()))) return;
 				    	World world = CraftBook.getWorld(chip.getCBWorld());
-						if (tpDestination == null
-								|| ! world.isChunkLoaded(
-										tpDestination.getBlockX(), 
-										tpDestination.getBlockX(),
-										tpDestination.getBlockX())) {
+						if (tpDestination == null) {
 							setOutput(false);
 							return;
 						}

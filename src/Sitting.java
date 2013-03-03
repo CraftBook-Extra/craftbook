@@ -19,17 +19,11 @@ public class Sitting
 	
 	protected static void sit(Player player, SitType[] types, World world, double x, double y, double z, float rotation, double offsety, double mountedOffsetY)
 	{
-		player.setX(x);
-		player.setY(y);
-		player.setZ(z);
 		player.setRotation(rotation);
-
-		OWorldServer oworld = world.getWorld();
-		EntitySitting esitting = new EntitySitting(types, oworld, player.getX(), player.getY(), player.getZ(), offsety, mountedOffsetY);
-		
-		esitting.spawn(world);
-		BaseEntity sitting = new BaseEntity(esitting);
-		sitting.setRiddenByEntity(player);
+		//OWorldServer oworld = world.getWorld();
+		EntitySitting esitting = new EntitySitting(types, world, x, y, z, offsety, mountedOffsetY);
+		esitting.spawn();
+		esitting.setRiddenByEntity(player);
 	}
 	
 	protected static void stand(Player player, double offsetx, double offsety, double offsetz)

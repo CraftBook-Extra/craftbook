@@ -35,6 +35,9 @@ import java.util.concurrent.TimeoutException;
  * Make sure to handle <i>all</i> exceptions inside your Runnables, or you'll crash
  * the server. Also check for RejectedExecutionException when submitting tasks.
  * 
+ * If you access anything in the world in a runnable submitted here,
+ * make sure that the chunk is actually still loaded, even when using the server queue!
+ * 
  * 
  * @author Stefan Steinheimer (nosefish)
  * 
