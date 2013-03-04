@@ -1,9 +1,8 @@
-import java.util.List;
+import java.util.Set;
 
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
-import com.sk89q.craftbook.ic.BaseIC;
 import com.sk89q.craftbook.ic.ChipState;
 
 /**
@@ -16,8 +15,9 @@ import com.sk89q.craftbook.ic.ChipState;
  * @author Drathus
  *
  */
-public class MCX216 extends BaseIC {
-
+public class MCX216 extends CBXEntityFindingIC {
+	private static final double SEARCH_DIST = 3;
+	
 	@Override
 	public String getTitle() {
 
@@ -76,22 +76,28 @@ public class MCX216 extends BaseIC {
     		return;
     	}
 
-    	try {
-    		yOffset = Integer.parseInt(chip.getText().getLine4());
-    	} catch (NumberFormatException e) {
-    		return;
+    	if (chip.getText().getLine4().length() != 0) {
+	    	try {
+	    		yOffset = Integer.parseInt(chip.getText().getLine4());
+	    	} catch (NumberFormatException e) {
+	    		return;
+	    	}
+	    	if (yOffset < 1) {
+	    		return;
+	    	}
+    	} else {
+    		yOffset = 1;
     	}
-    	if (yOffset < 1) {
-    		return;
-    	}
-
+    	
     	target = onBlock.add(0, yOffset, 0);
     	
 		if (world.getBlockIdAt(target.getBlockX(), target.getBlockY(), target.getBlockZ()) == 0 && 
 			itemPlantableOnBlock(info[0], world.getBlockIdAt(target.getBlockX(), target.getBlockY() - 1, target.getBlockZ()))) {
-			
-			saplingPlanter sp = new saplingPlanter(world, target, info[0], info[1]);
-			etc.getServer().addToServerQueue(sp);
+			Vector searchCenter = target.add(0.5, 0, 0.5);
+			CBXEntityFinder.ResultHandler rhPlanter = new RHPlanter(world, target, info[0], info[1], chip);
+			CBXEntityFinder toPlantFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, SEARCH_DIST, rhPlanter);
+			toPlantFinder.addItemFilter(info[0], info[1]);
+			CraftBook.cbxScheduler.execute(toPlantFinder);
 		}
 	}
 
@@ -110,18 +116,24 @@ public class MCX216 extends BaseIC {
 			// Netherwart on soulsand
 			return true;
 		}
-		
+		// can't plant this item on this block
 		return false;
 	}
 	
-	private class saplingPlanter implements Runnable {
+	/**
+	 * Plants an item from the world on the target block.
+	 * Sets output to high when successful, low when no suitable item was found.
+	 * 
+	 * @author Stefan Steinheimer (nosefish)
+	 */
+	public static class RHPlanter extends CBXEntityFindingIC.ResultHandlerWithOutput {
 		private final World world;
 		private final Vector target;
 		private final int itemId;
 		private final int damVal;
 		
-		public saplingPlanter(World world, Vector target, int itemId, int damVal) {
-			
+		public RHPlanter(World world, Vector target, int itemId, int damVal, ChipState chip) {
+			super(chip);
 			this.world = world;
 			this.target = target;
 			this.itemId = itemId;
@@ -129,36 +141,61 @@ public class MCX216 extends BaseIC {
 		}
 
 		@Override
-		public void run() {
-
-			try {
-				List<ItemEntity> items = this.world.getItemList();
-				
-				if(items == null)
-		        	return;
-		        
-		        for(ItemEntity itemEnt : items) {
-		            Item citem = itemEnt.getItem();
-		        	
-		        	if(!itemEnt.isDead() && citem.getAmount() > 0 && citem.getItemId() == this.itemId && (this.damVal == -1 || (this.damVal == -1 || citem.getDamage() == this.damVal))) {
-						double diffX = target.getBlockX() + 0.5D - itemEnt.getX();
-						double diffY = target.getBlockY() - itemEnt.getY();
-						double diffZ = target.getBlockZ() + 0.5D - itemEnt.getZ();
-						
-						if ((diffX * diffX + diffY * diffY + diffZ * diffZ) < 9) {
-							itemEnt.destroy();
-
-							world.setBlockAt(getBlockByItem(this.itemId), target.getBlockX(), target.getBlockY(), target.getBlockZ());
-							world.setBlockData(target.getBlockX(), target.getBlockY(), target.getBlockZ(), citem.getDamage());
-
-							break;
+		public void handleResult(final Set<BaseEntity> foundEntities) {
+			CraftBook.cbxScheduler.executeInServer(new Runnable() {
+				public void run() {
+					try {
+						boolean found = false;
+						for (BaseEntity bEntity : foundEntities) {
+							if (bEntity != null 
+									&& bEntity.getWorld().isChunkLoaded((int)bEntity.getX(), (int)bEntity.getY(), (int)bEntity.getZ())
+									&& !bEntity.isDead()) {
+								// looks valid, let's try to plant it
+								found = plant(bEntity);
+								if (found) break;
+							}
 						}
-		        	}
-		        }
-			} catch (Exception e) {
-			}
+						setOutput(found);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 		
+		
+		private boolean plant(BaseEntity bEntity) {
+			if (! (bEntity.getEntity() instanceof OEntityItem)) {
+				return false;
+			}
+			// get the item stack
+			ItemEntity itemEnt = new ItemEntity((OEntityItem) bEntity.getEntity());
+            Item itemStack = itemEnt.getItem();
+        	
+            // This should always be true if the toPlantFinder has done his work properly,
+            // but unsynchronized multithreading can have strange effects, so we'd better check again.
+        	if(itemStack.getAmount() > 0 
+        			&& itemStack.getItemId() == this.itemId 
+        			&& (this.damVal < 0 || itemStack.getDamage() == this.damVal)) {
+        		
+        		// get one item from the stack
+				itemStack.setAmount(itemStack.getAmount() - 1);
+				if (itemStack.getAmount() < 1) {
+					itemEnt.destroy();
+				}
+				// and plant it
+				world.setBlockAt(getBlockByItem(this.itemId), target.getBlockX(), target.getBlockY(), target.getBlockZ());
+				world.setBlockData(target.getBlockX(), target.getBlockY(), target.getBlockZ(), itemStack.getDamage());
+				return true;
+        	}
+			return false;
+			
+		}
+		
+		/**
+		 * @param itemId id of the item to plant
+		 * @return block ID to place to simulate planting
+		 */
 		private int getBlockByItem(int itemId) {
             switch (itemId) {
             case 295: return 59;
@@ -170,4 +207,5 @@ public class MCX216 extends BaseIC {
             }
 		}
 	}
+	
 }
