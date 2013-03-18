@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 
-import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
@@ -204,7 +203,7 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 			CraftBook.cbxScheduler.executeInServer(new Runnable() {
 				public void run() {
 					if (! Util.isBlockLoaded(new WorldBlockVector(chip.getCBWorld(), chip.getPosition()))) return;
-					NearbyChestBlockBag chest = null;
+					CBXItemStorage storage = null;
 					boolean itemCollected = false;
 					for (BaseEntity bEntity : foundEntities) {
 						if (bEntity == null 
@@ -214,27 +213,35 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 								) {
 							continue;
 						}
-						// only search for chest if there is something to store
-						if (chest == null) {
-							chest = new NearbyChestBlockBag(chip.getCBWorld(), chip.getPosition());
-				        	chest.addSourcePosition(chip.getCBWorld(), chip.getPosition());
-				        	if (chest.getChestBlockCount() == 0) {
-				        		// no chest - can't collect
-				        		return;
+						// only search for storage blocks if there is something to store
+						if (storage == null) {
+							storage = new CBXItemStorage();
+				        	if (!storage.addNearbyStorageBlocks(
+				        			new WorldBlockVector(chip.getCBWorld(),
+				        			chip.getBlockPosition()))) {
+				        		// no storage block, no point trying to store items
+				        		break;
 				        	}
 						}
 						ItemEntity itemEntity = new ItemEntity((OEntityItem) bEntity.getEntity());
-						Item item = itemEntity.getItem();			
-						if( item.getAmount() > 0 
-							&& chest.hasAvailableSlotSpace(item.getItemId(), (byte)item.getDamage(), item.getAmount())) {
-							try {
-		                        chest.storeBlock(item.getItemId(), (byte)item.getDamage(), item.getAmount(), item.getEnchantments());
-		                    } catch (BlockSourceException e) {
-		                        break;
-		                    }
+						Item item = itemEntity.getItem();
+						int amountBefore = item.getAmount();
+						boolean storedAll = false;
+						if(amountBefore > 0){
+							storedAll = storage.storeItem(item);
+							if (item.getAmount() < amountBefore) {
+								itemCollected = true;
+							}
+							if (storedAll) {
+								itemEntity.destroy();
+							}
+						} else {
+							// why is this thing even here with 0 or even negative amount, but not dead?
 							itemEntity.destroy();
-							itemCollected = true;
 						}
+					}
+					if (storage != null) {
+						storage.update();
 					}
 			   		setOutput(itemCollected);
 				}
