@@ -270,7 +270,7 @@ public enum ICType {
     		outVec[orderOut[1]] = Util.getWallSignSide(world, pt, 1).add(backShift);
     		if (outVec[orderOut[1]] == null) return;
     		outVec[orderOut[2]] = Util.getWallSignSide(world, pt, -1).add(backShift);
-    		if (outVec[orderOut[3]] == null) return;
+    		if (outVec[orderOut[2]] == null) return;
     	}
     	else
     	{
