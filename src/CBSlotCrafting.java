@@ -33,7 +33,8 @@ public class CBSlotCrafting extends OSlotCrafting
 		for(int i = 0; i < recipes.size(); i++)
 		{
 			OIRecipe oirecipe = (OIRecipe)recipes.get(i);
-			if(oirecipe.a(oinvcrafting, thePlayer.p))
+			//thePlayer.field_70170_p
+			if(oirecipe.a(oinvcrafting, thePlayer.q))
 			{
 				if(!(oirecipe instanceof CBEnchantRecipe))
 				{
@@ -56,7 +57,7 @@ public class CBSlotCrafting extends OSlotCrafting
 		
 		cbrecipe.decrStackSizes((OEntityPlayerMP)thePlayer, oinvcrafting);
 		
-		for(int i = 0; i < this.craftMatrix.k_(); i++)
+		for(int i = 0; i < this.craftMatrix.j_(); i++)
 		{
 			OItemStack oitemstack = this.craftMatrix.a(i);
 			
@@ -64,15 +65,16 @@ public class CBSlotCrafting extends OSlotCrafting
             {
                 continue;
             }
-
-            if (!oitemstack.b().s())
+			//getItem().containerHasItem()  func_77973_b().func_77634_r()
+            if (!oitemstack.b().t())
             {
                 continue;
             }
-
-            OItemStack oitemstack1 = new OItemStack(oitemstack.b().r());
-
-            if (oitemstack.b().j(oitemstack) && thePlayer.bJ.a(oitemstack1))
+            //getItem().getContainerItem() func_77973_b().func_77668_q()
+            OItemStack oitemstack1 = new OItemStack(oitemstack.b().s());
+            //.getItem(). && thePlayer.whateverTheFuckThisIs
+            //.func_77973_b(). && thePlayer.
+            if (oitemstack.b().j(oitemstack) && thePlayer.bK.a(oitemstack1))
             {
                 continue;
             }

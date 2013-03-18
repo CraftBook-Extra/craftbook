@@ -611,16 +611,24 @@ public class MechanismListener extends CraftBookDelegateListener {
 	    		PlayerSettings setting = CraftBookListener.getPlayerSettings(player);
 	    		if(setting != null)
 	    		{
-	    			if (oplayer.bL != oplayer.bK)
+	    			// field_71070_bA != field_71069_bz
+	    			if (oplayer.bM != oplayer.bL)
 		    		{
-		    			oplayer.i();
+	    				//func_71053_j
+		    			oplayer.h();
 		    		}
 	    			
 	    			setting.getNextWindowId();
-	    			UtilEntity.sendPacket(oplayer, new OPacket100OpenWindow(setting.currentWindowId, 0, cbbookinv.b(), cbbookinv.k_()));
-	    			oplayer.bL = new CBContainerShelf(oplayer.bJ, cbbookinv);
-	    			oplayer.bL.d = setting.currentWindowId;
-	    			oplayer.bL.a((OICrafting)oplayer);
+	    			// The constructor of OPacket100OpenWindow needs a boolean value now - no idea what its purpose is
+	    			// Set to true for now and see if anything breaks
+	    			boolean Packet100OpenWindow_field_94500_e = true;
+	    			UtilEntity.sendPacket(oplayer, new OPacket100OpenWindow(setting.currentWindowId, 0, cbbookinv.b(), cbbookinv.j_(), Packet100OpenWindow_field_94500_e));
+	    			//field_71070_bA ... field_71071_by
+	    			oplayer.bM = new CBContainerShelf(oplayer.bK, cbbookinv);
+	    			//field_71070_bA
+	    			oplayer.bM.d = setting.currentWindowId;
+	    			//field_71070_bA
+	    			oplayer.bM.a((OICrafting)oplayer);
 	    		}
 	    		return true;
 			}

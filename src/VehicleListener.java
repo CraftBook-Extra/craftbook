@@ -859,8 +859,8 @@ public class VehicleListener extends CraftBookDelegateListener {
 
                     return;
                 } else if (craftBlockRecipes != null && under == minecartCraftBlock[0] && underColor == minecartCraftBlock[1]
-                		&& (OMathHelper.c(minecart.getEntity().q) != OMathHelper.c(minecart.getX())
-                    			|| OMathHelper.c(minecart.getEntity().s) != OMathHelper.c(minecart.getZ()))
+                		&& (OMathHelper.c(minecart.getEntity().r) != OMathHelper.c(minecart.getX())
+                    			|| OMathHelper.c(minecart.getEntity().t) != OMathHelper.c(minecart.getZ()))
                 		) {
                     Boolean test = Redstone.testAnyInput(world, underPt);
 
@@ -869,7 +869,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                     	
                         if (minecart.getType() == Minecart.Type.StorageCart && minecart.getStorage() != null) {
                         	
-                        	ItemArray<?> cartStorage = minecart.getStorage();
+                        	StorageMinecart cartStorage = minecart.getStorage();
                         	Item[] cartItems = cartStorage.getContents();
                         	
                         	Map<CraftBookItem,Integer> contents = new HashMap<CraftBookItem,Integer>();
@@ -1288,9 +1288,9 @@ public class VehicleListener extends CraftBookDelegateListener {
                 	if (test == null || test)
                 	{
                 		OEntityMinecart eminecart = minecart.getEntity();
-                		if(OMathHelper.c(eminecart.q) == OMathHelper.c(minecart.getX())
-                		   && OMathHelper.c(eminecart.r) == OMathHelper.c(minecart.getY())
-                		   && OMathHelper.c(eminecart.s) == OMathHelper.c(minecart.getZ()))
+                		if(OMathHelper.c(eminecart.r) == OMathHelper.c(minecart.getX())
+                		   && OMathHelper.c(eminecart.s) == OMathHelper.c(minecart.getY())
+                		   && OMathHelper.c(eminecart.t) == OMathHelper.c(minecart.getZ()))
                 			return;
                 		
                 		Vector signPos = new Vector(blockX, blockY - 2, blockZ);
@@ -2632,7 +2632,8 @@ public class VehicleListener extends CraftBookDelegateListener {
                 	{
                 		if(minecartCollisionType == MinecartCollisionType.GHOST)
                 		{
-                			OAxisAlignedBB bb = emptyCart.getEntity().D.b(0.2000000029802322D, 0.0D, 0.2000000029802322D);
+                			//field_70121_D.b()
+                			OAxisAlignedBB bb = emptyCart.getEntity().E.b(0.2000000029802322D, 0.0D, 0.2000000029802322D);
                     		
                     		if(playerCart.getMotionX() != 0)
                     		{
@@ -2667,7 +2668,7 @@ public class VehicleListener extends CraftBookDelegateListener {
                 				vehicle.getPassenger().giveItem(new Item(item, 1));
                 			}
                 			
-                			emptyCart.getEntity().D.b(0, 0, 0, 0, 0, 0);
+                			emptyCart.getEntity().E.b(0, 0, 0, 0, 0, 0);
                 		}
                 	}
                 	
@@ -2946,8 +2947,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             	int[] info = UtilItem.getItemInfoFromParts(parts);
             	if(info == null)
             		return false;
-            	
-            	OItemStack iStack = player.getEntity().bJ.g();
+            	//field_71071_by.func_70448_g()
+            	OItemStack iStack = player.getEntity().bK.h();
             	if(iStack != null && player.getItemInHand() >= 0) {
             		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info)) || 
             			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info))) {

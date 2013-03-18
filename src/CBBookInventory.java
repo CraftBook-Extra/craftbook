@@ -12,14 +12,14 @@ public class CBBookInventory implements OIInventory
 	public int z;
 	
 	@Override
-	//getSizeInventory
-	public int k_()
+	//getSizeInventory func_70302_i_
+	public int j_()
 	{
 		return 27;
 	}
 	
 	@Override
-	//getStackInSlot
+	//getStackInSlot func_70301_a
 	public OItemStack a(int slot)
 	{
 		return items[slot];
@@ -27,7 +27,7 @@ public class CBBookInventory implements OIInventory
 
 	@Override
 	//isUseableByPlayer
-	public boolean a_(OEntityPlayer oplayer)
+	public boolean a(OEntityPlayer oplayer)
 	{
 		return !locked;
 	}
@@ -70,15 +70,15 @@ public class CBBookInventory implements OIInventory
 	{
 		this.items[slot] = stack;
 
-        if (stack != null && stack.a > this.c())
+        if (stack != null && stack.a > this.d())
         {
-        	stack.a = this.c();
+        	stack.a = this.d();
         }
 	}
 
 	@Override
 	//getStackInSlotOnClosing
-	public OItemStack a_(int slot)
+	public OItemStack b(int slot)
 	{
 		if (this.items[slot] != null)
         {
@@ -100,29 +100,29 @@ public class CBBookInventory implements OIInventory
 	}
 
 	@Override
-	//getInventoryStackLimit
-	public int c()
+	//getInventoryStackLimit func_70297_j_
+	public int d()
 	{
 		return 64;
 	}
 
 	@Override
-	//onInventoryChanged
-	public void d()
+	//onInventoryChanged func_70296_d
+	public void k_()
 	{
 		CraftBook.cbdata.markDirty();
 	}
 	
 	@Override
-	//openChest
-	public void l_()
+	//openChest func_70295_k_
+	public void f()
 	{
 		
 	}
 	
 	@Override
 	//closeChest
-	public void f()
+	public void g()
 	{
 		
 	}
@@ -140,7 +140,7 @@ public class CBBookInventory implements OIInventory
 		
         int var2;
 
-        for (var2 = 0; var2 < this.k_(); ++var2)
+        for (var2 = 0; var2 < this.j_(); ++var2)
         {
             this.a(var2, (OItemStack)null);
         }
@@ -150,7 +150,7 @@ public class CBBookInventory implements OIInventory
             ONBTTagCompound var3 = (ONBTTagCompound)localONBTTagList.b(var2);
             int var4 = var3.c("Slot") & 255;
 
-            if (var4 >= 0 && var4 < this.k_())
+            if (var4 >= 0 && var4 < this.j_())
             {
                 this.a(var4, OItemStack.a(var3));
             }
@@ -167,7 +167,7 @@ public class CBBookInventory implements OIInventory
     	
         ONBTTagList var1 = new ONBTTagList();
 
-        for (int var2 = 0; var2 < this.k_(); ++var2)
+        for (int var2 = 0; var2 < this.j_(); ++var2)
         {
             OItemStack var3 = this.a(var2);
 
@@ -182,4 +182,16 @@ public class CBBookInventory implements OIInventory
 
         nbtcompound.a("Items", var1);
     }
+
+	@Override
+	public boolean b(int arg0, OItemStack arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean c() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

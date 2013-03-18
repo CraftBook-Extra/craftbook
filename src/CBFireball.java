@@ -17,9 +17,10 @@ public class CBFireball extends OEntityFireball
         
 		this.b(x, y, z, 0F, 0F);
 		this.b(x, y, z);
-        
-		this.M = 0.0F;
-		this.w = this.x = this.y = 0.0D;
+        //field_70129_M
+		this.N = 0.0F;
+		//field_70159_w = this. field_70181_x = field_70179_y
+		this.x = this.y = this.z = 0.0D;
         
 		this.b = Math.cos(Math.toRadians(rotation)) * speed;
 		this.c = Math.sin(Math.toRadians(pitch)) * speed;
@@ -29,11 +30,15 @@ public class CBFireball extends OEntityFireball
 	@Override
 	protected void a(OMovingObjectPosition paramOMovingObjectPosition)
 	{
-		if (!this.p.I) {
+		//this. field_70170_p .I
+		if (!this.q.I) {
 	      if ((paramOMovingObjectPosition.g != null) && 
 	        (paramOMovingObjectPosition.g.a(ODamageSource.a(this, this.a), 6)));
-	      this.p.a(null, this.t, this.u, this.v, this.power, true, this.p.L().b("mobGriefing"));
-	      x();
+	      //newExplosion
+	      //this.field_70170_p.a(field_70165_t, field_70163_u, field_70161_v, .., .., this.field_70170_p.func_82736_K. b("")
+	      this.q.a(null, this.u, this.v, this.w, this.power, true, this.q.M().b("mobGriefing"));
+	      //setDead func_70106_y
+	      w();
 	    }
 	}
 }
@@ -46,7 +51,7 @@ class EntityCreatureX extends OEntityCreature
 	}
 	
 	@Override
-	public int aT()
+	public int aW()
 	{
 		return 1;
 	}

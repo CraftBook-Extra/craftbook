@@ -58,7 +58,7 @@ public class SignPatch extends OBlockSign {
         }
     }
     private static int nullId() {
-    	OBlock.p[TYPE] = null;
+    	OBlock.r[TYPE] = null;
         return TYPE;
     }
 
@@ -81,13 +81,13 @@ public class SignPatch extends OBlockSign {
      * Call before using addListener or getListenerList().
      */
     public static void applyPatch() {
-        new SignPatch(OBlock.p[TYPE]);
+        new SignPatch(OBlock.r[TYPE]);
     }
     /**
      * Removes the patch if it is applied.
      */
     public static void removePatch() {
-        if(OBlock.p[TYPE] instanceof SignPatch) OBlock.p[TYPE] = ((SignPatch)OBlock.p[TYPE]).old;
+        if(OBlock.r[TYPE] instanceof SignPatch) OBlock.r[TYPE] = ((SignPatch)OBlock.r[TYPE]).old;
     }
     
     /**

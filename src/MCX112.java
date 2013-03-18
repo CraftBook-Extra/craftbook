@@ -165,8 +165,9 @@ public class MCX112 extends BaseIC {
             			int bz = pVec.getBlockZ();
             			
             			oworld.c(bx, by, bz, 0);
-            			oworld.h(bx, by, bz, bdata);
-            			oworld.h(bx, by - 1, bz, bdata);
+            			//func_72898_h
+            			oworld.f(bx, by, bz, bdata);
+            			oworld.f(bx, by - 1, bz, bdata);
             			oworld.e(bx, by, bz, bx, by, bz);
             		}
         		}

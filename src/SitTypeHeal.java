@@ -65,10 +65,12 @@ public class SitTypeHeal extends SitType
 	public void update(OWorld oworld, EntitySitting sitentity, OEntityPlayerMP eplayer)
 	{
 		PluginLoader.HookResult autoHeal = etc.getInstance().autoHeal();
-		if((oworld.s != 0 || autoHeal != PluginLoader.HookResult.DEFAULT_ACTION) && autoHeal != PluginLoader.HookResult.ALLOW_ACTION)
+		//World.field_73013_u
+		if((oworld.r != 0 || autoHeal != PluginLoader.HookResult.DEFAULT_ACTION) && autoHeal != PluginLoader.HookResult.ALLOW_ACTION)
 		{
 			Player player = new Player(eplayer);
-			if(player.getHealth() < 20 && eplayer.ab % this.RATE * 12 == 0)
+			//eplayer.field_70173_aa
+			if(player.getHealth() < 20 && eplayer.ac % this.RATE * 12 == 0)
 				player.increaseHealth(1);
 		}
 	}
