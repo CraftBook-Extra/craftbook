@@ -83,6 +83,7 @@ public class SignPatch extends OBlockSign {
     public static void applyPatch() {
         new SignPatch(OBlock.r[TYPE]);
     }
+    
     /**
      * Removes the patch if it is applied.
      */
@@ -100,20 +101,20 @@ public class SignPatch extends OBlockSign {
     /**
      * Wraps a HookExtension to allow easier use by plugins.
      */
-    public static ExtensionListener wrapListener(final Plugin p, final ExtensionListener r) {
+    public static ExtensionListener wrapListener(final Plugin plugin, final ExtensionListener eListener) {
         return new ExtensionListener() {
-            private PluginLoader l = etc.getLoader();
+            private PluginLoader pluginLoader = etc.getLoader();
             private long lastCheck = 0;
             public void onSignAdded(World world, int x, int y, int z) {
                 if(world.getTime()!=lastCheck) {
-                    if(l.getPlugin(p.getName())!=p) {
+                    if(pluginLoader.getPlugin(plugin.getName())!=plugin) {
                         CopyOnWriteArrayList<ExtensionListener> taskList = LISTENERS;
                         while(taskList.contains(this)) taskList.remove(this);
                         return;
                     }
                     lastCheck = world.getTime();
                 }
-                if(p.isEnabled()) r.onSignAdded(world, x,y,z);
+                if(plugin.isEnabled()) eListener.onSignAdded(world, x,y,z);
             }
         };
     }
