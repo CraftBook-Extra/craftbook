@@ -49,8 +49,6 @@ public class TickDelayer implements Runnable {
      * Run thread.
      */
     public void run() {
-        //long currentTick = etc.getServer().getTime();
-        
         ArrayList<Action> actionQueue = new ArrayList<Action>();
         
         for (Iterator<Action> it = delayedActions.iterator(); it.hasNext(); ) {

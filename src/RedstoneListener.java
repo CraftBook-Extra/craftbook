@@ -222,8 +222,8 @@ public class RedstoneListener extends CraftBookDelegateListener
                     if(enableSelfTriggeredICs && (ic.type.isSelfTriggered || ic.type.updateOnce) ) {
                         instantICs.add(new WorldBlockVector(cbworld, pos));
                     }
-                    
-                    sign.update();
+                    //Canary bug: makes sign disappear
+                    //sign.update();
                 }
                 
                 if (ic.isPlc && !redstonePLCs && redstoneICs) {
@@ -272,7 +272,6 @@ public class RedstoneListener extends CraftBookDelegateListener
      */
     public void onDirectWireInput(World world, final Vector pt, boolean isOn, final Vector changed) {
         int type = CraftBook.getBlockID(world, pt);
-        
         // Redstone pumpkins
         if (redstonePumpkins
                 && (type == BlockType.PUMPKIN || type == BlockType.JACKOLANTERN)) {
@@ -300,7 +299,6 @@ public class RedstoneListener extends CraftBookDelegateListener
                 || type == BlockType.SIGN_POST) {
             ComplexBlock cblock = world.getComplexBlock(
                     pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
-
             if (!(cblock instanceof Sign)) {
                 return;
             }
@@ -316,7 +314,6 @@ public class RedstoneListener extends CraftBookDelegateListener
                     && line2.charAt(7) == ']') {
             	
                 final String id = line2.substring(1, 7).toUpperCase();
-
                 final SignText signText = new SignText(sign.getText(0),
                         sign.getText(1), sign.getText(2), sign.getText(3));
 
@@ -372,7 +369,7 @@ public class RedstoneListener extends CraftBookDelegateListener
                 final RedstoneListener thisListener = this;
                 
                 final CraftBookWorld cbworld = CraftBook.getCBWorld(world);
-                
+
                 craftBook.getDelay(cbworld).delayAction(
                         new TickDelayer.Action(world, pt.toBlockVector(), 2) {
                     @Override
