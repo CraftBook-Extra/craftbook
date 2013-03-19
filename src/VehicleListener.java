@@ -2227,8 +2227,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[Station]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            sign.update();
             
             if (minecartControlBlocks) {
                 int data = CraftBook.getBlockData(world, 
@@ -2254,8 +2253,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[Sort]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks) {
                 int data = CraftBook.getBlockData(world, 
@@ -2294,8 +2293,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[Dispenser]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
         
             player.sendMessage(Colors.Gold + "Dispenser sign detected.");
         // Print
@@ -2303,8 +2302,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(0, "[Print]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
         
             player.sendMessage(Colors.Gold + "Message print block detected.");
         // Cart Lift
@@ -2313,8 +2312,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[CartLift]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks) {
                 int data = CraftBook.getBlockData(world, 
@@ -2340,8 +2339,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[Launch]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks) {
                 int data = CraftBook.getBlockData(world, 
@@ -2367,8 +2366,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[Delay]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks) {
                 int data = CraftBook.getBlockData(world, 
@@ -2405,8 +2404,8 @@ public class VehicleListener extends CraftBookDelegateListener {
                 }
                 
                 sign.setText(3, "");
-                //Canary bug: makes sign disappear
-                //sign.update();
+                
+                sign.update();
                 
                 player.sendMessage(Colors.Gold + "Delay sign detected.");
             } else {
@@ -2418,8 +2417,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[Load]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks && minecartEnableLoadBlock) {
                 int data = CraftBook.getBlockData(world, 
@@ -2453,8 +2452,8 @@ public class VehicleListener extends CraftBookDelegateListener {
             listener.informUser(player);
             
             sign.setText(1, "[CartWarp]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks) {
                 int data = CraftBook.getBlockData(world, 
@@ -2479,14 +2478,14 @@ public class VehicleListener extends CraftBookDelegateListener {
                 if(line1.isEmpty())
                 {
                 	sign.setText(2, "Direction");
-                    //Canary bug: makes sign disappear
-                    //sign.update();
+                    
+                    sign.update();
                 }
                 else if(sign.getText(2).isEmpty() && sign.getText(3).isEmpty())
                 {
                 	sign.setText(2, "ALL");
-                    //Canary bug: makes sign disappear
-                    //sign.update();
+                    
+                    sign.update();
                 }
                 
                 player.sendMessage(Colors.Gold + "Warp sign detected.");
@@ -2504,16 +2503,16 @@ public class VehicleListener extends CraftBookDelegateListener {
         	}
         	
         	sign.setText(1, "[SpawnCart]");
-            //Canary bug: makes sign disappear
-            //sign.update();
+            
+            sign.update();
             
             if (minecartControlBlocks) {
                 
                 if(!line1.isEmpty())
                 {
                 	sign.setText(0, "");
-                    //Canary bug: makes sign disappear
-                	//sign.update();
+                    
+                	sign.update();
                 }
                 
                 String line3 = sign.getText(2);

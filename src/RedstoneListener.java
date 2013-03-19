@@ -222,8 +222,7 @@ public class RedstoneListener extends CraftBookDelegateListener
                     if(enableSelfTriggeredICs && (ic.type.isSelfTriggered || ic.type.updateOnce) ) {
                         instantICs.add(new WorldBlockVector(cbworld, pos));
                     }
-                    //Canary bug: makes sign disappear
-                    //sign.update();
+                    sign.update();
                 }
                 
                 if (ic.isPlc && !redstonePLCs && redstoneICs) {
