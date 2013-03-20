@@ -110,6 +110,7 @@ public class EntitySitting extends OEntityEnderEye
 			case 134:
 			case 135:
 			case 136:
+			case 156:
 				return true;
 		}
 		return false;

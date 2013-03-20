@@ -173,6 +173,21 @@ public final class BlockType {
     public static final int WOODEN_BUTTON = 143;
     public static final int MOB_HEAD = 144;
     public static final int ANVIL = 145;
+    // 1.5.0
+    public static final int TRAPPED_CHEST = 146;
+    public static final int WEIGHTED_PRESSURE_PLATE_LIGHT = 147;
+    public static final int WEIGHTED_PRESSURE_PLATE_HEAVY = 148;
+    public static final int REDSTONE_COMPARATOR_OFF = 149;
+    public static final int REDSTONE_COMPARATOR_ON = 149;
+    public static final int DAYLIGHT_SENSOR = 151;
+    public static final int REDSTONE_BLOCK = 152;
+    public static final int NETHER_QUARTZ_ORE = 153;
+    public static final int HOPPER = 154;
+    public static final int QUARTZ_BLOCK = 155;
+    public static final int QUARTZ_STAIRS = 156;
+    public static final int ACTIVATOR_RAIL = 157;
+    public static final int DROPPER = 158;
+
 
     /**
      * Stores a list of dropped blocks for blocks.
@@ -317,6 +332,18 @@ public final class BlockType {
         blockDrops.put(143, 143);
         blockDrops.put(144, 144);
         blockDrops.put(145, 145);
+        blockDrops.put(146, 146);
+        blockDrops.put(147, 147);
+        blockDrops.put(148, 148);
+        blockDrops.put(149, 404);
+        blockDrops.put(150, 404);
+        blockDrops.put(151, 151);
+        blockDrops.put(152, 152);
+        blockDrops.put(153, 153);
+        blockDrops.put(154, 154);
+        blockDrops.put(155, 155);
+        blockDrops.put(156, 156);
+        blockDrops.put(157, 158);
     }
 
     /**
@@ -341,18 +368,24 @@ public final class BlockType {
                 || id == CARROT
                 || id == POTATOES
                 || id == SIGN_POST
-                || id == WALL_SIGN
+                || id == WALL_SIGN //requires block underneath? seriously?
                 || id == MINECART_TRACKS
                 || id == POWERED_RAIL
                 || id == DETECTOR_RAIL
-                || id == LEVER
+                || id == LEVER //requires block underneath? seriously?
                 || id == STONE_PRESSURE_PLATE
                 || id == WOODEN_PRESSURE_PLATE
                 || id == REDSTONE_TORCH_OFF
                 || id == REDSTONE_TORCH_ON
                 || id == REDSTONE_REPEATER_OFF
                 || id == REDSTONE_REPEATER_ON
-                || id == STONE_BUTTON;
+                || id == STONE_BUTTON //requires block underneath? seriously?
+        		|| id == WOODEN_BUTTON//requires block underneath? seriously?
+        		|| id == WEIGHTED_PRESSURE_PLATE_LIGHT
+        		|| id == WEIGHTED_PRESSURE_PLATE_HEAVY
+        		|| id == REDSTONE_COMPARATOR_OFF
+        		|| id == REDSTONE_COMPARATOR_ON
+        		|| id == ACTIVATOR_RAIL;
     }
 
     /**
@@ -402,7 +435,13 @@ public final class BlockType {
                 || id == CACTUS
                 || id == REED
                 || id == PORTAL
-                || id == FENCE_GATE;
+                || id == FENCE_GATE
+				|| id == WOODEN_BUTTON
+				|| id == WEIGHTED_PRESSURE_PLATE_LIGHT
+				|| id == WEIGHTED_PRESSURE_PLATE_HEAVY
+				|| id == REDSTONE_COMPARATOR_OFF
+				|| id == REDSTONE_COMPARATOR_ON
+        		|| id == ACTIVATOR_RAIL;
     }
 
     /**
@@ -451,7 +490,12 @@ public final class BlockType {
                 || id == END_PORTAL
                 || id == PUMPKIN_STEM
                 || id == MELON_STEM
-                || id == VINES;
+                || id == VINES
+				|| id == WEIGHTED_PRESSURE_PLATE_LIGHT
+				|| id == WEIGHTED_PRESSURE_PLATE_HEAVY
+				|| id == REDSTONE_COMPARATOR_OFF
+				|| id == REDSTONE_COMPARATOR_ON
+				|| id == ACTIVATOR_RAIL;
     }
 
     /**
@@ -529,7 +573,17 @@ public final class BlockType {
                 || id == CAULDRON
                 || id == FLOWER_POT
                 || id == MOB_HEAD
-                || id == END_PORTAL_FRAME;
+                || id == END_PORTAL_FRAME
+                || id == ANVIL
+                || id == WEIGHTED_PRESSURE_PLATE_LIGHT
+                || id == WEIGHTED_PRESSURE_PLATE_HEAVY
+                || id == REDSTONE_COMPARATOR_OFF
+                || id == REDSTONE_COMPARATOR_ON
+                || id == ACTIVATOR_RAIL
+                || id == QUARTZ_BLOCK
+                || id == QUARTZ_STAIRS
+                || id == HOPPER
+                ;
     }
 
     /**
@@ -579,7 +633,13 @@ public final class BlockType {
                 || id == IRON_DOOR
                 || id == TRIPWIRE_HOOK
                 || id == COMMAND_BLOCK
-                || id == TRAPDOOR;
+                || id == TRAPDOOR
+                || id == WEIGHTED_PRESSURE_PLATE_LIGHT
+                || id == WEIGHTED_PRESSURE_PLATE_HEAVY
+                || id == REDSTONE_COMPARATOR_OFF
+                || id == REDSTONE_COMPARATOR_ON
+                || id == ACTIVATOR_RAIL
+                || id == REDSTONE_BLOCK;
     }
     
     /**
@@ -593,11 +653,14 @@ public final class BlockType {
                 || id == DOUBLE_STEP
                 || id == STEP
                 || id == LOG
+                || id == WOOD
                 || id == SAPLING
                 || id == TALL_GRASS
                 || id == WOODEN_DOUBLE_SLAB
                 || id == WOODEN_SLAB
-                || id == STONE_BRICKS;
+                || id == STONE_BRICKS
+                || id == QUARTZ_BLOCK
+                ;
     }
     
     /**
@@ -646,6 +709,13 @@ public final class BlockType {
         		|| id == BIRCH_WOOD_STAIRS
         		|| id == JUNGLE_WOOD_STAIRS
                 || id == BREWING_STAND
+                || id == LOG
+                || id == QUARTZ_BLOCK
+                || id == REDSTONE_COMPARATOR_OFF
+                || id == REDSTONE_COMPARATOR_ON
+                || id == ACTIVATOR_RAIL
+                || id == QUARTZ_STAIRS
+                || id == HOPPER
                 ;
     }
     
@@ -658,7 +728,8 @@ public final class BlockType {
     public static boolean isRail(int id) {
         return id == MINECART_TRACKS
                 || id == POWERED_RAIL
-                || id == DETECTOR_RAIL;
+                || id == DETECTOR_RAIL
+                || id == ACTIVATOR_RAIL;
     }
 
     /**
