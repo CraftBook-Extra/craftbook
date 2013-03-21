@@ -17,12 +17,18 @@
  */
 
 import java.util.Iterator;
+import java.util.Set;
+
 
 import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.ic.*;
 
 
 public class MCX304 extends MCX140 {
+	// this is sensitive to timing, run immediately
+	protected final boolean runThreaded = false;
+	
+	protected final int defaultHeight = 4;
 	
 	//private final String TITLE = "REPEL FLOOR+";
     /**
@@ -56,88 +62,154 @@ public class MCX304 extends MCX140 {
      * @return
      */
 	@Override
-    public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
-    	
+	public String validateEnvironment(CraftBookWorld cbworld, Vector pos,
+			SignText sign) {
+
 		sign = UtilIC.getSignTextWithExtension(cbworld, pos, sign);
-		
-    	if(!sign.getLine1().isEmpty())
-    	{
-    		if(sign.getLine1().charAt(0) != '@' || sign.getLine1().length() < 2)
-    		{
-    			return "Line 1 must start with @ or left blank.";
-    		}
-    		
-    		String[] args = sign.getLine1().substring(1).split("\\+", 2);
-    		if(!UtilEntity.isValidEntityTypeID(args[0]))
-    		{
-    			return "Invalid name on Line 1";
-    		}
-    		
-    		if(args.length > 1 && !UtilEntity.isValidEntityTypeID(args[1]))
-    		{
-    			return "Invalid rider name on Line 1";
-    		}
-    		
-    		settings = sign.getLine1().substring(1);
-    	}
-    	else
-    	{
-    		settings = "CREATURE";
-    	}
-    	
-    	if(!sign.getLine3().isEmpty())
-    	{
-    		try
-    		{
-    			String[] params = sign.getLine3().split(":", 3);
-    			double forcex = Double.parseDouble(params[0]);
-    			if(forcex < -10 || forcex > 10)
-    				return "3rd line force values must be a number from -10 to 10";
-    			
-    			if(params.length > 1)
-    			{
-    				double forcey = Double.parseDouble(params[1]);
-    				if(forcey < -10 || forcey > 10)
-    					return "3rd line force values must be a number from -10 to 10";
-    				
-    				if(params.length > 2)
-    				{
-    					double forcez = Double.parseDouble(params[2]);
-        				if(forcez < -10 || forcez > 10)
-        					return "3rd line force values must be a number from -10 to 10";
-    				}
-    				else
-    				{
-    					sign.setLine3(forcex+":"+forcey+":0");
-    				}
-    			}
-    			else
-				{
-					sign.setLine3(forcex+":0:0");
+
+		if (!sign.getLine1().isEmpty()) {
+			if (sign.getLine1().charAt(0) != '@'
+					|| sign.getLine1().length() < 2) {
+				return "Line 1 must start with @ or left blank.";
+			}
+
+			String[] args = sign.getLine1().substring(1).split("\\+", 2);
+			if (!UtilEntity.isValidEntityTypeID(args[0])) {
+				return "Invalid name on Line 1";
+			}
+
+			if (args.length > 1 && !UtilEntity.isValidEntityTypeID(args[1])) {
+				return "Invalid rider name on Line 1";
+			}
+
+			settings = sign.getLine1().substring(1);
+		} else {
+			settings = "CREATURE";
+		}
+
+		if (!sign.getLine3().isEmpty()) {
+			try {
+				String[] params = sign.getLine3().split(":", 3);
+				double forcex = Double.parseDouble(params[0]);
+				if (forcex < -10 || forcex > 10)
+					return "3rd line force values must be a number from -10 to 10";
+
+				if (params.length > 1) {
+					double forcey = Double.parseDouble(params[1]);
+					if (forcey < -10 || forcey > 10)
+						return "3rd line force values must be a number from -10 to 10";
+
+					if (params.length > 2) {
+						double forcez = Double.parseDouble(params[2]);
+						if (forcez < -10 || forcez > 10)
+							return "3rd line force values must be a number from -10 to 10";
+					} else {
+						sign.setLine3(forcex + ":" + forcey + ":0");
+					}
+				} else {
+					sign.setLine3(forcex + ":0:0");
 				}
-    		}
-    		catch(NumberFormatException e)
-    		{
-    			return "3rd line must be numbers";
-    		}
-    	}
-    	
-    	if(!sign.getLine4().isEmpty())
-    	{
-    		String out = UtilIC.isValidDimensions(sign.getLine4(), "4th", 1,16, 1,16, 1,16,   -10,10, -10,10, -10,10);
-    		if(out != null)
-    			return out;
-    	}
-    	
-        return null;
-    }
+			} catch (NumberFormatException e) {
+				return "3rd line must be numbers";
+			}
+		}
+
+		if (!sign.getLine4().isEmpty()) {
+			String out = UtilIC.isValidDimensions(sign.getLine4(), "4th", 1,
+					16, 1, 16, 1, 16, -10, 10, -10, 10, -10, 10);
+			if (out != null)
+				return out;
+		}
+
+		return null;
+	}
 	
-	protected int defaultHeight()
-    {
-    	return 4;
+    @Override
+    public ResultHandlerWithOutput rhFactory(ChipState chip) {
+    	double[] applyForce = getForces(chip.getText());
+    	return new RHRepelEntity(chip, applyForce);
     }
     
     @Override
+    public CBXEntityFinder.BaseEntityFilter beFilterFactory(ChipState chip) {
+		//MCX304 has entity+rider on the first line
+    	SignText text = UtilIC.getSignTextWithExtension(chip);
+    	String[] args = text.getLine1().split("\\+", 2);
+    	String entityName = (args[0].charAt(0) == '%' || args[0].charAt(0) == '^')?args[0].substring(1):args[0];
+    	String riderName = args.length > 1 ? args[1] : null;
+    	return new FilterEntityAndRider(entityName, riderName);
+    }
+	
+   
+    protected static double[] getForces(SignText text)
+	{
+		if(!text.getLine3().isEmpty())
+		{
+			double[] forces = new double[3];
+			String[] params = text.getLine3().split(":",3);
+			forces[0] = Double.parseDouble(params[0]);
+			forces[1] = Double.parseDouble(params[1]);
+			forces[2] = Double.parseDouble(params[2]);
+			return forces;
+		}
+		return new double[]{0.0D, 2.0D, 0.0D};
+	}
+
+    /**
+     * Repels the entities. Must be run in server thread!
+     * @author Stefan Steinheimer
+     *
+     */
+    public static class RHRepelEntity extends ResultHandlerWithOutput {
+
+    	private final double[] FORCE;
+    	
+		public RHRepelEntity(ChipState chip, double[] force) {
+			super(chip);
+    		this.FORCE = force;
+    		//clamp force to configured maximum
+			if (FORCE != null) {
+				int maxICForce = Bounce.maxICForce;
+				if(FORCE[0] > maxICForce)
+					FORCE[0] = maxICForce;
+				else if(FORCE[0] < -maxICForce)
+					FORCE[0] = -maxICForce;
+				if(FORCE[1] > maxICForce)
+					FORCE[1] = maxICForce;
+				else if(FORCE[1] < -maxICForce)
+					FORCE[1] = -maxICForce;
+				if(FORCE[2] > maxICForce)
+					FORCE[2] = maxICForce;
+				else if(FORCE[2] < -maxICForce)
+					FORCE[2] = -maxICForce;
+			}
+		}
+
+		@Override
+		public void handleResult(Set<BaseEntity> foundEntities) {
+			try {
+				boolean found = false;
+				for (BaseEntity bEntity : foundEntities) {
+					if (FORCE == null) break;
+					if (bEntity != null 
+							&& bEntity.getWorld().isChunkLoaded((int)bEntity.getX(), (int)bEntity.getY(), (int)bEntity.getZ())
+							&& !bEntity.isDead()) {
+						found = true;
+						bEntity.setMotionX(FORCE[0]);
+						bEntity.setMotionY(FORCE[1]);
+						bEntity.setMotionZ(FORCE[2]);
+					}
+				}
+				setOutput(found);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+    }
+    
+    // old stuff --------------------------------------------------
+	@Override
+	@Deprecated
     protected void detectEntity(World world, Vector lever, BlockArea area, ChipState chip)
     {
     	SignText text = UtilIC.getSignTextWithExtension(chip);
@@ -149,20 +221,7 @@ public class MCX304 extends MCX140 {
         etc.getServer().addToServerQueue(detectEntity);
     }
     
-    protected static double[] getForces(SignText text)
-    {
-    	if(!text.getLine3().isEmpty())
-    	{
-    		double[] forces = new double[3];
-    		String[] params = text.getLine3().split(":",3);
-    		forces[0] = Double.parseDouble(params[0]);
-    		forces[1] = Double.parseDouble(params[1]);
-    		forces[2] = Double.parseDouble(params[2]);
-    		return forces;
-    	}
-    	return new double[]{0.0D, 2.0D, 0.0D};
-    }
-    
+	@Deprecated
     public class DetectEntityRepel implements Runnable
     {
     	private final BlockArea AREA;

@@ -32,7 +32,8 @@ import com.sk89q.craftbook.ic.ChipState;
  */
 
 public class MCX140 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory{
-	public static final int defaultHeight = 1;
+	protected final int defaultHeight = 1;
+	protected final boolean runThreaded = true;
 	
     /**
      * Get the title of the IC.
@@ -157,10 +158,14 @@ public class MCX140 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 	        CBXEntityFinder entityFinder=new CBXEntityFinder(chip.getCBWorld(), searchCenter, maxDistance, rhFactory(chip));
 	        entityFinder.setDistanceCalculationMethod(new CBXinRangeBlockArea(area));
 	        entityFinder.addCustomFilter(beFilterFactory(chip));
-	        try {
-	        	CraftBook.cbxScheduler.execute(entityFinder);
-	        } catch (RejectedExecutionException e) {
-	        	// cbx is being disabled or reloaded
+	        if (runThreaded) {
+		        try {
+		        	CraftBook.cbxScheduler.execute(entityFinder);
+		        } catch (RejectedExecutionException e) {
+		        	// cbx is being disabled or reloaded
+		        }
+	        } else {
+	        	entityFinder.run();
 	        }
 	        //detectEntity(world, lever, area, chip);
     	}
@@ -186,7 +191,8 @@ public class MCX140 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
     		}
     	}
     }
-   
+
+    
     @Override
     public ResultHandlerWithOutput rhFactory(ChipState chip) {
     	return new RHSetOutIfFound(chip);
