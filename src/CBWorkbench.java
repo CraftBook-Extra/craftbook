@@ -8,7 +8,7 @@ public class CBWorkbench extends OBlockWorkbench
 	{
 		super(arg0);
 		c(2.5F);
-		a(OBlock.e);
+		a(OBlock.g);
 	}
 	
 	@SuppressWarnings("unchecked")

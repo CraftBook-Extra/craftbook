@@ -30,11 +30,11 @@ public class ItemArrayUtil {
      * @param minecart
      * @param bag
      */
-    public static void moveItemArrayToChestBag(ItemArray<?> from,
+    public static void moveItemArrayToChestBag(StorageMinecart from,
             NearbyChestBlockBag bag) {
     	moveItemArrayToChestBag(from, bag, 0, -1, 0);
     }
-	public static void moveItemArrayToChestBag(ItemArray<?> from,
+	public static void moveItemArrayToChestBag(StorageMinecart from,
             NearbyChestBlockBag bag, int itemType, int itemColor, int itemAmount) {
     	
         Item[] fromItems = from.getContents();
@@ -146,7 +146,7 @@ public class ItemArrayUtil {
      * @param to
      * @param bag
      */
-    public static void moveChestBagToItemArray(ItemArray<?> to,
+    public static void moveChestBagToItemArray(StorageMinecart to,
             NearbyChestBlockBag bag) {
     	
     	moveChestBagToItemArray(to, bag, 0, -1, 0);
@@ -157,7 +157,7 @@ public class ItemArrayUtil {
      * I guess sk89q, didn't work properly and used more resources
      * than should have (using exceptions to break? o_O)
      */
-    public static void moveChestBagToItemArray(ItemArray<?> to,
+    public static void moveChestBagToItemArray(StorageMinecart to,
             NearbyChestBlockBag bag, int itemType, int itemColor, int itemAmount) {
     	
         Item[] toItems = to.getContents();

@@ -21,28 +21,33 @@ public class UtilEntity
 {
     protected static double prevX(OEntity oentity)
     {
-        return oentity.q;
+    	//Entity.field_70169_q
+        return oentity.r;
     }
     
     protected static double prevY(OEntity oentity)
     {
-        return oentity.r;
+    	//field_70167_r
+        return oentity.s;
     }
     
     protected static double prevZ(OEntity oentity)
     {
-        return oentity.s;
+    	//field_70166_s
+        return oentity.t;
     }
     
     protected static void setPosition(OEntity oentity, double x, double y, double z)
     {
+    	//field_70152_a
         oentity.b(x, y, z);
     }
     
     //mainly used to set "false"
     protected static void setDead(OEntity oentity, boolean isDead)
     {
-        oentity.L = isDead;
+    	//func_70067_L
+        oentity.K = isDead;
     }
     
     protected static void dismount(OEntity oentity)
@@ -57,12 +62,14 @@ public class UtilEntity
     
     protected static void removeEntity(OWorld oworld, OEntity oentity)
     {
+    	//func_72973_f
         oworld.f(oentity);
     }
     
     protected static void onUpdate(OEntity oentity)
     {
-        oentity.j_();
+    	//func_70071_h_
+        oentity.l_();
     }
     
     protected static void updateEntityWithOptionalForce(OWorld oworld, OEntity oentity, boolean forceUpdate)
@@ -72,7 +79,8 @@ public class UtilEntity
     
     protected static double getMountedYOffset(OEntity oentity)
     {
-        return oentity.X();
+    	//func_70042_X
+        return oentity.W();
     }
     
     protected static OEntityPlayer getClosestPlayerToEntity(OWorld oworld, OEntity oentity, double distance)
@@ -314,9 +322,11 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityWolf wolf = (OEntityWolf)entity.getEntity();
-			    		return (color == 2 && wolf.bK())
+			    		//func_70919_bu
+			    		return (color == 2 && wolf.bU())
+			    				//func_70685_l
 			    				|| (color == 1 && wolf.n())
-			    				|| (color == 0 && !wolf.bK() && !wolf.n() && !wolf.m());
+			    				|| (color == 0 && !wolf.bU() && !wolf.n() && !wolf.m());
 			    	}
 			    	else if(entityName.equals("Ozelot") && (entity.getEntity() instanceof OEntityOcelot))
 			    	{

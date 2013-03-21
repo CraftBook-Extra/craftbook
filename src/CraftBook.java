@@ -165,21 +165,21 @@ public class CraftBook extends Plugin {
         	if(wdata.d())
         	{
         		//force save-all
-        		odefaultWorld.A.a();
+        		odefaultWorld.z.a();
         	}
         	
         	try {
-            	Field field = odefaultWorld.A.getClass().getDeclaredField("b");
+            	Field field = odefaultWorld.z.getClass().getDeclaredField("b");
             	field.setAccessible(true);
             	
             	@SuppressWarnings("rawtypes")
-				HashMap loadedDataMap = (HashMap)field.get(odefaultWorld.A);
+				HashMap loadedDataMap = (HashMap)field.get(odefaultWorld.z);
             	
-            	field = odefaultWorld.A.getClass().getDeclaredField("c");
+            	field = odefaultWorld.z.getClass().getDeclaredField("c");
             	field.setAccessible(true);
             	
             	@SuppressWarnings("rawtypes")
-				ArrayList loadedDataList = (ArrayList)field.get(odefaultWorld.A);
+				ArrayList loadedDataList = (ArrayList)field.get(odefaultWorld.z);
             	
             	loadedDataList.remove(loadedDataMap.remove("craftbook"));
             } catch (SecurityException e) {
@@ -192,13 +192,13 @@ public class CraftBook extends Plugin {
     			e.printStackTrace();
     		}
         	
-        	wdata = odefaultWorld.A.a(CBData.class, "craftbook");
+        	wdata = odefaultWorld.z.a(CBData.class, "craftbook");
         }
         
         if(wdata == null)
         {
         	CraftBook.cbdata = new CBData();
-			odefaultWorld.A.a("craftbook", CraftBook.cbdata);
+			odefaultWorld.z.a("craftbook", CraftBook.cbdata);
         }
         else
         {

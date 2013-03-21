@@ -221,8 +221,9 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 				        			int bz = mVec.getBlockZ();
 				        			
 				        			oworld.c(bx, by, bz, 0);
-				        			oworld.h(bx, by, bz, bdata);
-				        			oworld.h(bx, by - 1, bz, bdata);
+				        			//Worlds.func_72898_h
+				        			oworld.f(bx, by, bz, bdata);
+				        			oworld.f(bx, by - 1, bz, bdata);
 				        			oworld.e(bx, by, bz, bx, by, bz);
 				        		}
 				    		}
@@ -311,8 +312,9 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
         			int bz = mVec.getBlockZ();
         			
         			oworld.c(bx, by, bz, 0);
-        			oworld.h(bx, by, bz, bdata);
-        			oworld.h(bx, by - 1, bz, bdata);
+        			//World.func_72898_h
+        			oworld.f(bx, by, bz, bdata);
+        			oworld.f(bx, by - 1, bz, bdata);
         			oworld.e(bx, by, bz, bx, by, bz);
         		}
     		}

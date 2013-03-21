@@ -7,7 +7,7 @@ public class CBContainerShelf extends OContainer
 	public CBContainerShelf(OIInventory oiinventory, OIInventory oiinventory1)
 	{
 		this.a = oiinventory1;
-        this.f = oiinventory1.k_() / 9;
+        this.f = oiinventory1.j_() / 9;
         
         int i = (this.f - 4) * 18;
 
@@ -37,33 +37,35 @@ public class CBContainerShelf extends OContainer
 	
 	  public boolean a(OEntityPlayer paramOEntityPlayer)
 	  {
-	    return this.a.a_(paramOEntityPlayer);
+	    return this.a.a(paramOEntityPlayer);
 	  }
 
-	  public OItemStack b(OEntityPlayer paramOEntityPlayer, int paramInt)
+	  public OItemStack b(OEntityPlayer oentityplayer, int i)
 	  {
-	    OItemStack localOItemStack1 = null;
-	    OSlot localOSlot = (OSlot)this.c.get(paramInt);
-	    if ((localOSlot != null) && (localOSlot.d())) {
-	      OItemStack localOItemStack2 = localOSlot.c();
-	      localOItemStack1 = localOItemStack2.l();
+	        OItemStack oitemstack = null;
+	        OSlot oslot = (OSlot) this.c.get(i);
 
-	      if (paramInt < this.f * 9) {
-	        if (!a(localOItemStack2, this.f * 9, this.c.size(), true)) {
-	          return null;
+	        if (oslot != null && oslot.d()) {
+	            OItemStack oitemstack1 = oslot.c();
+
+	            oitemstack = oitemstack1.m();
+	            if (i < this.f * 9) {
+	                if (!this.a(oitemstack1, this.f * 9, this.c.size(), true)) {
+	                    return null;
+	                }
+	            } else if (!this.a(oitemstack1, 0, this.f * 9, false)) {
+	                return null;
+	            }
+
+	            if (oitemstack1.a == 0) {
+	                oslot.c((OItemStack) null);
+	            } else {
+	                oslot.e();
+	            }
 	        }
-	      }
-	      else if (!a(localOItemStack2, 0, this.f * 9, false)) {
-	        return null;
-	      }
 
-	      if (localOItemStack2.a == 0)
-	        localOSlot.c(null);
-	      else {
-	        localOSlot.e();
-	      }
-	    }
-	    return localOItemStack1;
+	        return oitemstack;
+
 	  }
 
 	  public void b(OEntityPlayer paramOEntityPlayer)
@@ -72,7 +74,7 @@ public class CBContainerShelf extends OContainer
 	    this.a.f();
 	  }
 
-	  public OIInventory d() {
+	  public OIInventory e() {
 	    return this.a;
 	  }
 }

@@ -110,6 +110,7 @@ public class EntitySitting extends OEntityEnderEye
 			case 134:
 			case 135:
 			case 136:
+			case 156:
 				return true;
 		}
 		return false;
@@ -136,7 +137,8 @@ public class EntitySitting extends OEntityEnderEye
 			|| id == 107 //fence gate
 			|| id == 113 //nether brick fence
 			|| id == 139 //cobblestone wall
-			|| OBlock.p[id].e(world.getWorld(), x, y, z) == null) {
+			//Block.field_71973_m[id].func_71872_e()
+			|| OBlock.r[id].b(world.getWorld(), x, y, z) == null) {
 			return false;
 		}
 		return true;
@@ -155,8 +157,8 @@ public class EntitySitting extends OEntityEnderEye
 	}
 	
 	@Override
-	//onUpdate
-	public void j_()
+	//onUpdate func_70071_h_
+	public void l_()
 	{
 		BaseEntity rider = this.BASE_ENTITY.getRiddenByEntity();
 		if(rider != null && rider.isDead())
@@ -197,8 +199,8 @@ public class EntitySitting extends OEntityEnderEye
 	}
 	
 	@Override
-	//getMountedYOffset
-	public double X()
+	//getMountedYOffset func_70042_X
+	public double W()
 	{
 		return MOUNTED_OFFSET_Y;
 	}
