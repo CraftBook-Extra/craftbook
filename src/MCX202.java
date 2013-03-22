@@ -117,6 +117,8 @@ public class MCX202 extends MCX201 {
         //find chest
         WorldBlockVector wbv = new WorldBlockVector(chip.getCBWorld(), chip.getPosition());
         CBXItemStorage storage = new CBXItemStorage();
+        storage.addAllowedStorageBlockType(Block.Type.Chest);
+        storage.addAllowedStorageBlockType(Block.Type.TrappedChest);
         boolean found = storage.addNearbyStorageBlocks(wbv);
         if (! found) return; // no chest found
         

@@ -152,7 +152,7 @@ public class RedstoneListener extends CraftBookDelegateListener
                     CraftBook.dropSign(world, sign.getX(), sign.getY(), sign.getZ());
                     return true;
                 } else {
-                	
+                	// TODO: rewrite option system
                 	String options = line2.substring(8);
             		switch(options.length())
             		{
@@ -179,7 +179,7 @@ public class RedstoneListener extends CraftBookDelegateListener
 	                		int[][] orders = getIOOrder(options);
 	                		if(orders[0] == null && orders[1] == null)
 	                		{
-	                			options = "";
+	                			//options = "";
 	                			//player.sendMessage(Colors.Rose + "Unrecognized options: " + line2.substring(8));
 	                		}
 	                		else

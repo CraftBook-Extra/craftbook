@@ -18,7 +18,9 @@
  */
 
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.regex.Pattern;
 
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
@@ -33,6 +35,7 @@ import com.sk89q.craftbook.ic.ChipState;
  * @author Stefan Steinheimer (nosefish)
  */
 public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHWithOutputFactory{
+	
     /**
      * Get the title of the IC.
      *
@@ -63,8 +66,11 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
      */
 	@Override
     public String validateEnvironment(CraftBookWorld cbworld, Vector pos, SignText sign) {
-        String id = sign.getLine3();
-
+		String options = sign.getLine2().substring(8);
+		if (!Pattern.matches("[cCtTdDrRhH]*", options)) {
+			return "Line 2 - valid options characters: (C)hest,  (T)rapped Chest, (D)ispenser, D(R)opper, (H)opper."; 
+		}
+		String id = sign.getLine3();
         if (id.length() > 0) {
         	String[] args = id.split(":", 2);
             int color = getColor(args);
@@ -89,7 +95,7 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 	        try	{
 	        	double dist = Double.parseDouble(distanceAndOffset[0]);
 	        	if(dist < 1.0D || dist > 64.0D) {
-	        		return "4th line must be a number from 1 to 64.";
+	        		return "Radius on 4th line must be a number from 1 to 64.";
 	        	}
 	        } catch(NumberFormatException e) {
 	        	return "Radius on 4th line must be a number from 1 to 64.";
@@ -215,9 +221,30 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 	 */
     private class ItemChestCollector extends RHSetOutIfFound{
     	WorldBlockVector chestVector = null;
+        Set<Integer> storageTypes = new TreeSet<Integer>();;
+        
     	
     	public ItemChestCollector(ChipState chip) {
     		super(chip);
+    		String options = chip.getText().getLine2().substring(8);
+    		for (int i = 0; i < options.length(); i++) {
+      			switch (options.charAt(i)) {
+      			case 'c':
+    			case 'C': storageTypes.add(Block.Type.Chest.getType()); break;
+    			case 't':
+    			case 'T': storageTypes.add(Block.Type.TrappedChest.getType()); break;
+    			case 'd':
+    			case 'D': storageTypes.add(Block.Type.Dispenser.getType()); break;
+    			case 'r':
+    			case 'R': storageTypes.add(Block.Type.Dropper.getType()); break;
+    			case 'h':
+    			case 'H':storageTypes.add(Block.Type.Hopper.getType()); break;
+    			}
+    		}
+    		if (storageTypes.isEmpty()) {
+    			storageTypes.add(Block.Type.Chest.getType());
+    			storageTypes.add(Block.Type.TrappedChest.getType());
+    		}
     		String[] distanceAndOffset = chip.getText().getLine4().split(":");
     		if (distanceAndOffset.length == 4) {
 	        	try	{
@@ -255,6 +282,7 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 						// only search for storage blocks if there is something to store
 						if (storage == null) {
 							storage = new CBXItemStorage();
+							storage.addAllowedStorageBlockIds(storageTypes);
 							if (chestVector == null) {
 								// no chest specified, search
 					        	if (!storage.addNearbyStorageBlocks(

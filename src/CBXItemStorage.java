@@ -1,7 +1,9 @@
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.sk89q.craftbook.WorldBlockVector;
 
@@ -10,6 +12,35 @@ public class CBXItemStorage {
 	private List<Inventory> storage = new LinkedList<Inventory>();
 	private Set<Inventory> changedInventories = new HashSet<Inventory>(8);
 	private Set<WorldBlockVector> positions = new HashSet<WorldBlockVector>(8);
+	private Set<Integer> allowedBlocks = new TreeSet<Integer>();
+	
+	
+	/** There must be at least one type of storage block allowed, or you won't be able
+	 *  to add storage blocks.
+	 * 
+	 * @param type Block.Type to allow as storage. Invalid types will be ignored.
+	 */
+	public void addAllowedStorageBlockType(Block.Type type) {
+		allowedBlocks.add(type.getType());
+	}
+	
+	/** There must be at least one type of storage block allowed, or you won't be able
+	 *  to add storage blocks.
+	 * 
+	 * @param type block id to allow as storage. Invalid types will be ignored.
+	 */
+	public void addAllowedStorageBlockType(int type) {
+		allowedBlocks.add(type);
+	}
+
+	/** There must be at least one type of storage block allowed, or you won't be able
+	 *  to add storage blocks.
+	 * 
+	 * @param type block ids to allow as storage. Invalid types will be ignored.
+	 */
+	public void addAllowedStorageBlockIds(Collection<Integer> type) {
+		allowedBlocks.addAll(type);
+	}
 	
 	/**
 	 * Stores an Item.
@@ -127,11 +158,9 @@ public class CBXItemStorage {
 		World world = CraftBook.getWorld(wbv.getCBWorld());
 		ComplexBlock cBlock = world.getComplexBlock(wbv.getBlockX(), wbv.getBlockY(), wbv.getBlockZ());
 		if (cBlock == null) return false;
-		WorldBlockVector cBlockPos = new WorldBlockVector(wbv.getCBWorld(),cBlock.getX(), cBlock.getY(), cBlock.getZ());;
-		if (cBlock instanceof Chest 
-				|| cBlock instanceof DoubleChest
-				//|| cBlock instanceof Dispenser
-				) {
+		if (! allowedBlocks.contains(cBlock.getBlock().getType())) return false;
+		if (cBlock instanceof Inventory) {
+			WorldBlockVector cBlockPos = new WorldBlockVector(wbv.getCBWorld(),cBlock.getX(), cBlock.getY(), cBlock.getZ());;
 			if (positions.add(cBlockPos)) {
 				storage.add((Inventory) cBlock);
 			}
