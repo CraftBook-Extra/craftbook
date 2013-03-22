@@ -22,8 +22,7 @@ public class CBXItemStorage {
 		for (Inventory inventory : storage) {
 			if (item.getAmount() > 0) {
 				int amountBefore=item.getAmount();
-				//allStored = inventory.insertItem(item); //bugged in Canary
-				allStored = canaryIssue117WorkaroundInsert(inventory, item);
+				allStored = storeItem(inventory, item);
 				if (item.getAmount() != amountBefore) {
 					changedInventories.add(inventory);
 				}
@@ -35,28 +34,33 @@ public class CBXItemStorage {
 		return allStored;
 	}
 	
-	// Canary issue 117: ItemArry.insert removes NBT data and enchantments when storing items
-	public boolean canaryIssue117WorkaroundInsert(Inventory inv, Item item) {
-		Item[] contents = inv.getContents();
-		 // stack if possible
+		
+	public static boolean storeItem(Inventory inv, Item item) {
+		Item[] storageArray = inv.getContents();
+		// stack if possible
 		if (item.getEnchantment() == null 
-					|| InventoryListener.allowEnchantableItemStacking) {
-			for (int slot = 0; slot < inv.getContentsSize(); slot ++) {
-				 if (contents[slot] == null) continue;
-				 int freeSpace = contents[slot].getMaxAmount() - contents[slot].getAmount(); 
-				 if (freeSpace > 0
-						 && contents[slot].getItemId() == item.getItemId()
-						 && contents[slot].getColor() == item.getColor()
-						 && (contents[slot].getDataTag() == null
-						 	||contents[slot].getDataTag().equals(item.getDataTag()))
-						 && (contents[slot].getEnchantment() == null
-							|| contents[slot].getEnchantments().equals(item.getEnchantments()))) {
-					 int storeAmount = (item.getAmount() > freeSpace) ? freeSpace : item.getAmount();
-					 contents[slot].setAmount(contents[slot].getAmount() + storeAmount);
-					 item.setAmount(item.getAmount() - storeAmount);
-					 if (item.getAmount() < 1) {
-						 return true;
-					 }
+				|| InventoryListener.allowEnchantableItemStacking) {
+			for (int slot = 0; slot < storageArray.length; slot ++) {
+				if (storageArray[slot] == null) continue;
+				int maxAmount = storageArray[slot].getMaxAmount();
+				if (item.getType().equals(Item.Type.Minecart)) {
+					//stack minecarts
+					maxAmount = 64;
+				}
+				int freeSpace = maxAmount - storageArray[slot].getAmount(); 
+				if (freeSpace > 0
+						&& storageArray[slot].getItemId() == item.getItemId()
+						&& storageArray[slot].getColor() == item.getColor()
+						&& (storageArray[slot].getDataTag() == null
+						||storageArray[slot].getDataTag().equals(item.getDataTag()))
+						&& (storageArray[slot].getEnchantment() == null
+						|| storageArray[slot].getEnchantments().equals(item.getEnchantments()))) {
+					int storeAmount = (item.getAmount() > freeSpace) ? freeSpace : item.getAmount();
+					storageArray[slot].setAmount(storageArray[slot].getAmount() + storeAmount);
+					item.setAmount(item.getAmount() - storeAmount);
+					if (item.getAmount() < 1) {
+						return true;
+					}
 				}
 			}
 		}
@@ -126,7 +130,8 @@ public class CBXItemStorage {
 		WorldBlockVector cBlockPos = new WorldBlockVector(wbv.getCBWorld(),cBlock.getX(), cBlock.getY(), cBlock.getZ());;
 		if (cBlock instanceof Chest 
 				|| cBlock instanceof DoubleChest
-				|| cBlock instanceof Dispenser) {
+				//|| cBlock instanceof Dispenser
+				) {
 			if (positions.add(cBlockPos)) {
 				storage.add((Inventory) cBlock);
 			}
@@ -137,7 +142,7 @@ public class CBXItemStorage {
 	
 	
 	/**
-	 * Adds all storage blocks in a 3x3x3 cube centered around wbv to be used as storage space
+	 * Adds all storage blocks in a 7x7x7 cube centered around wbv to be used as storage space.
 	 * @param wbv
 	 * @return true, if at least one storage block was added, false if no suitable block was found
 	 */
@@ -155,8 +160,9 @@ public class CBXItemStorage {
 	}
 	
 	/**
-	 * Adds all storage blocks in a 2x2x2 cube centered around wbv,
-	 * as well as those located 2 and 3 blocks directly above to be used as storage space,
+	 * Adds all storage blocks in a 5x5x2 cuboid centered around wbv,
+	 * as well as those located 2 and 3 blocks directly above to be used as storage space.
+	 * Used for [Deposit]/[Collect].
 	 * 
 	 * @param wbv
 	 * @return true, if at least one storage block was added, false if no suitable block was found
@@ -179,68 +185,93 @@ public class CBXItemStorage {
 		return addedAtLeastOne;
 	}
 
-	/** Stores all items from the source array that match the criteria.
-	 * 
-	 * @param source The items to store. The amount of the items will be reduced by the amount stored. Stacks that are stored completely will be set to null.
-	 * @param id Item id to be stored, negative values match all
-	 * @param dataValue Data value of items to be stored, negative values match all 
-	 * @param amount Number of items to store, use 0 to store all that match
-	 * @return true, if the desired amount was transferred, false otherwise
-	 */
-	public boolean storeItemsFromArray(Item[] source, int id, int dataValue, int amount ) {
-		boolean allStored=false;
-		int amountToStore = amount;
-		for (int slot = 0; slot < source.length; slot++) {
-			if (matchItem(source[slot], id, dataValue)) {
-				if (amount == 0) {
-					// store everything
-					storeItem(source[slot]);
-				} else {
-					// keep track of amount
-					if (amountToStore > 0) {
-						int amountToStoreNow = Math.min(amountToStore, source[slot].getAmount());
-						Item itemToStore = source[slot].clone();
-						itemToStore.setAmount(amountToStoreNow);
-						storeItem(itemToStore);
-						int amountStored = amountToStoreNow - itemToStore.getAmount();
-						source[slot].setAmount(source[slot].getAmount() - amountStored);
-						amountToStore -= amountStored;
-					}
-				}
-				// set empty slots to null
-				if (source[slot].getAmount() < 1) {
-					source[slot] = null;
-				}
-			}
-		}
-		// has the desired amount been stored?
-		if (amount == 0) {
-			// check if there are any matching items left in the source array
-			allStored = true;
-			for (Item item : source) {
-				if (matchItem(item, id, dataValue) ){
-					allStored = false;
-					break;
-				}
-			}	
-		} else {
-			// check if there is anything left to store
-			allStored = (amountToStore < 1);
-		}
-		return allStored;
-	}
-	
-	
-	/**
-	 * Takes items that match criteria out of storage and puts them into the target array.
-	 * @param target
-	 * @param id
-	 * @param color
-	 * @param amount
-	 */
-	public void fetchItemsToArray(Item[] target, int id, int color, int amount ) {
-		//TODO: implement
-	}
+//	/** Stores all items from the source array that match the criteria.
+//	 * 
+//	 * @param source The items to store. The amount of the items will be reduced by the amount stored. Stacks that are stored completely will be set to null.
+//	 * @param id Item id to be stored, negative values match all
+//	 * @param dataValue Data value of items to be stored, negative values match all 
+//	 * @param amount Number of items to store, use 0 to store all that match
+//	 * @return true, if the desired amount was transferred, false otherwise
+//	 */
+//	public boolean storeItemsFromArray(Item[] source, int id, int dataValue, int amount ) {
+//		boolean allStored=false;
+//		int amountToStore = amount;
+//		for (int slot = 0; slot < source.length; slot++) {
+//			if (matchItem(source[slot], id, dataValue)) {
+//				if (amount == 0) {
+//					// store everything
+//					storeItem(source[slot]);
+//				} else {
+//					// keep track of amount
+//					if (amountToStore > 0) {
+//						int amountToStoreNow = Math.min(amountToStore, source[slot].getAmount());
+//						Item itemToStore = source[slot].clone();
+//						itemToStore.setAmount(amountToStoreNow);
+//						storeItem(itemToStore);
+//						int amountStored = amountToStoreNow - itemToStore.getAmount();
+//						source[slot].setAmount(source[slot].getAmount() - amountStored);
+//						amountToStore -= amountStored;
+//					}
+//				}
+//				// set empty slots to null
+//				if (source[slot].getAmount() < 1) {
+//					source[slot] = null;
+//				}
+//			}
+//		}
+//		// has the desired amount been stored?
+//		if (amount == 0) {
+//			// check if there are any matching items left in the source array
+//			allStored = true;
+//			for (Item item : source) {
+//				if (matchItem(item, id, dataValue) ){
+//					allStored = false;
+//					break;
+//				}
+//			}	
+//		} else {
+//			// check if there is anything left to store
+//			allStored = (amountToStore < 1);
+//		}
+//		return allStored;
+//	}
+//	
+//	
+//	/**
+//	 * Takes items that match criteria out of storage and puts them into the target array.
+//	 * @param target
+//	 * @param id
+//	 * @param color
+//	 * @param amount
+//	 */
+//	//TODO: test
+//	public void fetchItemsToArray(Item[] target, int id, int datavalue, int amount ) {
+//		final int EVERYTHING = 10000000;
+//		int amountToFetch = (amount > 0) ? amount : EVERYTHING;
+//		int completed = 0;
+//		// Temporary space for Items we can't put into target. Ugly, but simple.
+//		// TODO: change because this wastes resources
+//		List<Item> itemsToReturn = new LinkedList<Item>();
+//		while (completed < amountToFetch) {
+//			//fetch items from storage
+//			Item item = this.fetchItem(id, datavalue, amountToFetch - completed);
+//			if (item == null) break; // storage doesn't have the item
+//			int amountBefore = item.getAmount(); 
+//			//put as many as possible into target
+//			storeItem(target, item);
+//			int amountTransferred = amountBefore - item.getAmount();
+//			completed += amountTransferred;
+//			// If it doesn't fit, put it aside to return it later.
+//			// Can't put it back now or we'll fetch it again in an endless loop.
+//			if (item.getAmount() > 0) {
+//				itemsToReturn.add(item);
+//			}
+//		}
+//		//store remaining items
+//		for (Item toReturn : itemsToReturn) {
+//			storeItem(toReturn);
+//		}
+//	}
 	
 	/**
 	 * Sends changes to players. Call when you're done storing and fetching for this tick. Don't forget!

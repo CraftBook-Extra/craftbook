@@ -335,7 +335,8 @@ public class MCX200 extends BaseIC {
     			return;
     		
     		OEntityPig pig = (OEntityPig)entity;
-    		pig.f(true);
+    		//setSaddled() func_70900_e
+    		pig.i(true);
     	}
 	}
     
