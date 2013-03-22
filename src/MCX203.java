@@ -20,7 +20,6 @@
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
-
 import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.SignText;
 import com.sk89q.craftbook.Vector;
@@ -82,16 +81,31 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
         
         if (sign.getLine4().length() > 0)
         {
-        	try
-        	{
-        		double dist = Double.parseDouble(sign.getLine4());
-        		if(dist < 1.0D || dist > 64.0D)
-        			return "4th line must be a number from 1 to 64.";
-        	}
-        	catch(NumberFormatException e)
-        	{
-        		return "4th line must be a number from 1 to 64.";
-        	}
+	        String[] distanceAndOffset = sign.getLine4().split(":");
+	        if (distanceAndOffset.length != 1 
+	        		&& distanceAndOffset.length != 4) {
+	        	return "Line 4 format must be a number from 1 to 64 for radius, or radius:x:y:z for radius and chest offset";
+	        }
+	        try	{
+	        	double dist = Double.parseDouble(distanceAndOffset[0]);
+	        	if(dist < 1.0D || dist > 64.0D) {
+	        		return "4th line must be a number from 1 to 64.";
+	        	}
+	        } catch(NumberFormatException e) {
+	        	return "Radius on 4th line must be a number from 1 to 64.";
+	        }
+	        if (distanceAndOffset.length == 4) {
+	        	try	{
+	        		for (int i = 1; i < 4; i++) {
+		        		int offset = Integer.parseInt(distanceAndOffset[i]);
+		        		if(offset < -3 || offset > 3) {
+		        			return "Offsets on 4th line must be numbers from -3 to +3.";
+		        		}
+	        		}
+	        	} catch(NumberFormatException e) {
+	        		return "Offsets on 4th line must be a number from -3 to +3.";
+	        	}
+	        }
         	
         }
 
@@ -164,9 +178,16 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
         }
         // set distance
         double dist = 16.0D;
-        if(chip.getText().getLine4().length() > 0)
-        {
-        	dist = Double.parseDouble(chip.getText().getLine4());
+        if(chip.getText().getLine4().length() > 0) {
+        	try {
+        		// radius is the first token on the last line - "r" or "r:x:y:z"
+        		dist = Double.parseDouble(chip.getText().getLine4().split(":")[0]);
+        	} catch(NumberFormatException e) {
+        		// Eat it for now.
+        		// This sign must have been placed without CBX active,
+        		// or validateEnvironment would have caught it
+        		//TODO: log it
+        	}
         }
         if(dist > RedstoneListener.chestCollectorMaxRange)
         	dist = RedstoneListener.chestCollectorMaxRange;
@@ -193,9 +214,27 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 	 *
 	 */
     private class ItemChestCollector extends RHSetOutIfFound{
+    	WorldBlockVector chestVector = null;
     	
     	public ItemChestCollector(ChipState chip) {
     		super(chip);
+    		String[] distanceAndOffset = chip.getText().getLine4().split(":");
+    		if (distanceAndOffset.length == 4) {
+	        	try	{
+	        		Vector offset = new Vector(
+	        								Integer.parseInt(distanceAndOffset[1]),
+	        								Integer.parseInt(distanceAndOffset[2]),
+	        								Integer.parseInt(distanceAndOffset[3]));
+	        		chestVector = new WorldBlockVector(
+		        						chip.getCBWorld(),
+		        						chip.getPosition().add(offset));
+	        	} catch(NumberFormatException e) {
+	        		// Eat it for now.
+	        		// This sign must have been placed without CBX active,
+	        		// or validateEnvironment would have caught it
+	        		// TODO: log it
+	        	}
+	        }
     	}
     	
 		@Override
@@ -216,12 +255,21 @@ public class MCX203 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 						// only search for storage blocks if there is something to store
 						if (storage == null) {
 							storage = new CBXItemStorage();
-				        	if (!storage.addNearbyStorageBlocks(
-				        			new WorldBlockVector(chip.getCBWorld(),
-				        			chip.getBlockPosition()))) {
-				        		// no storage block, no point trying to store items
-				        		break;
-				        	}
+							if (chestVector == null) {
+								// no chest specified, search
+					        	if (!storage.addNearbyStorageBlocks(
+					        			new WorldBlockVector(chip.getCBWorld(),
+					        			chip.getPosition()))) {
+					        		// no storage block, no point trying to store items
+					        		break;
+					        	}
+							} else {
+								// collect into specified chest only
+								if (! storage.addStorageBlock(chestVector)) {
+									// no storage block, no point trying to store items
+									break;
+								}
+							}
 						}
 						ItemEntity itemEntity = new ItemEntity((OEntityItem) bEntity.getEntity());
 						Item item = itemEntity.getItem();
