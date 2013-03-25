@@ -27,6 +27,13 @@ public class Bounce
 	protected static int maxICForce = 8;
 	public static ArrayList<Integer> allowedICBlocks;
 	
+	/**
+	 * 
+	 * @param entity
+	 * @param from
+	 * @param to
+	 * @return
+	 */
 	protected static boolean bounce(BaseEntity entity, Location from, Location to)
 	{
 		if(from.y <= to.y)
@@ -97,12 +104,19 @@ public class Bounce
 		if(applyForce != 0)
 		{
 		    entity.setMotionY(applyForce);
-		    Util.sendPacketToDimension(new OPacket28EntityVelocity(entity.getEntity()), cbworld);
+		    //Util.sendPacketToDimension(new OPacket28EntityVelocity(entity.getEntity()), cbworld);
 			return true;
 		}
 		return false;
 	}
 	
+	
+	/**
+	 * 
+	 * @param entity
+	 * @param from
+	 * @param to
+	 */
 	protected static void repel(BaseEntity entity, Location from, Location to)
 	{
 		if(icRepelAreas != null && icRepelAreas.size() > 0)
@@ -169,15 +183,18 @@ public class Bounce
 			
 			if(applyForce != null)
 			{
-				OEntity oentity = entity.getEntity();
-				oentity.w = applyForce[0];
-				oentity.x = applyForce[1];
-				oentity.y = applyForce[2];
-				etc.getMCServer().ad().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
+				entity.setMotion(applyForce[0], applyForce[1], applyForce[2]);
 			}
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @param entity
+	 * @param amount
+	 * @return
+	 */
 	protected static boolean fallProtected(BaseEntity entity, int amount)
 	{
 		int x = OMathHelper.c(entity.getX());
@@ -260,6 +277,10 @@ public class Bounce
 		return false;
 	}
 	
+	
+	/**
+	 *
+	 */
 	protected static void bounceCreatures()
 	{
 		Iterator<Entry<String, OWorldServer[]>> worldIter = etc.getMCServer().worlds.entrySet().iterator();
