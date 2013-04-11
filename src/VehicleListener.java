@@ -591,7 +591,7 @@ public class VehicleListener extends CraftBookDelegateListener {
 					Boolean test = Redstone.testAnyInput(world, underPt);
 
 					if (test == null || test) {
-						if (minecart.getType() == Minecart.Type.StorageCart) {
+						if (minecart instanceof ContainerMinecart) {
 							Vector pt = new Vector(blockX, blockY, blockZ);
 							CraftBookWorld cbworld = CraftBook.getCBWorld(world);
 							NearbyChestBlockBag bag = new NearbyChestBlockBag(cbworld, pt);
@@ -654,9 +654,9 @@ public class VehicleListener extends CraftBookDelegateListener {
 											return;
 										}
 
-										ItemArrayUtil.moveChestBagToItemArray(minecart.getStorage(), bag, type, color, amount);
+										ItemArrayUtil.moveChestBagToItemArray((ContainerMinecart) minecart, bag, type, color, amount);
 									} else {
-										ItemArrayUtil.moveChestBagToItemArray(minecart.getStorage(), bag);
+										ItemArrayUtil.moveChestBagToItemArray((ContainerMinecart) minecart, bag);
 									}
 								} else {
 									sign = getControllerSign(world, pt.add(0, -1, 0), "[Collect]");
@@ -704,9 +704,9 @@ public class VehicleListener extends CraftBookDelegateListener {
 											return;
 										}
 
-										ItemArrayUtil.moveItemArrayToChestBag(minecart.getStorage(), bag, type, color, amount);
+										ItemArrayUtil.moveItemArrayToChestBag((ContainerMinecart) minecart, bag, type, color, amount);
 									} else {
-										ItemArrayUtil.moveItemArrayToChestBag(minecart.getStorage(), bag);
+										ItemArrayUtil.moveItemArrayToChestBag((ContainerMinecart) minecart, bag);
 									}
 								}
 							}
@@ -867,9 +867,9 @@ public class VehicleListener extends CraftBookDelegateListener {
                     if (test == null || test) {
                     	Sign sign = getControllerSign(world, blockX, blockY - 1, blockZ, "[Craft]");
                     	
-                        if (minecart.getType() == Minecart.Type.StorageCart && minecart.getStorage() != null) {
+                        if (minecart instanceof ContainerMinecart) {
                         	
-                        	StorageMinecart cartStorage = minecart.getStorage();
+                                ContainerMinecart cartStorage = (ContainerMinecart) minecart;
                         	Item[] cartItems = cartStorage.getContents();
                         	
                         	Map<CraftBookItem,Integer> contents = new HashMap<CraftBookItem,Integer>();
@@ -1155,10 +1155,10 @@ public class VehicleListener extends CraftBookDelegateListener {
                             minecart.destroy();
                         } catch (BlockSourceException e) {
                         }
-                    } else if (type == Minecart.Type.StorageCart) {
+                    } else if (type == Minecart.Type.StorageCart || type == Minecart.Type.HopperMinecart) {
                         try {
                             ItemArrayUtil.moveItemArrayToChestBag(
-                                    minecart.getStorage(), blockBag);
+                                    (ContainerMinecart) minecart, blockBag);
 
                             if (collectType.equalsIgnoreCase("Storage") || collectType.equalsIgnoreCase("All")) {
                                 blockBag.storeBlock(ItemType.STORAGE_MINECART);
@@ -2991,7 +2991,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             	if ((!invert && contentsHasItems(inv.getContents(), info)) || (invert && !contentsHasItems(inv.getContents(), info)))
         			return true;
             	
-            } else if (minecart.getType() == Minecart.Type.StorageCart
+            } else if (minecart instanceof ContainerMinecart
             		&& ( parts[0].equalsIgnoreCase("SCI")
             				|| parts[0].equalsIgnoreCase("SCI+") )
             		) {
@@ -3000,7 +3000,7 @@ public class VehicleListener extends CraftBookDelegateListener {
             	if(info == null)
             		return false;
             	
-                StorageMinecart storage = minecart.getStorage();
+                ContainerMinecart storage = (ContainerMinecart) minecart;
                 if(storage != null)
                 {
                 	if(parts[0].equalsIgnoreCase("SCI"))
@@ -3070,7 +3070,7 @@ public class VehicleListener extends CraftBookDelegateListener {
     private Minecart spawnMinecart(CraftBookWorld cbworld, double x, double y, double z, int type)
     {
         World world = CraftBook.getWorld(cbworld);
-        Minecart minecart = new Minecart(world, x, y, z, Minecart.Type.fromId(type));
+        Minecart minecart = Minecart.fromType(world, x, y, z, Minecart.Type.fromId(type));
     	return minecart;
     }
 
