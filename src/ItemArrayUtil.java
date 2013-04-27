@@ -23,6 +23,7 @@
  * 
  * @author sk89q
  */
+@Deprecated
 public class ItemArrayUtil {
     /**
      * Move the contents of an inventory to a chest block bag.
@@ -30,10 +31,13 @@ public class ItemArrayUtil {
      * @param minecart
      * @param bag
      */
+	@Deprecated
     public static void moveItemArrayToChestBag(Inventory from,
             NearbyChestBlockBag bag) {
     	moveItemArrayToChestBag(from, bag, 0, -1, 0);
     }
+	
+	@Deprecated
 	public static void moveItemArrayToChestBag(Inventory from,
             NearbyChestBlockBag bag, int itemType, int itemColor, int itemAmount) {
     	
@@ -146,6 +150,7 @@ public class ItemArrayUtil {
      * @param to
      * @param bag
      */
+	@Deprecated
     public static void moveChestBagToItemArray(Inventory to,
             NearbyChestBlockBag bag) {
     	
@@ -157,6 +162,7 @@ public class ItemArrayUtil {
      * I guess sk89q, didn't work properly and used more resources
      * than should have (using exceptions to break? o_O)
      */
+	@Deprecated
     public static void moveChestBagToItemArray(Inventory to,
             NearbyChestBlockBag bag, int itemType, int itemColor, int itemAmount) {
     	
@@ -284,6 +290,7 @@ public class ItemArrayUtil {
      * @param itemArray
      * @param contents
      */
+	@Deprecated
     public static void setContents(Inventory itemArray, Item[] contents) {
         int size = itemArray.getContentsSize();
 
@@ -302,6 +309,7 @@ public class ItemArrayUtil {
      * @param itemArray
      * @param contents
      */
+	@Deprecated
     public static void setContents(ItemArray<?> itemArray, Item[] contents) {
         int size = itemArray.getContentsSize();
 
@@ -317,6 +325,7 @@ public class ItemArrayUtil {
     /*
      * assumes item1 and item2 id types have already been compared
      */
+	@Deprecated
     private static boolean isSameColor(Item item1, Item item2)
     {
      	return item1.getDamage() == item2.getDamage();
@@ -325,6 +334,7 @@ public class ItemArrayUtil {
     /**
      * Thrown when an item has been fully transferred.
      */
+	@Deprecated
     private static class TransferredItemException extends Exception {
         private static final long serialVersionUID = -4125958007487924445L;
     }
@@ -332,6 +342,7 @@ public class ItemArrayUtil {
     /**
      * Thrown when the target is full.
      */
+	@Deprecated
     private static class TargetFullException extends Exception {
         private static final long serialVersionUID = 5408687817221722647L;
     }

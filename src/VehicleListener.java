@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sk89q.craftbook.BlockSourceException;
 import com.sk89q.craftbook.BlockType;
 import com.sk89q.craftbook.CauldronCookbook;
 import com.sk89q.craftbook.CauldronRecipe;
@@ -32,6 +31,7 @@ import com.sk89q.craftbook.CraftBookWorld;
 import com.sk89q.craftbook.ItemType;
 import com.sk89q.craftbook.StringUtil;
 import com.sk89q.craftbook.Vector;
+import com.sk89q.craftbook.WorldBlockVector;
 import com.sk89q.craftbook.WorldLocation;
 
 /**
@@ -287,175 +287,17 @@ public class VehicleListener extends CraftBookDelegateListener {
      * @param isOn
      */
     public void onDirectWireInput(World world, Vector pt, boolean isOn, Vector changed) {
-        int type = CraftBook.getBlockID(world, pt);
+    	 int type = CraftBook.getBlockID(world, pt);
         
         // Minecart dispenser
-        if (minecartDispensers && (
-            (type == BlockType.CHEST
-             && (CraftBook.getBlockID(world, pt.add(0, -2, 0)) == BlockType.SIGN_POST
-              || CraftBook.getBlockID(world, pt.add(0, -1, 0)) == BlockType.SIGN_POST)
-             )
-             || (type == BlockType.SIGN_POST && Util.doesSignSay(world, pt, 1, "[Dispenser]"))
-             )
-           )
-        {
-            
-            // Rising edge-triggered only
-            if (!isOn) {
-                return;
-            }
-            
-            if(type == BlockType.SIGN_POST)
-            {
-            	pt = pt.add(0, 1, 0);
-            	if(CraftBook.getBlockID(world, pt) != BlockType.CHEST)
-            	{
-            		pt = pt.add(0, 1, 0);
-            		if(CraftBook.getBlockID(world, pt) != BlockType.CHEST)
-            		{
-            			//no chest?
-            			return;
-            		}
-            	}
-            }
-            
-            Vector signPos = pt.add(0, -2, 0);
-
-            Sign sign = getControllerSign(world, pt.add(0, -1, 0), "[Dispenser]");
-            
-            if (sign == null) {
-                return;
-            }
-
-            String collectType = sign != null ? sign.getText(2) : "";
-            boolean push = sign != null ? sign.getText(3).contains("Push") : false;
-
-            Vector dir = Util.getSignPostOrthogonalBack(world, signPos, 1)
-                    .subtract(signPos);
-            Vector depositPt = pt.add(dir.multiply(2.5));
-
-            /*if (CraftBook.getBlockID(depositPt) != BlockType.MINECART_TRACKS) {
-                return;
-            }*/
-
-            CraftBookWorld cbworld = CraftBook.getCBWorld(world);
-            NearbyChestBlockBag blockBag = new NearbyChestBlockBag(cbworld, pt);
-            blockBag.addSingleSourcePosition(cbworld, pt);
-            blockBag.addSingleSourcePosition(cbworld, pt.add(1, 0, 0));
-            blockBag.addSingleSourcePosition(cbworld, pt.add(-1, 0, 0));
-            blockBag.addSingleSourcePosition(cbworld, pt.add(0, 0, 1));
-            blockBag.addSingleSourcePosition(cbworld, pt.add(0, 0, -1));
-
-            try {
-                Minecart minecart = null;
-                
-                if(collectType.equalsIgnoreCase("All"))
-                {
-                	Minecart.Type minecartType = Minecart.Type.StorageCart;
-                	
-                	try {
-                        blockBag.fetchBlock(ItemType.STORAGE_MINECART);
-                    } catch (BlockSourceException e) {
-                        // Okay, no storage minecarts... but perhaps we can
-                        // craft a minecart + chest!
-                        if (blockBag.peekBlock(BlockType.CHEST)) {
-                            blockBag.fetchBlock(ItemType.MINECART);
-                            blockBag.fetchBlock(BlockType.CHEST);
-                        } else {
-                        	minecartType = Minecart.Type.PoweredMinecart;
-                        	
-                        	try {
-                                blockBag.fetchBlock(ItemType.POWERED_MINECART);
-                            } catch (BlockSourceException e2) {
-                                // Okay, no storage minecarts... but perhaps we can
-                                // craft a minecart + chest!
-                                if (blockBag.peekBlock(BlockType.FURNACE)) {
-                                    blockBag.fetchBlock(ItemType.MINECART);
-                                    blockBag.fetchBlock(BlockType.FURNACE);
-                                } else {
-                                	minecartType = Minecart.Type.Minecart;
-                                	blockBag.fetchBlock(ItemType.MINECART);
-                                }
-                            }
-                        }
-                    }
-                    
-                    minecart = spawnMinecart(cbworld,
-                    						depositPt.getX(),
-                    						depositPt.getY(),
-                    						depositPt.getZ(),
-                    						minecartType.getType());
-                }
-                else if (collectType.equalsIgnoreCase("Storage")) {
-                    try {
-                        blockBag.fetchBlock(ItemType.STORAGE_MINECART);
-                    } catch (BlockSourceException e) {
-                        // Okay, no storage minecarts... but perhaps we can
-                        // craft a minecart + chest!
-                        if (blockBag.peekBlock(BlockType.CHEST)) {
-                            blockBag.fetchBlock(ItemType.MINECART);
-                            blockBag.fetchBlock(BlockType.CHEST);
-                        } else {
-                            throw new BlockSourceException();
-                        }
-                    }
-                    
-                    minecart = spawnMinecart(cbworld,
-    						depositPt.getX(),
-    						depositPt.getY(),
-    						depositPt.getZ(),
-    						Minecart.Type.StorageCart.getType());
-                } else if (collectType.equalsIgnoreCase("Powered")) {
-                    try {
-                        blockBag.fetchBlock(ItemType.POWERED_MINECART);
-                    } catch (BlockSourceException e) {
-                        // Okay, no powered minecarts... but perhaps we can
-                        // craft a minecart + chest!
-                        if (blockBag.peekBlock(BlockType.FURNACE)) {
-                            blockBag.fetchBlock(ItemType.MINECART);
-                            blockBag.fetchBlock(BlockType.FURNACE);
-                        } else {
-                            throw new BlockSourceException();
-                        }
-                    }
-                    
-                    minecart = spawnMinecart(cbworld,
-    						depositPt.getX(),
-    						depositPt.getY(),
-    						depositPt.getZ(),
-    						Minecart.Type.PoweredMinecart.getType());
-                } else if (collectType.equalsIgnoreCase("Boat")) {
-                	blockBag.fetchBlock(ItemType.BOAT);
-                   	spawnBoat(cbworld,
-					depositPt.getX(),
-					depositPt.getY(),
-					depositPt.getZ());
-                } else {
-                    blockBag.fetchBlock(ItemType.MINECART);
-                    minecart = spawnMinecart(cbworld,
-    						depositPt.getX(),
-    						depositPt.getY(),
-    						depositPt.getZ(),
-    						Minecart.Type.Minecart.getType());
-                }
-                
-                if (minecart != null && push) {
-                    int data = CraftBook.getBlockData(world, signPos);
-                    
-                    if (data == 0x0) {
-                        minecart.setMotion(0, 0, -minecartBoostLaunch);
-                    } else if (data == 0x4) {
-                        minecart.setMotion(minecartBoostLaunch, 0, 0);
-                    } else if (data == 0x8) {
-                        minecart.setMotion(0, 0, minecartBoostLaunch);
-                    } else if (data == 0xC) {
-                        minecart.setMotion(-minecartBoostLaunch, 0, 0);
-                    }
-                }
-            } catch (BlockSourceException e) {
-                // No minecarts
-            }
-        // Minecart station
+        if (minecartDispensers && isOn 
+        		&&(((type == BlockType.CHEST)
+        				&& (CraftBook.getBlockID(world, pt.add(0, -2, 0)) == BlockType.SIGN_POST
+        				|| CraftBook.getBlockID(world, pt.add(0, -1, 0)) == BlockType.SIGN_POST))
+        				|| (type == BlockType.SIGN_POST && Util.doesSignSay(world, pt, 1, "[Dispenser]")))) {
+        	dispenseCart(world, pt, type);
+        	
+         // Minecart station
         } else if (minecartControlBlocks && type == minecartStationBlock[0]
                 && CraftBook.getBlockData(world, pt) == minecartStationBlock[1]
                 && CraftBook.getBlockID(world, pt.add(0, 1, 0)) == BlockType.MINECART_TRACKS
@@ -511,7 +353,170 @@ public class VehicleListener extends CraftBookDelegateListener {
         }
     }
     
+private void dispenseCart(World world, Vector pt, int type) {
+    // find chest
+    if(type == BlockType.SIGN_POST) {
+    	pt = pt.add(0, 1, 0);
+    	if(CraftBook.getBlockID(world, pt) != BlockType.CHEST) {
+    		pt = pt.add(0, 1, 0);
+    		if(CraftBook.getBlockID(world, pt) != BlockType.CHEST) {
+    			//no chest?
+    			return;
+    		}
+    	}
+    }
+    
+    Vector signPos = pt.add(0, -2, 0);
 
+    Sign sign = getControllerSign(world, pt.add(0, -1, 0), "[Dispenser]");
+    
+    if (sign == null) {
+        return;
+    }
+
+    String collectType = sign != null ? sign.getText(2) : "";
+    boolean push = sign != null ? sign.getText(3).contains("Push") : false;
+
+    Vector dir = Util.getSignPostOrthogonalBack(world, signPos, 1)
+            .subtract(signPos);
+    Vector depositPt = pt.add(dir.multiply(2.5));
+
+    
+    CraftBookWorld cbworld = CraftBook.getCBWorld(world);
+    CBXItemStorage chest = new CBXItemStorage();
+    chest.addAllowedStorageBlockType(BlockType.CHEST);
+    if (! chest.addStorageBlock(new WorldBlockVector(cbworld, pt))) {
+    	return;
+    }
+    // dispense
+    Minecart minecart = null;
+    Minecart.Type minecartType = null;
+    
+    // Boat
+	if (collectType.equalsIgnoreCase("Boat")) {
+		if (chest.fetchItem(Item.Type.Boat, 1) != null) {
+			chest.update();
+		   	spawnBoat(cbworld,
+			depositPt.getX(),
+			depositPt.getY(),
+			depositPt.getZ());
+		}
+		return;
+	// All
+	} else if(collectType.equalsIgnoreCase("All")) {
+    	if (fetchStorageCart(chest)) {
+    		minecartType = Minecart.Type.StorageCart;
+    	} else if (fetchPoweredCart(chest)){
+    		minecartType = Minecart.Type.PoweredMinecart;
+    	} else if (fetchHopperCart(chest)) {
+    		minecartType = Minecart.Type.HopperMinecart;
+    	} else if (fetchTNTCart(chest)) {
+    		minecartType = Minecart.Type.TNTMinecart;
+    	} else if (fetchPassengerCart(chest)) {
+    		minecartType = Minecart.Type.Minecart;
+    	}
+   	// Storage
+    } else if(collectType.equalsIgnoreCase("Storage")) {
+    	if (fetchStorageCart(chest)) {
+    		minecartType = Minecart.Type.StorageCart;
+    	}
+    // Powered
+	} else if(collectType.equalsIgnoreCase("Powered")) {
+		if (fetchPoweredCart(chest)) {
+			minecartType = Minecart.Type.PoweredMinecart;
+		}
+	// Hopper
+	} else if (collectType.equalsIgnoreCase("Hopper")) {
+		if (fetchHopperCart(chest)) {
+    		minecartType = Minecart.Type.HopperMinecart;
+		}
+	// TNT
+	} else if (collectType.equalsIgnoreCase("TNT")) {
+		if (fetchHopperCart(chest)) {
+	    		minecartType = Minecart.Type.TNTMinecart;
+		}
+	// Standard cart
+	} else {
+		if (fetchPassengerCart(chest)) {
+    		minecartType = Minecart.Type.Minecart;
+		}
+	}
+	chest.update();
+	
+    // spawn the cart
+    if (minecartType != null) {
+	    minecart = spawnMinecart(cbworld,
+				depositPt.getX(),
+				depositPt.getY(),
+				depositPt.getZ(),
+				minecartType.getType());
+    }
+    // push the cart
+    if (minecart != null && push) {
+        int data = CraftBook.getBlockData(world, signPos);
+        if (data == 0x0) {
+            minecart.setMotion(0, 0, -minecartBoostLaunch);
+        } else if (data == 0x4) {
+            minecart.setMotion(minecartBoostLaunch, 0, 0);
+        } else if (data == 0x8) {
+            minecart.setMotion(0, 0, minecartBoostLaunch);
+        } else if (data == 0xC) {
+            minecart.setMotion(-minecartBoostLaunch, 0, 0);
+        }
+    }
+}
+
+private boolean fetchPassengerCart(CBXItemStorage chest) {
+	return chest.fetchItem(Item.Type.Minecart, 1) != null;
+}
+
+private boolean fetchStorageCart(CBXItemStorage chest) {
+	if (chest.fetchItem(Item.Type.StorageMinecart, 1) != null) {
+		return true;
+	} else if (chest.containsItem(Item.Type.Chest, 1)) {
+		if (chest.fetchItem(Item.Type.Minecart, 1) != null) {
+			chest.fetchItem(Item.Type.Chest, 1);
+			return true;
+		}
+	}
+	return false;
+}
+
+private boolean fetchPoweredCart(CBXItemStorage chest) {
+	if (chest.fetchItem(Item.Type.PoweredMinecart, 1) != null) {
+		return true;
+	} else if (chest.containsItem(Item.Type.Furnace, 1)) {
+		if (chest.fetchItem(Item.Type.Minecart, 1) != null) {
+			chest.fetchItem(Item.Type.Furnace, 1);
+			return true;
+		}
+	}
+	return false;
+}
+
+private boolean fetchHopperCart(CBXItemStorage chest) {
+	if (chest.fetchItem(Item.Type.MinecartHopper, 1) != null) {
+		return true;
+	} else if (chest.containsItem(Item.Type.Hopper, 1)) {
+		if (chest.fetchItem(Item.Type.Minecart, 1) != null) {
+			chest.fetchItem(Item.Type.Hopper, 1);
+			return true;
+		}
+	}
+	return false;
+}
+
+private boolean fetchTNTCart(CBXItemStorage chest) {
+	if (chest.fetchItem(Item.Type.MinecartTNT, 1) != null) {
+		return true;
+	} else if (chest.containsItem(Item.Type.TNT, 1)) {
+		if (chest.fetchItem(Item.Type.Minecart, 1) != null) {
+			chest.fetchItem(Item.Type.TNT, 1);
+			return true;
+		}
+	}
+	return false;
+}
 
 	/**
      * Called when a vehicle changes block
@@ -1141,56 +1146,122 @@ public class VehicleListener extends CraftBookDelegateListener {
                     String collectType = sign != null ? sign.getText(2) : "";
                     
                     CraftBookWorld cbworld = CraftBook.getCBWorld(world);
-                    NearbyChestBlockBag blockBag = new NearbyChestBlockBag(cbworld, depositPt);
-                    blockBag.addSingleSourcePosition(cbworld, depositPt);
-                    blockBag.addSingleSourcePosition(cbworld, depositPt.add(1, 0, 0));
-                    blockBag.addSingleSourcePosition(cbworld, depositPt.add(-1, 0, 0));
-                    blockBag.addSingleSourcePosition(cbworld, depositPt.add(0, 0, 1));
-                    blockBag.addSingleSourcePosition(cbworld, depositPt.add(0, 0, -1));
+                    CBXItemStorage chest = new CBXItemStorage();
+                    chest.addAllowedStorageBlockType(Block.Type.Chest);
+                    chest.addStorageBlock(new WorldBlockVector(cbworld, depositPt));
 
-                    Minecart.Type type = minecart.getType();
-                    if (type == Minecart.Type.Minecart) {
-                        try {
-                            blockBag.storeBlock(ItemType.MINECART);
-                            minecart.destroy();
-                        } catch (BlockSourceException e) {
-                        }
-                    } else if (type == Minecart.Type.StorageCart || type == Minecart.Type.HopperMinecart) {
-                        try {
-                            ItemArrayUtil.moveItemArrayToChestBag(
-                                    (ContainerMinecart) minecart, blockBag);
-
-                            if (collectType.equalsIgnoreCase("Storage") || collectType.equalsIgnoreCase("All")) {
-                                blockBag.storeBlock(ItemType.STORAGE_MINECART);
-                            } else {
-                                blockBag.storeBlock(ItemType.MINECART);
-                                blockBag.storeBlock(BlockType.CHEST);
-                            }
-                            
-                            minecart.destroy();
-                        } catch (BlockSourceException e) {
-                            // Ran out of space
-                        }
-                    } else if (type == Minecart.Type.PoweredMinecart) {
-                        try {
-                            if (collectType.equalsIgnoreCase("Powered") || collectType.equalsIgnoreCase("All")) {
-                                blockBag.storeBlock(ItemType.POWERED_MINECART);
-                            } else {
-                                blockBag.storeBlock(ItemType.MINECART);
-                                blockBag.storeBlock(BlockType.FURNACE);
-                            }
-                            minecart.destroy();
-                        } catch (BlockSourceException e) {
-                            // Ran out of space
-                        }
+                    if (storeMinecart(collectType, minecart, chest)) {
+                    	minecart.destroy();
                     }
-                    
-                    blockBag.flushChanges();
+                    chest.update();
                 }
             }
         }
     }
 
+    
+    private boolean storeMinecart(String collectType, Minecart minecart, CBXItemStorage chest) {
+    	Minecart.Type type = minecart.getType();
+        
+    	// storing a simple minecart is simple
+    	if (type == Minecart.Type.Minecart) {
+        	Item item = new Item(Item.Type.Minecart, 1);
+        	return chest.storeItem(item);
+        }
+        // store contents of minecart in chest
+        if (minecart instanceof ContainerMinecart) {
+        	if (! chest.storeAllItems((ContainerMinecart) minecart)) {
+        		return false;
+        	}
+        }
+        // If the minecart type matches that specified on the sign, store the
+        // cart in one piece. Otherwise, store its components separately.
+        // If the minecart can't be stored, leave it on the tracks.
+        
+        // no type specified
+        if (collectType.equals("")) {
+        	return storeMinecartComponents(minecart, chest);
+        // All
+        } else if (collectType.equalsIgnoreCase("All")) {
+        	return storeWholeMinecart(minecart, chest);
+        // Storage
+        } else if (collectType.equalsIgnoreCase("Storage")) {
+        	if (minecart.getType().equals(Minecart.Type.StorageCart)) {
+        		return storeWholeMinecart(minecart, chest);
+        	} else {
+        		return storeMinecartComponents(minecart, chest);
+        	}
+        // Powered
+        } else if (collectType.equalsIgnoreCase("Powered")) {
+        	if (minecart.getType().equals(Minecart.Type.PoweredMinecart)) {
+        		return storeWholeMinecart(minecart, chest);
+        	} else {
+        		return storeMinecartComponents(minecart, chest);
+        	}
+        // Hopper
+        } else if (collectType.equalsIgnoreCase("Hopper")) {
+        	if (minecart.getType().equals(Minecart.Type.HopperMinecart)) {
+        		return storeWholeMinecart(minecart, chest);
+        	} else {
+        		return storeMinecartComponents(minecart, chest);
+        	}
+        	// TNT
+        } else if (collectType.equalsIgnoreCase("TNT")) {
+        	if (minecart.getType().equals(Minecart.Type.TNTMinecart)) {
+        		return storeWholeMinecart(minecart, chest);
+        	} else {
+        		return storeMinecartComponents(minecart, chest);
+        	}
+        }
+        return true;
+    }
+    
+    private boolean storeWholeMinecart(Minecart minecart, CBXItemStorage chest) {
+    	Item item = getMinecartItem(minecart);
+    	if (item == null) {
+    		return false;
+    	}
+    	return chest.storeItem(item);
+    }
+    
+    private Item getMinecartItem(Minecart minecart) {
+    	Item.Type cartItemType = null;
+    	switch (minecart.getType()) {
+    	case Minecart: cartItemType = Item.Type.Minecart; break;
+    	case StorageCart: cartItemType = Item.Type.StorageMinecart; break;
+    	case PoweredMinecart: cartItemType = Item.Type.PoweredMinecart; break;
+    	case HopperMinecart: cartItemType = Item.Type.MinecartHopper; break;
+    	case TNTMinecart: cartItemType = Item.Type.MinecartTNT; break; 
+    	}
+    	if (cartItemType != null) {
+    		return new Item(cartItemType, 1);
+    	}
+    	return null;
+    }
+    
+    private boolean storeMinecartComponents(Minecart minecart, CBXItemStorage chest) {
+    	Item cart = new Item(Item.Type.Minecart, 1);
+    	if (! chest.storeItem(cart)) {
+    		return false;
+    	}
+    	Item.Type otherPartType = null;
+    	switch (minecart.getType()) {
+    	case StorageCart: otherPartType = Item.Type.Chest; break;
+    	case PoweredMinecart: otherPartType = Item.Type.Furnace; break;
+    	case HopperMinecart: otherPartType = Item.Type.Hopper; break;
+    	case TNTMinecart: otherPartType = Item.Type.TNT; break;
+    	}
+    	Item otherPart = null;    	
+    	if (otherPartType != null) {
+    		 otherPart = new Item(otherPartType, 1);
+    	}
+    	if (otherPart == null || ! chest.storeItem(otherPart)) {
+    		chest.fetchItem(Item.Type.Minecart, 1);
+    		return false;
+    	}
+    	return true;
+    }
+    
     /**
      * Called when a vehicle enters or leaves a block
      *
@@ -2892,6 +2963,16 @@ public class VehicleListener extends CraftBookDelegateListener {
             return true;
         }
         
+        if (line.equalsIgnoreCase("Hopper")
+                && minecart.getType() == Minecart.Type.HopperMinecart) {
+            return true;
+        }
+        
+        if (line.equalsIgnoreCase("TNT")
+                && minecart.getType() == Minecart.Type.TNTMinecart) {
+            return true;
+        }
+        
         if (line.equalsIgnoreCase("Minecart")
                 && minecart.getType() == Minecart.Type.Minecart) {
             return true;
@@ -3071,6 +3152,7 @@ public class VehicleListener extends CraftBookDelegateListener {
     {
         World world = CraftBook.getWorld(cbworld);
         Minecart minecart = Minecart.fromType(world, x, y, z, Minecart.Type.fromId(type));
+        minecart.spawn();
     	return minecart;
     }
 

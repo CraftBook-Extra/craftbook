@@ -25,6 +25,7 @@
  */
 public class InventoryListener extends CraftBookDelegateListener {
 	protected static boolean allowEnchantableItemStacking = false;
+	protected static boolean allowMinecartStacking = false;
 	
 	/**
      * Construct the object.
@@ -42,6 +43,8 @@ public class InventoryListener extends CraftBookDelegateListener {
     public void loadConfiguration() {
     	if(properties.containsKey("allow-enchantable-item-stacking"))
     		InventoryListener.allowEnchantableItemStacking = properties.getBoolean("allow-enchantable-item-stacking", false);
+    	if(properties.containsKey("allow-enchantable-item-stacking"))
+    		InventoryListener.allowMinecartStacking = properties.getBoolean("allow-minecart-stacking", false);
     }
 
     /**
