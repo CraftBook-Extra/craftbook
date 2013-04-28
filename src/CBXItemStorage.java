@@ -72,7 +72,6 @@ public class CBXItemStorage {
 		if (item.getEnchantment() != null && ! InventoryListener.allowEnchantableItemStacking) {
 			maxStackSize = 1;
 		}
-				
 		// the contents array gives us more control than the Inventory methods
 		Item[] contents = inv.getContents();
 		// stack if possible
@@ -83,7 +82,7 @@ public class CBXItemStorage {
 				int freeSpace = maxStackSize - contents[slot].getAmount(); 
 				if (freeSpace > 0
 						&& contents[slot].getItemId() == item.getItemId()
-						&& contents[slot].getColor() == item.getColor()
+						&& contents[slot].getDamage() == item.getDamage()
 						&& (contents[slot].getDataTag() == null
 						||contents[slot].getDataTag().equals(item.getDataTag()))
 						&& (contents[slot].getEnchantment() == null
@@ -99,14 +98,17 @@ public class CBXItemStorage {
 		}
 		// we've tried stacking but still have some items left in the stack
 		// do we have an empty slot?
-		if (inv.getEmptySlot() < 0)	return false;
-		inv.addItem(item.clone());
+		int freeSlot = inv.getEmptySlot();
+		if (freeSlot < 0) return false;
+		Item itemClone = item.clone();
+		itemClone.setSlot(freeSlot);
+		inv.addItem(itemClone);
 		item.setAmount(0);
 		return true;
 	}
 	
 	public Item fetchItem(Item.Type type, int amount){
-		return fetchItem(type.getId(), 0, amount);
+		return fetchItem(type.getId(), -1, amount);
 	}
 	
 	/**
@@ -121,6 +123,7 @@ public class CBXItemStorage {
 	 * @return The Item taken from storage, or null if no suitable item was found in this storage.
 	 */
 	public Item fetchItem(int id, int datavalue, int amount){
+		int amountRequested = (amount < 0) ? Integer.MAX_VALUE : amount;
 		Item retItem = null;
 		int maxRetAmount = 0;
 		for (Inventory inventory : storage) {
@@ -132,7 +135,7 @@ public class CBXItemStorage {
 						// prepare a new Item with the right properties
 						retItem = contents[slot].clone();
 						retItem.setAmount(0);
-						maxRetAmount = Math.min(CBXItemStorage.maxStackSize(retItem), amount);
+						maxRetAmount = Math.min(CBXItemStorage.maxStackSize(retItem), amountRequested);
 					}
 					if (retItem.equalsIgnoreSlotAndAmount(contents[slot])) {
 						// take items from this slot
@@ -165,7 +168,7 @@ public class CBXItemStorage {
 	 * 
 	 * @param id Item Id
 	 * @param datavalue data value to look for, -1 matches all
-	 * @param minAmount 
+	 * @param minAmount must be greater than 0
 	 * @return true if the specified amount was found
 	 */
 	public boolean containsItem(int id, int datavalue, int minAmount) {
@@ -205,10 +208,87 @@ public class CBXItemStorage {
 			}
 			if (contents[slot].getAmount() < 1) {
 				contents[slot] = null;
+				source.removeItem(slot);
 			}
 		}
 		return allStored;
 	}
+	
+	
+	public boolean storeAllItems(Inventory source, int id, int datavalue, int amount) {
+		int remainingAmount = (amount < 0)? Integer.MAX_VALUE : amount;
+		Item[] contents = source.getContents();
+		for (int slot = 0; slot < contents.length; slot++) {
+			if (remainingAmount < 1) {
+				break;
+			}
+			if (contents[slot] == null || ! matchItem(contents[slot], id, datavalue)) {
+				continue;
+			}
+			Item toStore = contents[slot].clone();
+			int amountBefore = toStore.getAmount();
+			if (amountBefore > remainingAmount) {
+				// store only the remaining amount
+				toStore.setAmount(remainingAmount);
+				amountBefore = remainingAmount;
+			}
+			this.storeItem(toStore);
+			int amountStored = amountBefore - toStore.getAmount();
+			remainingAmount -= amountStored;
+			contents[slot].setAmount(contents[slot].getAmount() - amountStored);
+			if (contents[slot].getAmount() < 1) {
+				contents[slot] = null;
+				source.removeItem(slot);
+			}
+		}
+		return remainingAmount < 1;
+	}
+	
+	public boolean fetchAllItems(Inventory target) {
+		Item item = null;
+		List <Item> couldNotTransfer = new LinkedList<Item>();
+		while (true) {
+			item = fetchItem(-1, -1, -1);
+			if (item == null) {
+				break;
+			}
+			// put the item into the target inventory
+			boolean stored = CBXItemStorage.storeItem(target, item);
+			if (! stored) {
+				couldNotTransfer.add(item);
+			}
+		}
+		if  (couldNotTransfer.isEmpty()){
+			return true;
+		} else {
+			// put everything that doesn't fit in the target back into storage
+			for (Item i:couldNotTransfer) {
+				storeItem(i);
+			}
+		}
+		return false;
+	}
+	
+	public boolean fetchAllItems(Inventory target, int id, int datavalue, int amount) {
+		// negative amount: no limit
+		int amountRemaining = (amount < 0) ? Integer.MAX_VALUE: amount;
+		while (amountRemaining > 0) {
+			Item item = fetchItem(id, datavalue, amountRemaining);
+			if (item == null) {
+				//storage is empty
+				return false;
+			}
+			int amountBefore = item.getAmount();
+			boolean targetFull = ! CBXItemStorage.storeItem(target, item);
+			if (targetFull) {
+				return false;
+			}
+			int amountStored = amountBefore - item.getAmount();
+			amountRemaining -= amountStored; 
+		}
+		return true;
+	}
+	
 	
 	/**
 	 * Adds storage block at wbv to be used as storage space.
