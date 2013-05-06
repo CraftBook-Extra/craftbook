@@ -754,154 +754,9 @@ private boolean fetchTNTCart(CBXItemStorage chest) {
                     Boolean test = Redstone.testAnyInput(world, underPt);
 
                     if (test == null || test) {
-                    	Sign sign = getControllerSign(world, blockX, blockY - 1, blockZ, "[Craft]");
-                    	
                         if (minecart instanceof ContainerMinecart) {
-                        	
-                                ContainerMinecart cartStorage = (ContainerMinecart) minecart;
-                        	Item[] cartItems = cartStorage.getContents();
-                        	
-                        	Map<CraftBookItem,Integer> contents = new HashMap<CraftBookItem,Integer>();
-                        	
-                        	for(int i = 0; i < cartItems.length; i++)
-                        	{
-                        		Item item = cartItems[i];
-                        		if(item == null || item.getAmount() <= 0)
-                        			continue;
-                        		
-                        		int dmg = item.getDamage();
-                        		if(BlockType.isDirectionBlock(item.getItemId()))
-                        			dmg = 0;
-                        		
-                        		CraftBookEnchantment[] cbenchants = UtilItem.enchantmentsToCBEnchantment(item.getEnchantments());
-                        		
-                        		CraftBookItem cbItem = new CraftBookItem(item.getItemId(), dmg, cbenchants);
-                        		if(!contents.containsKey(cbItem))
-                        		{
-                        			contents.put(cbItem, item.getAmount());
-                        		}
-                        		else
-                        		{
-                        			contents.put(cbItem, contents.get(cbItem) + item.getAmount());
-                        		}
-                        	}
-                        	
-                        	CauldronRecipe recipe = null;
-
-                        	if (sign == null || sign.getText(2).length() < 1) {
-                        		recipe = craftBlockRecipes.find(contents);
-                        	} else {
-                        		recipe = craftBlockRecipes.find(contents, sign.getText(2));
-                        	}
-
-                        	if(recipe != null)
-                            {
-                        		List<CraftBookItem> ingredients = new ArrayList<CraftBookItem>(recipe.getIngredients());
-                            	
-                            	boolean itemsFound = true;
-                            	ingredientLoop:
-                            	for(int i = 0; i < ingredients.size(); i++)
-                            	{
-                            		if(ingredients.get(i) == null)
-                            			continue;
-                            		
-                            		CraftBookItem itemType = ingredients.get(i);
-                            		
-                            		for(int j = 0; j < cartItems.length; j++)
-                                	{
-                                		Item cartItem = cartItems[j];
-                                		
-                                		if (cartItem == null || cartItem.getAmount() <= 0
-                            				|| itemType.id() != cartItem.getItemId()
-                            				|| itemType.color() != cartItem.getDamage()
-                            				|| !UtilItem.enchantsAreEqual(cartItem.getEnchantments(), itemType.enchantments())
-                            				)
-                                		{
-                                			continue;
-                                		}
-                                		
-                                		if(cartItem.getAmount() == 1)
-                                		{
-                                			cartItems[j] = null;
-                                		}
-                                		else
-                                		{
-                                			cartItems[j].setAmount(cartItem.getAmount() - 1);
-                                		}
-                                		
-                                		continue ingredientLoop;
-                                	}
-                            		
-                            		itemsFound = false;
-                            		
-                            		//item not found? did something change to the minecart storage inventory?
-                            		
-                            		break;
-                            	}
-                            	
-                            	if(itemsFound)
-                            	{
-                            		for(CraftBookItem cbItem : recipe.getResults())
-                            		{
-                            			boolean found = false;
-                            			for(int i = 0; i < cartItems.length; i++)
-                                    	{
-                            				if(cartItems[i] != null
-                            					&& cartItems[i].getItemId() == cbItem.id()
-                            					&& cartItems[i].getDamage() == cbItem.color()
-                            					&& UtilItem.enchantsAreEqual(cartItems[i].getEnchantments(), cbItem.enchantments())
-                            					&& cartItems[i].getAmount() > 0
-                            					&& cartItems[i].getAmount() < cartItems[i].getMaxAmount()
-                            					)
-                            				{
-                            					cartItems[i].setAmount(cartItems[i].getAmount() + 1);
-                            					found = true;
-                            					break;
-                            				}
-                                    	}
-                            			
-                            			if(!found)
-                        				{
-                            				for(int i = 0; i < cartItems.length; i++)
-                                        	{
-                            					if(cartItems[i] == null)
-                            					{
-                            						cartItems[i] = new Item(cbItem.id(), 1, i, cbItem.color());
-                            						if(cbItem.hasEnchantments())
-                            	                	{
-                            		                	for(int k = 0; k < cbItem.enchantments().length; k++)
-                            		        			{
-                            		        				CraftBookEnchantment cbenchant = cbItem.enchantment(k);
-                            		        				
-                            		        				//since this is from a server created recipe we can assume it is allowed
-                            		        				//if(!cbenchant.enchantment().allowed)
-                            		        					//continue;
-                            		        				
-                            		        				Enchantment enchant = new Enchantment(Enchantment.Type.fromId(cbenchant.enchantment().getId()), cbenchant.level());
-                            		        				
-                            		        				if(!enchant.isValid())
-                            		        					continue;
-                            		        				
-                            		        				cartItems[i].addEnchantment(enchant);
-                            		        			}
-                            	                	}
-                            						found = true;
-                            						break;
-                            					}
-                                        	}
-                        				}
-                            			
-                            			if(!found)
-                            			{
-                            				//no space to add!
-                            				return;
-                            			}
-                                    }
-                            		cartStorage.setContents(cartItems);
-                            		cartStorage.update();
-                            		//ItemArrayUtil.setContents(cartStorage, cartItems);
-                            	}
-                            }
+                        	Sign sign = getControllerSign(world, blockX, blockY - 1, blockZ, "[Craft]");
+                        	minecartCraftBlock((ContainerMinecart) minecart, sign);
                         }
                     }
                     
@@ -1256,6 +1111,153 @@ private boolean fetchTNTCart(CBXItemStorage chest) {
     		return false;
     	}
     	return true;
+    }
+    
+    private void minecartCraftBlock(ContainerMinecart minecart, Sign sign) {
+        ContainerMinecart cartStorage = (ContainerMinecart) minecart;
+	Item[] cartItems = cartStorage.getContents();
+	
+	Map<CraftBookItem,Integer> contents = new HashMap<CraftBookItem,Integer>();
+	
+	for(int i = 0; i < cartItems.length; i++)
+	{
+		Item item = cartItems[i];
+		if(item == null || item.getAmount() <= 0)
+			continue;
+		
+		int dmg = item.getDamage();
+		if(BlockType.isDirectionBlock(item.getItemId()))
+			dmg = 0;
+		
+		CraftBookEnchantment[] cbenchants = UtilItem.enchantmentsToCBEnchantment(item.getEnchantments());
+		
+		CraftBookItem cbItem = new CraftBookItem(item.getItemId(), dmg, cbenchants);
+		if(!contents.containsKey(cbItem))
+		{
+			contents.put(cbItem, item.getAmount());
+		}
+		else
+		{
+			contents.put(cbItem, contents.get(cbItem) + item.getAmount());
+		}
+	}
+	
+	CauldronRecipe recipe = null;
+
+	if (sign == null || sign.getText(2).length() < 1) {
+		recipe = craftBlockRecipes.find(contents);
+	} else {
+		recipe = craftBlockRecipes.find(contents, sign.getText(2));
+	}
+
+	if(recipe != null)
+    {
+		List<CraftBookItem> ingredients = new ArrayList<CraftBookItem>(recipe.getIngredients());
+    	
+    	boolean itemsFound = true;
+    	ingredientLoop:
+    	for(int i = 0; i < ingredients.size(); i++)
+    	{
+    		if(ingredients.get(i) == null)
+    			continue;
+    		
+    		CraftBookItem itemType = ingredients.get(i);
+    		
+    		for(int j = 0; j < cartItems.length; j++)
+        	{
+        		Item cartItem = cartItems[j];
+        		
+        		if (cartItem == null || cartItem.getAmount() <= 0
+    				|| itemType.id() != cartItem.getItemId()
+    				|| itemType.color() != cartItem.getDamage()
+    				|| !UtilItem.enchantsAreEqual(cartItem.getEnchantments(), itemType.enchantments())
+    				)
+        		{
+        			continue;
+        		}
+        		
+        		if(cartItem.getAmount() == 1)
+        		{
+        			cartItems[j] = null;
+        		}
+        		else
+        		{
+        			cartItems[j].setAmount(cartItem.getAmount() - 1);
+        		}
+        		
+        		continue ingredientLoop;
+        	}
+    		
+    		itemsFound = false;
+    		
+    		//item not found? did something change to the minecart storage inventory?
+    		
+    		break;
+    	}
+    	
+    	if(itemsFound)
+    	{
+    		for(CraftBookItem cbItem : recipe.getResults())
+    		{
+    			boolean found = false;
+    			for(int i = 0; i < cartItems.length; i++)
+            	{
+    				if(cartItems[i] != null
+    					&& cartItems[i].getItemId() == cbItem.id()
+    					&& cartItems[i].getDamage() == cbItem.color()
+    					&& UtilItem.enchantsAreEqual(cartItems[i].getEnchantments(), cbItem.enchantments())
+    					&& cartItems[i].getAmount() > 0
+    					&& cartItems[i].getAmount() < cartItems[i].getMaxAmount()
+    					)
+    				{
+    					cartItems[i].setAmount(cartItems[i].getAmount() + 1);
+    					found = true;
+    					break;
+    				}
+            	}
+    			
+    			if(!found)
+				{
+    				for(int i = 0; i < cartItems.length; i++)
+                	{
+    					if(cartItems[i] == null)
+    					{
+    						cartItems[i] = new Item(cbItem.id(), 1, i, cbItem.color());
+    						if(cbItem.hasEnchantments())
+    	                	{
+    		                	for(int k = 0; k < cbItem.enchantments().length; k++)
+    		        			{
+    		        				CraftBookEnchantment cbenchant = cbItem.enchantment(k);
+    		        				
+    		        				//since this is from a server created recipe we can assume it is allowed
+    		        				//if(!cbenchant.enchantment().allowed)
+    		        					//continue;
+    		        				
+    		        				Enchantment enchant = new Enchantment(Enchantment.Type.fromId(cbenchant.enchantment().getId()), cbenchant.level());
+    		        				
+    		        				if(!enchant.isValid())
+    		        					continue;
+    		        				
+    		        				cartItems[i].addEnchantment(enchant);
+    		        			}
+    	                	}
+    						found = true;
+    						break;
+    					}
+                	}
+				}
+    			
+    			if(!found)
+    			{
+    				//no space to add!
+    				return;
+    			}
+            }
+    		cartStorage.setContents(cartItems);
+    		cartStorage.update();
+    		//ItemArrayUtil.setContents(cartStorage, cartItems);
+    	}
+    }
     }
     
     /**
