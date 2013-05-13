@@ -5,7 +5,6 @@ import com.sk89q.craftbook.WorldBlockVector;
 
 public class OutputLever implements Runnable {
 	
-	final static Player fakePlayer = new Player(); // workaround for Canary bug #109
 	private final LinkedBlockingQueue<WorldBlockVector> outputQueue = new LinkedBlockingQueue<WorldBlockVector>();
 	
 	protected void addToOutputQueue(WorldBlockVector outputBlock) {

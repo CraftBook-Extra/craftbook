@@ -271,6 +271,9 @@ public class RedstoneListener extends CraftBookDelegateListener
      */
     public void onDirectWireInput(World world, final Vector pt, boolean isOn, final Vector changed) {
         int type = CraftBook.getBlockID(world, pt);
+        // If sign input doesn't work after a Canary update, check world.getTime().
+        // Chances are it returns something else, e.g. the world seed.
+        // System.out.println("Time: " + world.getTime());
         // Redstone pumpkins
         if (redstonePumpkins
                 && (type == BlockType.PUMPKIN || type == BlockType.JACKOLANTERN)) {
