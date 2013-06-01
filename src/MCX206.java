@@ -199,7 +199,10 @@ public class MCX206 extends BaseIC {
 	        if (inp)
 	        	bag.setBlockID(chip.getCBWorld(), x, y, z, block, color);
 	        else if (hold)
-	        	bag.setBlockID(chip.getCBWorld(), x, y, z, 0);
+	        	if (CraftBook.getBlockID(chip.getCBWorld(), x, y, z) == block
+	        	&& CraftBook.getBlockData(chip.getCBWorld(), x, y, z) == color) {
+	        		bag.setBlockID(chip.getCBWorld(), x, y, z, 0);
+	        	}
 		}
         catch(BlockSourceException e) {}
     }
