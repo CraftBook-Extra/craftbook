@@ -325,7 +325,8 @@ public class CBEnchantRecipe extends OShapedRecipes
 				if(recipeItem.getAmount() > 1)
 				{
 					invItemStack = inventory.a(slot);
-					UtilEntity.sendPacket(eplayer, new OPacket103SetSlot(eplayer.bK.c, slot + 1, invItemStack));
+					// Notchian: EntityPlayer.inventory, field_71071_by
+					UtilEntity.sendPacket(eplayer, new OPacket103SetSlot(eplayer.bn.c, slot + 1, invItemStack));
 				}
 			}
 		}

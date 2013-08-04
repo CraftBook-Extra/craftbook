@@ -149,7 +149,7 @@ public class MCM116 extends MCX116 {
 			if (oEntity instanceof OEntityPig) {
 				OEntityPig oEntityPig = (OEntityPig) oEntity;
 				// Check for saddle
-				return oEntityPig.m();
+				return oEntityPig.bT();
 			}
 			return false;
 		}
@@ -162,7 +162,7 @@ public class MCM116 extends MCX116 {
 			if (oEntity instanceof OEntityPig) {
 				OEntityPig oEntityPig = (OEntityPig) oEntity;
 				// Check for saddle and rider
-				if (oEntityPig.m() == true && bEntity.getRiddenByEntity() != null) {
+				if (oEntityPig.bT() == true && bEntity.getRiddenByEntity() != null) {
 					return true;
 				}
 			}
@@ -281,12 +281,12 @@ public class MCM116 extends MCX116 {
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("riddenpig")) && (oent instanceof OEntityPig)) {
 					OEntityPig op = (OEntityPig) oent;
 					// Check for saddle
-					if (op.m() == true && oent.n != null) {
+					if (op.bT() == true && oent.n != null) {
 						match = true;
 					}
 				} else if ((line.equalsIgnoreCase("animal") || line.equalsIgnoreCase("saddledpig")) && (oent instanceof OEntityPig)) {
 					OEntityPig op = (OEntityPig) oent;
-					if (op.m() == true) {
+					if (op.bT() == true) {
 						match = true;
 					}
 				} else if ((line.equalsIgnoreCase("mob") || line.equalsIgnoreCase("blaze")) && (oent instanceof OEntityBlaze)) {

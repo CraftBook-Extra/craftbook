@@ -66,15 +66,15 @@ public class CBSlotCrafting extends OSlotCrafting
                 continue;
             }
 			//getItem().containerHasItem()  func_77973_b().func_77634_r()
-            if (!oitemstack.b().t())
+            if (!oitemstack.b().u())
             {
                 continue;
             }
             //getItem().getContainerItem() func_77973_b().func_77668_q()
-            OItemStack oitemstack1 = new OItemStack(oitemstack.b().s());
-            //.getItem(). && thePlayer.whateverTheFuckThisIs
-            //.func_77973_b(). && thePlayer.
-            if (oitemstack.b().j(oitemstack) && thePlayer.bK.a(oitemstack1))
+            OItemStack oitemstack1 = new OItemStack(oitemstack.b().t());
+            //.getItem(). && thePlayer.inventory
+            //.func_77973_b(). && thePlayer.field_71071_by.
+            if (oitemstack.b().j(oitemstack) && thePlayer.bn.a(oitemstack1))
             {
                 continue;
             }

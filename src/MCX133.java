@@ -139,8 +139,9 @@ public class MCX133 extends CBXEntityFindingIC {
     				&& !(obj instanceof OEntityBoat)
     				&& !(obj instanceof OEntityEnderEye)
     				&& !(obj instanceof OEntityFishHook)
-    				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).o().isEmpty())
-    				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).o().isEmpty()) ) {
+    				// EntityOwneable.getOwnerName, func_70905_p
+    				&& (!(obj instanceof OEntityWolf) || ((OEntityTameable)obj).h_().isEmpty())
+    				&& (!(obj instanceof OEntityOcelot) || ((OEntityTameable)obj).h_().isEmpty()) ) {
 				return true;
 			} else {
 				return false;

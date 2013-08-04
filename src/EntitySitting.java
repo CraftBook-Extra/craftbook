@@ -138,7 +138,7 @@ public class EntitySitting extends OEntityEnderEye
 			|| id == 113 //nether brick fence
 			|| id == 139 //cobblestone wall
 			//Block.field_71973_m[id].func_71872_e()
-			|| OBlock.r[id].b(world.getWorld(), x, y, z) == null) {
+			|| OBlock.s[id].b(world.getWorld(), x, y, z) == null) {
 			return false;
 		}
 		return true;
@@ -206,22 +206,22 @@ public class EntitySitting extends OEntityEnderEye
 	}
 	
 	@Override
-	//canTriggerWalking
-	protected boolean f_()
+	//canTriggerWalking, func_70041_e_
+	protected boolean e_()
 	{
 		return false;
 	}
 	
 	@Override
-	//canBeCollidedWith
-	public boolean L()
+	//canBeCollidedWith, func_70067_L 
+	public boolean K()
 	{
 		return false;
 	}
 	
 	@Override
-	//attackEntityFrom
-	public boolean a(ODamageSource paramODamageSource, int paramInt)
+	//attackEntityFrom, func_70097_a
+	public boolean a(ODamageSource paramODamageSource, float paramFloat)
 	{
 		return false;
 	}

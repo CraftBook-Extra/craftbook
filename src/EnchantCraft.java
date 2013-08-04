@@ -128,11 +128,11 @@ public class EnchantCraft
     	}
     	else if(origBlockWorkbench == null && EnchantCraft.recipes.length > 0)
     	{
-    		//OBlock.field_71973_m[]
-	    	origBlockWorkbench = OBlock.r[Block.Type.Workbench.getType()];
-	        OBlock.r[Block.Type.Workbench.getType()] = null;
+    		//Notchian: Block.blocksList, field_71973_m
+	    	origBlockWorkbench = OBlock.s[Block.Type.Workbench.getType()];
+	        OBlock.s[Block.Type.Workbench.getType()] = null;
 	        //Block.func_71864_b("workbench")
-	        OBlock.r[Block.Type.Workbench.getType()] = new CBWorkbench(Block.Type.Workbench.getType()).c("workbench");
+	        OBlock.s[Block.Type.Workbench.getType()] = new CBWorkbench(Block.Type.Workbench.getType()).c("workbench");
     	}
 		CraftBookListener.logger.info("CraftBook Enchant recipes loaded: "+EnchantCraft.recipes.length);
 	}
@@ -147,8 +147,8 @@ public class EnchantCraft
 	{
 		if(origBlockWorkbench != null)
 		{
-			OBlock.r[Block.Type.Workbench.getType()] = null;
-	        OBlock.r[Block.Type.Workbench.getType()] = origBlockWorkbench;
+			OBlock.s[Block.Type.Workbench.getType()] = null;
+	        OBlock.s[Block.Type.Workbench.getType()] = origBlockWorkbench;
 	        origBlockWorkbench = null;
 		}
 	}

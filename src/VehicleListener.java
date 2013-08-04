@@ -3040,10 +3040,11 @@ private boolean fetchTNTCart(CBXItemStorage chest) {
             	if(info == null)
             		return false;
             	//field_71071_by.func_70448_g()
-            	OItemStack iStack = player.getEntity().bK.h();
+            	OItemStack iStack = player.getEntity().bn.h();
             	if(iStack != null && player.getItemInHand() >= 0) {
-            		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info)) || 
-            			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.a, info))) {
+            		// ItemStack.stackSize, field_77994_a
+            		if ((!invert &&  contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.b, info)) || 
+            			( invert && !contentEqualsItem(player.getItemInHand(), iStack.j(), iStack.b, info))) {
             			return true;
             		}
             	}

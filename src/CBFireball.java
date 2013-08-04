@@ -36,7 +36,7 @@ public class CBFireball extends OEntityFireball
 	        (paramOMovingObjectPosition.g.a(ODamageSource.a(this, this.a), 6)));
 	      //newExplosion
 	      //this.field_70170_p.a(field_70165_t, field_70163_u, field_70161_v, .., .., this.field_70170_p.func_82736_K. b("")
-	      this.q.a(null, this.u, this.v, this.w, this.power, true, this.q.N().b("mobGriefing"));
+	      this.q.a(null, this.u, this.v, this.w, this.power, true, this.q.O().b("mobGriefing"));
 	      //setDead func_70106_y
 	      w();
 	    }
@@ -50,9 +50,10 @@ class EntityCreatureX extends OEntityCreature
 		super(arg0);
 	}
 	
-	@Override
-	public int aW()
-	{
-		return 1;
-	}
+	// Notchian: EntityLiving.getMaxHealth, func_70667_aM
+//	@Override
+//	public int aW()
+//	{
+//		return 1;
+//	}
 }

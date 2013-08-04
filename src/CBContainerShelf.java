@@ -44,9 +44,10 @@ public class CBContainerShelf extends OContainer
 	  {
 	        OItemStack oitemstack = null;
 	        OSlot oslot = (OSlot) this.c.get(i);
-
-	        if (oslot != null && oslot.d()) {
-	            OItemStack oitemstack1 = oslot.c();
+	        //Notchian: Slot.getHasStack, func_75216_d
+	        if (oslot != null && oslot.e()) {
+	        	// Notchian: Slot.getStack, func_75211_c
+	            OItemStack oitemstack1 = oslot.d();
 
 	            oitemstack = oitemstack1.m();
 	            if (i < this.f * 9) {
@@ -57,7 +58,7 @@ public class CBContainerShelf extends OContainer
 	                return null;
 	            }
 
-	            if (oitemstack1.a == 0) {
+	            if (oitemstack1.b == 0) {
 	                oslot.c((OItemStack) null);
 	            } else {
 	                oslot.e();
@@ -71,7 +72,8 @@ public class CBContainerShelf extends OContainer
 	  public void b(OEntityPlayer paramOEntityPlayer)
 	  {
 	    super.b(paramOEntityPlayer);
-	    this.a.f();
+	    //Notchian: IInventory.openChest, func_70295_k_
+	    this.a.k_();
 	  }
 
 	  public OIInventory e() {

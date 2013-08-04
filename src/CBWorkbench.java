@@ -16,11 +16,11 @@ public class CBWorkbench extends OBlockWorkbench
 	public boolean a(OWorld oworld, int x, int y, int z, OEntityPlayer eplayer, int direction, float offsetx, float offsety, float offsetz)
 	{
 		boolean output = super.a(oworld, x, y, z, eplayer, direction, offsetx, offsety, offsetz);
-		
-		if(!(eplayer.bL instanceof OContainerWorkbench))
+		// Notchian: EntityPlayer.inventoryContainer, field_71069_bz
+		if(!(eplayer.bo instanceof OContainerWorkbench))
 			return output;
 		
-		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bL;
+		OContainerWorkbench ocontainerwb = (OContainerWorkbench)eplayer.bo;
 		
 		@SuppressWarnings("rawtypes")
 		List inventorySlots = ocontainerwb.b;

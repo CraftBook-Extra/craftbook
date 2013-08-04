@@ -290,7 +290,8 @@ public class MCX304 extends MCX140 {
 						oentity.w = FORCE[0];
 						oentity.x = FORCE[1];
 						oentity.y = FORCE[2];
-						etc.getMCServer().ad().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
+						//  MinecraftServer.getConfigurationManager,  func_71203_ab
+						etc.getMCServer().af().sendPacketToDimension(new OPacket28EntityVelocity(oentity), cbworld.name(), cbworld.dimension());
 					}
     				
     				break;

@@ -43,7 +43,8 @@ public class Util {
     
     protected static void sendPacketToDimension(OPacket opacket, String worldName, int dimension)
     {
-        etc.getMCServer().ad().sendPacketToDimension(opacket, worldName, dimension);
+    	// Notchian: MinecraftServer.getConfigurationManager, func_71203_ab
+        etc.getMCServer().af().sendPacketToDimension(opacket, worldName, dimension);
     }
     
     protected static void sendPacketToPlayersAroundPoint(CraftBookWorld cbworld, double x, double y, double z, double distance, OPacket opacket)
@@ -53,12 +54,12 @@ public class Util {
     
     protected static void sendPacketToPlayersAroundPoint(String worldName, int dimension, double x, double y, double z, double distance, OPacket opacket)
     {
-        etc.getMCServer().ad().a(x, y, z, distance, dimension, opacket, worldName);
+        etc.getMCServer().af().a(x, y, z, distance, dimension, opacket, worldName);
     }
     
     protected static void sendPacketToAllPlayers(OPacket opacket)
     {
-        etc.getMCServer().ad().a(opacket);
+        etc.getMCServer().af().a(opacket);
     }
     
     /**

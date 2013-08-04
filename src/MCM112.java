@@ -187,7 +187,7 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
 				    		OEntityPig oEntityPig = (OEntityPig) (bEntity.getEntity());
 							// Check for saddle and rider
 				    		// Notchian: EntityPig.getSaddled() Searge: func_70901_n
-							if (oEntityPig.m() == false || bEntity.getRiddenByEntity() == null) {
+							if (oEntityPig.bT() == false || bEntity.getRiddenByEntity() == null) {
 								continue;
 							}
 								BaseEntity riderEntity = bEntity.getRiddenByEntity();
@@ -273,7 +273,7 @@ public class MCM112 extends CBXEntityFindingIC implements CBXEntityFindingIC.RHW
         	}
     		OEntityPig op = (OEntityPig) (mob.getEntity());
 			// Check for saddle and rider
-			if (op.m() == false || mob.getRiddenByEntity() == null) {
+			if (op.bT() == false || mob.getRiddenByEntity() == null) {
 				continue;
 			}
         	

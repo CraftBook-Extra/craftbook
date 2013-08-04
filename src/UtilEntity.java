@@ -306,7 +306,8 @@ public class UtilEntity
 					if(entityName.equals("Sheep") && (entity.getEntity() instanceof OEntitySheep))
 			    	{
 			    		OEntitySheep sheep = (OEntitySheep)entity.getEntity();
-			    		return color == sheep.m();
+			    		//EntitySheep.getFleeceColor, func_70896_n
+			    		return color == sheep.bT();
 			    	}
 			    	else if(entityName.equals("Creeper") && (entity.getEntity() instanceof OEntityCreeper))
 			    	{
@@ -314,7 +315,8 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityCreeper creeper = (OEntityCreeper)entity.getEntity();
-			    		return (color == 0) ^ creeper.m();
+			    		// EntityCreeper.getPowered, func_70830_n
+			    		return (color == 0) ^ creeper.bT();
 			    	}
 			    	else if(entityName.equals("Wolf") && (entity.getEntity() instanceof OEntityWolf))
 			    	{
@@ -323,10 +325,10 @@ public class UtilEntity
 			    		
 			    		OEntityWolf wolf = (OEntityWolf)entity.getEntity();
 			    		//func_70919_bu
-			    		return (color == 2 && wolf.bU())
-			    				//func_70685_l
-			    				|| (color == 1 && wolf.n())
-			    				|| (color == 0 && !wolf.bU() && !wolf.n() && !wolf.m());
+			    		return (color == 2 && wolf.cc())
+			    				//func_70906_o
+			    				|| (color == 1 && wolf.bU())
+			    				|| (color == 0 && !wolf.cc() && !wolf.bU() && !wolf.bT());
 			    	}
 			    	else if(entityName.equals("Ozelot") && (entity.getEntity() instanceof OEntityOcelot))
 			    	{
@@ -334,8 +336,8 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityOcelot ocelot = (OEntityOcelot)entity.getEntity();
-			    		return (color == 1 && ocelot.n())
-			    				|| (color == 0 && !ocelot.n() && !ocelot.m());
+			    		return (color == 1 && ocelot.bU())
+			    				|| (color == 0 && !ocelot.bU() && !ocelot.bT());
 			    	}
 			    	else if(entityName.equals("Pig") && (entity.getEntity() instanceof OEntityPig))
 			    	{
@@ -343,7 +345,7 @@ public class UtilEntity
 			    			return false;
 			    		
 			    		OEntityPig pig = (OEntityPig)entity.getEntity();
-			    		return (color == 0) ^ pig.m();
+			    		return (color == 0) ^ pig.bT();
 			    	}
 				}
 				

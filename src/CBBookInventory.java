@@ -39,8 +39,8 @@ public class CBBookInventory implements OIInventory
 		if (this.items[slot] != null)
         {
             OItemStack stack;
-
-            if (this.items[slot].a <= amount)
+            // Notchian: ItemStack.stackSize, Searge: field_77994_a
+            if (this.items[slot].b <= amount)
             {
             	stack = this.items[slot];
                 this.items[slot] = null;
@@ -50,7 +50,7 @@ public class CBBookInventory implements OIInventory
             {
             	stack = this.items[slot].a(amount);
 
-                if (this.items[slot].a == 0)
+                if (this.items[slot].b == 0)
                 {
                     this.items[slot] = null;
                 }
@@ -70,15 +70,16 @@ public class CBBookInventory implements OIInventory
 	{
 		this.items[slot] = stack;
 
-        if (stack != null && stack.a > this.d())
+        if (stack != null && stack.b > this.d())
         {
-        	stack.a = this.d();
+        	// Notchian: ItemStack.stackSize, Searge: field_77994_a = getInventoryStackLimit, Searge: func_70297_j_
+        	stack.b = this.d();
         }
 	}
 
 	@Override
-	//getStackInSlotOnClosing
-	public OItemStack b(int slot)
+	//getStackInSlotOnClosing, func_70304_b
+	public OItemStack a_(int slot)
 	{
 		if (this.items[slot] != null)
         {
@@ -93,7 +94,7 @@ public class CBBookInventory implements OIInventory
 	}
 
 	@Override
-	//getInvName
+	//getInvName, func_70303_b
 	public String b()
 	{
 		return "container.chest";
@@ -108,20 +109,20 @@ public class CBBookInventory implements OIInventory
 
 	@Override
 	//onInventoryChanged func_70296_d
-	public void k_()
+	public void e()
 	{
 		CraftBook.cbdata.markDirty();
 	}
 	
 	@Override
 	//openChest func_70295_k_
-	public void f()
+	public void k_()
 	{
 		
 	}
 	
 	@Override
-	//closeChest
+	//closeChest, func_70305_f
 	public void g()
 	{
 		
@@ -184,14 +185,16 @@ public class CBBookInventory implements OIInventory
     }
 
 	@Override
+	// Notchian: isItemValidForSlot, func_94041_b
 	public boolean b(int arg0, OItemStack arg1) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
+	// Notchian: isInvNameLocalized, func_94042_c
 	public boolean c() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

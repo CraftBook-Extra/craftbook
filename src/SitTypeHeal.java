@@ -69,8 +69,8 @@ public class SitTypeHeal extends SitType
 		if((oworld.r != 0 || autoHeal != PluginLoader.HookResult.DEFAULT_ACTION) && autoHeal != PluginLoader.HookResult.ALLOW_ACTION)
 		{
 			Player player = new Player(eplayer);
-			//eplayer.field_70173_aa
-			if(player.getHealth() < 20 && eplayer.ac % this.RATE * 12 == 0)
+			//Notchian: Entity.ticksExisted, field_70173_aa
+			if(player.getHealthFloat() < 20.0 && eplayer.ac % this.RATE * 12 == 0)
 				player.increaseHealth(1);
 		}
 	}
