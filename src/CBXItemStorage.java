@@ -69,7 +69,7 @@ public class CBXItemStorage {
 	public static boolean storeItem(Inventory inv, Item item) {
 		// determine maximum stack size for this item type
 		int maxStackSize = maxStackSize(item);
-		if (item.getEnchantments() != null && ! InventoryListener.allowEnchantableItemStacking) {
+		if (item.getEnchantments().length != 0  && ! InventoryListener.allowEnchantableItemStacking) {
 			maxStackSize = 1;
 		}
 		// the contents array gives us more control than the Inventory methods
@@ -85,7 +85,7 @@ public class CBXItemStorage {
 						&& contents[slot].getDamage() == item.getDamage()
 						&& (contents[slot].getDataTag() == null
 						||contents[slot].getDataTag().equals(item.getDataTag()))
-						&& (contents[slot].getEnchantments() == null
+						&& (contents[slot].getEnchantments().length == 0
 						|| contents[slot].getEnchantments().equals(item.getEnchantments()))) {
 					int storeAmount = (item.getAmount() > freeSpace) ? freeSpace : item.getAmount();
 					contents[slot].setAmount(contents[slot].getAmount() + storeAmount);
@@ -384,7 +384,7 @@ public class CBXItemStorage {
 						)) {
 			maxStackSize = 64;
 		}
-		if (item.getEnchantments() != null && ! InventoryListener.allowEnchantableItemStacking) {
+		if (item.getEnchantments().length != 0 && ! InventoryListener.allowEnchantableItemStacking) {
 			maxStackSize = 1;
 		}
 		return maxStackSize;
