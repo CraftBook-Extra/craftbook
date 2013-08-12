@@ -229,7 +229,7 @@ public class NearbyChestBlockBag extends BlockBag {
 	     	                    }
 	                			
 	    	                    // Add on any enchantments that are needed.
-	    	                    if (enchants != null && enchants.length > 0) {
+	    	                    if (enchants != null) {
 	    	                    	for (Enchantment e : enchants) {
 	    	                    		it.addEnchantment(e);
 	    	                    	}
@@ -250,10 +250,7 @@ public class NearbyChestBlockBag extends BlockBag {
                         if (itemArray[i].getItemId() == id &&
                         	(data == -1 || itemArray[i].getDamage() == data) &&
                             itemArray[i].getAmount() < itemMax &&
-                            // no enchantments or equal enchantments
-                            (((itemArray[i].getEnchantments() == null || itemArray[i].getEnchantments().length == 0) &&
-                              (enchants == null ||enchants.length == 0)) ||
-                             Arrays.equals(itemArray[i].getEnchantments(), enchants))) {
+                            Arrays.equals(itemArray[i].getEnchantments(), enchants)) {
                         	
                         	int newAmount;
                         	if(itemArray[i].getAmount() + amount > itemMax)
