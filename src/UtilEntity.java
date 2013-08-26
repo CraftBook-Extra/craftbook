@@ -46,8 +46,8 @@ public class UtilEntity
     //mainly used to set "false"
     protected static void setDead(OEntity oentity, boolean isDead)
     {
-    	//func_70067_L
-        oentity.K = isDead;
+    	//field_70128_L
+        oentity.M = isDead;
     }
     
     protected static void dismount(OEntity oentity)
