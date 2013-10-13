@@ -200,7 +200,7 @@ public class EntitySitting extends OEntityEnderEye
 	
 	@Override
 	//getMountedYOffset func_70042_X
-	public double W()
+	public double Y()
 	{
 		return MOUNTED_OFFSET_Y;
 	}
@@ -214,7 +214,7 @@ public class EntitySitting extends OEntityEnderEye
 	
 	@Override
 	//canBeCollidedWith, func_70067_L 
-	public boolean K()
+	public boolean L()
 	{
 		return false;
 	}

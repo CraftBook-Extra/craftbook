@@ -38,7 +38,7 @@ public class CBFireball extends OEntityFireball
 	      //this.field_70170_p.a(field_70165_t, field_70163_u, field_70161_v, .., .., this.field_70170_p.func_82736_K. b("")
 	      this.q.a(null, this.u, this.v, this.w, this.power, true, this.q.O().b("mobGriefing"));
 	      //setDead func_70106_y
-	      w();
+	      x();
 	    }
 	}
 }

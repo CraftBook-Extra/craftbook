@@ -306,7 +306,7 @@ public class MCX200 extends BaseIC {
     		
     		OEntityCreeper creeper = (OEntityCreeper)entity;
     		//getDataWatcher().b func_70096_w.b
-    		creeper.u().b(17, (byte)1);
+    		creeper.v().b(17, (byte)1);
     	}
     	else if(entity instanceof OEntityWolf)
     	{
@@ -318,7 +318,7 @@ public class MCX200 extends BaseIC {
     		
     		OEntityWolf wolf = (OEntityWolf)entity;
     		//getDataWatcher().b func_70096_w.b
-    		wolf.u().b(16, (byte)color);
+    		wolf.v().b(16, (byte)color);
     	}
     	else if(entity instanceof OEntityOcelot)
     	{
@@ -328,7 +328,7 @@ public class MCX200 extends BaseIC {
     		
     		OEntityOcelot ocelot = (OEntityOcelot)entity;
     		//getDataWatcher().b func_70096_w.b
-    		ocelot.u().b(16, (byte)color);
+    		ocelot.v().b(16, (byte)color);
     	}
     	else if(entity instanceof OEntityPig)
     	{

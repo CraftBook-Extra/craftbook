@@ -80,7 +80,7 @@ public class UtilEntity
     protected static double getMountedYOffset(OEntity oentity)
     {
     	//func_70042_X
-        return oentity.W();
+        return oentity.Y();
     }
     
     protected static OEntityPlayer getClosestPlayerToEntity(OWorld oworld, OEntity oentity, double distance)
