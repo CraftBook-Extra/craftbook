@@ -91,18 +91,60 @@ public class MCX216 extends CBXEntityFindingIC {
     	
     	target = onBlock.add(0, yOffset, 0);
     	
-		if (world.getBlockIdAt(target.getBlockX(), target.getBlockY(), target.getBlockZ()) == 0 && 
-			itemPlantableOnBlock(info[0], world.getBlockIdAt(target.getBlockX(), target.getBlockY() - 1, target.getBlockZ()))) {
-			Vector searchCenter = target.add(0.5, 0, 0.5);
-			CBXEntityFinder.ResultHandler rhPlanter = new RHPlanter(world, target, info[0], info[1], chip);
-			CBXEntityFinder toPlantFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, SEARCH_DIST, rhPlanter);
-			toPlantFinder.addItemFilter(info[0], info[1]);
-			CraftBook.cbxScheduler.execute(toPlantFinder);
+		if (world.getBlockIdAt(target.getBlockX(), target.getBlockY(), target.getBlockZ()) == 0)
+		{
+				
+			if (info[0]==127)
+			{ 	//this block if the planted seed is cocoa
+				//the cocoa beans is ID 351:3 which is the brown dye
+				//the cocoa sapling when planted is 127, so still confused which to use
+				FakeData fdata = fakeData.get(world.getWorld()); // for use in the meta data finding sub routine
+				
+				for (int diffX = -1 ; diffX < 2 ; diffX++)
+				{
+					for (int diffZ = -1 ; diffZ <2 ; diffZ++)
+					{	
+						if((diffX == 0) && (diffZ == 0))
+						{
+							;	
+						}
+						else if(itemPlantableOnBlock(info[0], world.getBlockIdAt(target.getBlockX() + diffX, target.getBlockY() - 1, target.getBlockZ() - diffZ)))
+						{
+							// Assuming getBlockData returns the meta/damage value of the block, so 3 incase of jungle wood
+							int metavalue = 0;
+        						if (fdata != null && fdata.pos.equals(new BlockVector(world.getBlockIdAt(target.getBlockX() + diffX, target.getBlockY() - 1, target.getBlockZ() - diffZ))))
+        						{
+            							metavalue = fdata.val;
+        						}else
+        						{
+        							metavalue = world.getBlockData(target.getBlockX() + diffX, target.getBlockY() - 1, target.getBlockZ() - diffZ);
+        						}
+							if(3 == metavalue)
+							{
+								Vector searchCenter = target.add(0.5, 0, 0.5);
+								CBXEntityFinder.ResultHandler rhPlanter = new RHPlanter(world, target, info[0], info[1], chip);
+								CBXEntityFinder toPlantFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, SEARCH_DIST, rhPlanter);
+								toPlantFinder.addItemFilter(info[0], info[1]);
+								CraftBook.cbxScheduler.execute(toPlantFinder);
+								break;
+							}
+						}
+					}
+				}
+			}
+			else if (itemPlantableOnBlock(info[0], world.getBlockIdAt(target.getBlockX(), target.getBlockY() - 1, target.getBlockZ()))) 
+			{
+				Vector searchCenter = target.add(0.5, 0, 0.5);
+				CBXEntityFinder.ResultHandler rhPlanter = new RHPlanter(world, target, info[0], info[1], chip);
+				CBXEntityFinder toPlantFinder = new CBXEntityFinder(chip.getCBWorld(), searchCenter, SEARCH_DIST, rhPlanter);
+				toPlantFinder.addItemFilter(info[0], info[1]);
+				CraftBook.cbxScheduler.execute(toPlantFinder);
+			}
 		}
 	}
 
-	private boolean plantableItem(int itemId) {
-		return (itemId == 6 || itemId == 295 ||	itemId == 372 || itemId == 391 || itemId == 392);
+	private boolean plantableItem(int itemId) { // 127 for cocoa bean and not the brown dye
+		return (itemId == 6 || itemId == 127 || itemId == 295 || itemId == 372 || itemId == 391 || itemId == 392); 
 	}
 	
 	private boolean itemPlantableOnBlock(int itemId, int blockId) {
@@ -114,6 +156,9 @@ public class MCX216 extends CBXEntityFindingIC {
 			return true;
 		} else if (itemId == 372 && blockId == 88) {
 			// Netherwart on soulsand
+			return true;
+		} else if (itemId == 127 && blockId == 17){// 127 for cocoa bean and not the brown dye
+							   // and block == 17 for log, type 3 for jungle is checked in the calling method
 			return true;
 		}
 		// can't plant this item on this block
